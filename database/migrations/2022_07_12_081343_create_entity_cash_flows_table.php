@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEntityCashFlowsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -18,6 +18,7 @@ class CreateEntityCashFlowsTable extends Migration
             $table->foreignId('cash_flow_id')->constrained('cash_flows');
             $table->foreignId('entity_id', 'nft_deposits')->constrained('nft_deposits');
             $table->foreign('entity_id', 'withdrawals')->references('id')->on('withdrawals');
+            $table->foreign('entity_id', 'deposits')->references('id')->on('deposits');
             $table->char('entity_type', 50);
         });
     }
@@ -31,4 +32,4 @@ class CreateEntityCashFlowsTable extends Migration
     {
         Schema::dropIfExists('entity_cash_flows');
     }
-}
+};
