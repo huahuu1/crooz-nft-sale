@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id()->autoIncrement();
             $table->foreignId('role_id')->constrained('roles');
             $table->string('mail', 150);
-            $table->string('wallet_address', 150);
+            $table->string('wallet_address', 150)->nullable();
             $table->boolean('status')->default(1);
             $table->string('password', 200)->nullable();
             $table->boolean('is_verified')->default(0);
