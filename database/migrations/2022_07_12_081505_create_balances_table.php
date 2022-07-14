@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('balances', function (Blueprint $table) {
             $table->id()->autoIncrement();
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('coin_id')->constrained('coins');
+            $table->foreignId('token_id')->constrained('tokens');
             $table->decimal('amount', 12, 10);
             $table->boolean('status')->default(1);
             $table->timestamps();

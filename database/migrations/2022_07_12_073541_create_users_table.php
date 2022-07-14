@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id()->autoIncrement();
             $table->foreignId('role_id')->constrained('roles');
-            $table->string('mail', 150);
+            $table->string('mail', 150)->unique()->nullable();
             $table->string('wallet_address', 150)->nullable();
             $table->boolean('status')->default(1);
             $table->string('password', 200)->nullable();
