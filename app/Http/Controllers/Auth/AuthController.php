@@ -91,4 +91,35 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Register by Wallet Address api
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function registerByWalletAddress($walletAddress)
+    {
+        try {
+            $user = User::where('wallet_address', $walletAddress)->first();
+
+            if (!$user) {
+                User::create([
+                    'wallet_address' => $walletAddress
+                ]);
+
+                return response()->json([
+                    'message' => 'User registered successfully.'
+                ], 200);
+            }
+
+            return response()->json([
+                'data' => $user
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'User registration failed',
+                'error' => $e,
+            ], 500);
+        }
+    }
 }
