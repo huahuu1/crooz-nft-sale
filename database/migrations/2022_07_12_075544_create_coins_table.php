@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('coins', function (Blueprint $table) {
+        Schema::create('tokens', function (Blueprint $table) {
             $table->id()->autoIncrement();
             $table->string('name', 100);
             $table->char('code', 100);
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('coins');
+        Schema::dropIfExists('tokens');
     }
 };
