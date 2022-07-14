@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-/**
+    /**
      * Register api
      *
      * @return \Illuminate\Http\Response
@@ -21,11 +21,9 @@ class AuthController extends Controller
     {
         try {
             User::create([
-                'role_id' => $request->role_id,
                 'mail' => $request->mail,
                 'status' => $request->status,
                 'password' => Hash::make($request['password']),
-                'is_verified' => $request->is_verified,
             ]);
 
             return response()->json([
@@ -65,6 +63,7 @@ class AuthController extends Controller
             return response()->json([
                 'access_token' => $token,
                 'token_type' => 'Bearer',
+                'data' => $user
             ], 200);
         } catch (Exception $e) {
             return response()->json([

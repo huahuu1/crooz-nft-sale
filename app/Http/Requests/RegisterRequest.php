@@ -14,11 +14,9 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            'role_id' => 'required',
             'mail' => 'required|email|unique:users,mail',
             'status' => 'required',
             'password' => 'required|confirmed',
-            'is_verified' => 'required',
         ];
     }
 
