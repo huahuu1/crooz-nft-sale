@@ -61,8 +61,7 @@ class AuthController extends Controller
             $token = $user->createToken('authToken')->plainTextToken;
 
             return response()->json([
-                'access_token' => $token,
-                'token_type' => 'Bearer',
+                'access_token' => 'Bearer ' + $token,
                 'data' => $user
             ], 200);
         } catch (Exception $e) {
@@ -107,8 +106,12 @@ class AuthController extends Controller
                     'wallet_address' => $walletAddress
                 ]);
 
+                $token = $user->createToken('authToken')->plainTextToken;
+
                 return response()->json([
-                    'message' => 'User registered successfully.'
+                    'message' => 'User registered successfully.',
+                    'data' => User::where('wallet_address', $walletAddress)->first(),
+                    'access_token' => 'Bearer ' + $token
                 ], 200);
             }
 

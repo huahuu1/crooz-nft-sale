@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('stakings', function (Blueprint $table) {
+        Schema::create('earning_wallets', function (Blueprint $table) {
             $table->id()->autoIncrement();
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('token_id')->constrained('tokens');
