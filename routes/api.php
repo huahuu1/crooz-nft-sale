@@ -25,6 +25,7 @@ Route::controller(AuthController::class)->group(function(){
 Route::middleware('auth:sanctum')->group( function () {
     Route::controller(UserController::class)->group(function(){
         Route::get('users', 'index');
+        Route::put('update-email/{id}', 'updateEmailByWalletAddress');
     });
 
     Route::get('logout', [AuthController::class, 'logout']);

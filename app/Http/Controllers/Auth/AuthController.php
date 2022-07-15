@@ -44,12 +44,12 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        try {
-            $request->validate([
-                'mail' => 'email|required',
-                'password' => 'required'
-            ]);
+        $request->validate([
+            'mail' => 'required|email',
+            'password' => 'required'
+        ]);
 
+        try {
             $user = User::where('mail', $request->mail)->first();
 
             if (!$user || !Hash::check($request->password, $user->password, [])) {
