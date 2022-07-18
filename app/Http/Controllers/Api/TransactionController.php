@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Auth\AuthController;
+use App\Http\Requests\EarningWalletRequest;
 use Illuminate\Http\Request;
 use App\Models\EarningWallet;
 use App\Models\User;
@@ -17,12 +17,8 @@ class TransactionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function createDepositTransaction(Request $request, $walletAddress, $txHash)
+    public function createDepositTransaction(EarningWalletRequest $request)
     {
-        $request->validate([
-            'amount' => 'required|numeric|min:0',
-        ]);
-
         try {
             $depositTransaction = EarningWallet::where('tx_hash', $request->tx_hash)->first();
 
@@ -33,7 +29,7 @@ class TransactionController extends Controller
                 ], 500);
             }
 
-            $user = User::where('wallet_address', $walletAddress)->first();
+            $user = User::where('wallet_address', $request->wallet_address)->first();
 
             EarningWallet::create([
                 "user_id" => $user->id,
@@ -42,7 +38,7 @@ class TransactionController extends Controller
                 "amount" => $request->amount,
                 "type" => 'AUCTION',
                 "status" => 'REQUESTING',
-                "tx_hash" => $txHash,
+                "tx_hash" => $request->tx_hash,
             ]);
 
             return response()->json([
