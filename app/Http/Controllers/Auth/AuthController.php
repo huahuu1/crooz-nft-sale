@@ -61,7 +61,7 @@ class AuthController extends Controller
             $token = $user->createToken('authToken')->plainTextToken;
 
             return response()->json([
-                'access_token' => 'Bearer ' + $token,
+                'access_token' => $token,
                 'data' => $user
             ], 200);
         } catch (Exception $e) {
@@ -96,22 +96,28 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function registerByWalletAddress($walletAddress)
+    public function registerByWalletAddress(Request $request)
     {
+        $request->validate([
+            'wallet_address' => 'required|regex:'. config('regex.wallet_address'),
+        ]);
+
         try {
-            $user = User::where('wallet_address', $walletAddress)->first();
+            $user = User::where('wallet_address', $request->wallet_address)->first();
 
             if (!$user) {
                 User::create([
-                    'wallet_address' => $walletAddress
+                    'wallet_address' => $request->wallet_address
                 ]);
+
+                $user = User::where('wallet_address', $request->wallet_address)->first();
 
                 $token = $user->createToken('authToken')->plainTextToken;
 
                 return response()->json([
                     'message' => 'User registered successfully.',
-                    'data' => User::where('wallet_address', $walletAddress)->first(),
-                    'access_token' => 'Bearer ' + $token
+                    'data' => $user,
+                    'access_token' => $token
                 ], 200);
             }
 

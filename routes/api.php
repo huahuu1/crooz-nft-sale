@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 //Router authorization
 Route::controller(AuthController::class)->group(function() {
     Route::post('register', 'register');
-    Route::post('register-wallet/{wallet_address}', 'registerByWalletAddress');
+    Route::post('register-wallet', 'registerByWalletAddress');
     Route::post('login', 'login');
 });
 
@@ -28,7 +28,7 @@ Route::middleware('auth:sanctum')->group( function () {
     //user routes
     Route::controller(UserController::class)->group(function(){
         Route::get('users', 'index');
-        Route::put('update-email/{id}', 'updateEmailByWalletAddress');
+        Route::put('update-email/{wallet_address}', 'updateEmailByWalletAddress');
     });
 
     //logout route

@@ -31,6 +31,12 @@ class TransactionController extends Controller
 
             $user = User::where('wallet_address', $request->wallet_address)->first();
 
+            if (!$user) {
+                return response()->json([
+                    'message' => 'Please connect to metamask'
+                ], 500);
+            }
+
             EarningWallet::create([
                 "user_id" => $user->id,
                 "token_id" => 1,
