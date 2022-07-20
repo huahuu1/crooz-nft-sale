@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Auth\AuthController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,17 +16,27 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::controller(AuthController::class)->group(function(){
+//Router authorization
+Route::controller(AuthController::class)->group(function() {
     Route::post('register', 'register');
-    Route::post('register-wallet/{wallet_address}', 'registerByWalletAddress');
+    Route::post('register-wallet', 'registerByWalletAddress');
     Route::post('login', 'login');
 });
 
+//Must login routes
 Route::middleware('auth:sanctum')->group( function () {
+    //user routes
     Route::controller(UserController::class)->group(function(){
         Route::get('users', 'index');
-        Route::put('update-email/{id}', 'updateEmailByWalletAddress');
+        Route::put('update-email/{wallet_address}', 'updateEmailByWalletAddress');
     });
 
+    //logout route
     Route::get('logout', [AuthController::class, 'logout']);
+
+});
+
+//transaction routes
+Route::controller(TransactionController::class)->group(function() {
+    Route::post('send-transaction', 'createDepositTransaction');
 });
