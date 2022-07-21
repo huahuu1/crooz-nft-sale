@@ -19,7 +19,7 @@ class TokenMasterSeeder extends Seeder
         DB::table('token_masters')->insert([
             [
                 'id' => 1,
-                'name' => 'USD',
+                'name' => 'TETHER',
                 'code' => 'USDT',
                 'description' => null,
                 'status' => 1,

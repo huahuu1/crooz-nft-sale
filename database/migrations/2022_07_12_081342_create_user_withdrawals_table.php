@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('token_id')->constrained('token_masters');
             $table->decimal('amount', 20, 15);
-            $table->timestamp('request_time');
+            $table->dateTime('request_time');
             $table->enum('status', ['REQUESTING', 'PROCESSING', 'CLOSE', 'FORCECLOSE','REJECT']);
             $table->timestamps();
         });

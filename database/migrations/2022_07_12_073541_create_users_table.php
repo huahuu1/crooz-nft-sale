@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id()->autoIncrement();
             $table->string('email', 150)->unique()->nullable();
             $table->string('wallet_address', 150)->nullable();
+            $table->char('token_validate', 20)->nullable();
             $table->boolean('status')->default(1);
             $table->timestamps();
         });

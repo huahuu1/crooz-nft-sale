@@ -3,12 +3,17 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ConfirmTokenRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\WalletAddressRequest;
 use App\Models\User;
+use App\Notifications\EmailAuthenticationNotification;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -21,7 +26,7 @@ class AuthController extends Controller
     {
         try {
             User::create([
-                'email' => $request->mail,
+                'email' => $request->email,
                 'status' => $request->status,
                 'password' => Hash::make($request['password']),
             ]);
@@ -30,6 +35,7 @@ class AuthController extends Controller
                 'message' => 'User registered successfully.'
             ], 200);
         } catch (Exception $e) {
+            Log::error($e);
             return response()->json([
                 'message' => 'User registration failed',
                 'error' => $e,
@@ -50,7 +56,7 @@ class AuthController extends Controller
         ]);
 
         try {
-            $user = User::where('email', $request->mail)->first();
+            $user = User::where('email', $request->email)->first();
 
             if (!$user || !Hash::check($request->password, $user->password, [])) {
                 return response()->json([
@@ -65,6 +71,7 @@ class AuthController extends Controller
                 'data' => $user
             ], 200);
         } catch (Exception $e) {
+            Log::error($e);
             return response()->json([
                 'message' => 'Error in Login',
                 'error' => $e,
@@ -85,6 +92,7 @@ class AuthController extends Controller
                 'message' => 'Logout'
             ], 200);
         } catch (Exception $e) {
+            Log::error($e);
             return response()->json([
                 'error' => $e
             ], 500);
@@ -96,12 +104,8 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function registerByWalletAddress(Request $request)
+    public function registerByWalletAddress(WalletAddressRequest $request)
     {
-        $request->validate([
-            'wallet_address' => 'required|regex:'. config('regex.wallet_address'),
-        ]);
-
         try {
             $user = User::where('wallet_address', $request->wallet_address)->first();
 
@@ -122,11 +126,95 @@ class AuthController extends Controller
             }
 
             return response()->json([
-                'data' => $user
+                'data' => $user,
+                'access_token' => $user->createToken('authToken')->plainTextToken
             ], 200);
         } catch (Exception $e) {
+            Log::error($e);
             return response()->json([
                 'message' => 'User registration failed',
+                'error' => $e,
+            ], 500);
+        }
+    }
+
+    /**
+     * Send token to mail
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function sendToken(Request $request) {
+        $request->validate([
+            'email' => 'required|email'
+        ]);
+        try {
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'Email does not exist'
+                ], 200);
+            }
+
+            //Token is random 6 digits
+            $tokenValidate = random_int(100000, 999999);
+
+            $user->token_validate = $tokenValidate;
+
+            $user->save();
+
+            //Send email contains token to user
+            $emailAuthenticationNotification = new EmailAuthenticationNotification($request->email, $tokenValidate);
+
+            $user->notify($emailAuthenticationNotification);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Send email successfully',
+            ], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+            return response()->json([
+                'success' => false,
+                'message' => 'Send email failed',
+                'error' => $e,
+            ], 500);
+        }
+    }
+
+    /**
+     * Check token of user input is correct or not
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function confirmToken(ConfirmTokenRequest $request) {
+        try {
+            $user = User::where('wallet_address', $request->wallet_address)->first();
+
+            //Token's duration is 10 minutes
+            if (Carbon::parse($user->updated_at)->addMinutes(10)->isPast()) {
+                $user->token_validate = null;
+                $user->save();
+                return response()->json([
+                    'message' => 'Token has expired'
+                ], 200);
+            }
+
+            //User input wrong token
+            if ($user->token_validate != $request->token_validate) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Verify email token wrong'
+                ], 200);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Verify email token successfully'
+            ], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+            return response()->json([
                 'error' => $e,
             ], 500);
         }
