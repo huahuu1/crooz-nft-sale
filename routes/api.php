@@ -39,7 +39,7 @@ Route::middleware('auth:sanctum')->group( function () {
     //user routes
     Route::controller(UserController::class)->group(function(){
         Route::get('users', 'index');
-        Route::put('update-email/{wallet_address}', 'updateEmailByWalletAddress');
+        Route::put('update-email', 'updateEmailByWalletAddress');
     });
 
     //logout route
@@ -49,5 +49,6 @@ Route::middleware('auth:sanctum')->group( function () {
 
 //transaction routes
 Route::controller(TransactionController::class)->group(function() {
-    Route::post('send-transaction', 'createDepositTransaction');
+    Route::post('buy-token-transaction', 'createDepositTokenTransaction');
+    Route::post('buy-nft-transaction', 'createDepositNftTransaction');
 });

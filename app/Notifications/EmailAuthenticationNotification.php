@@ -10,7 +10,7 @@ class EmailAuthenticationNotification extends Notification
 {
     use Queueable;
 
-    private $mail;
+    private $email;
     private $token_validate;
 
     /**
@@ -18,9 +18,9 @@ class EmailAuthenticationNotification extends Notification
      *
      * @return void
      */
-    public function __construct($mail, $token_validate)
+    public function __construct($email, $token_validate)
     {
-        $this->mail = $mail;
+        $this->email = $email;
         $this->token_validate = $token_validate;
     }
     /**
@@ -41,6 +41,6 @@ class EmailAuthenticationNotification extends Notification
      */
      public function toMail($notifiable)
      {
-        return (new EmailAuthenticationMail($this->mail, $this->token_validate))->to($this->mail);
+        return (new EmailAuthenticationMail($this->email, $this->token_validate))->to($this->email);
     }
 }

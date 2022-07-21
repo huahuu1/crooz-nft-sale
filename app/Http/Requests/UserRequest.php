@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class EarningWalletRequest extends FormRequest
+class UserRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,9 +14,8 @@ class EarningWalletRequest extends FormRequest
     public function rules()
     {
         return [
-            'amount' => 'required|numeric|min:0',
+            'email' => 'required|email',
             'wallet_address' => 'required|regex:'. config('regex.wallet_address'),
-            'tx_hash' => 'required',
         ];
     }
 }

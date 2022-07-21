@@ -26,7 +26,7 @@ class AuthController extends Controller
     {
         try {
             User::create([
-                'email' => $request->mail,
+                'email' => $request->email,
                 'status' => $request->status,
                 'password' => Hash::make($request['password']),
             ]);
@@ -56,7 +56,7 @@ class AuthController extends Controller
         ]);
 
         try {
-            $user = User::where('email', $request->mail)->first();
+            $user = User::where('email', $request->email)->first();
 
             if (!$user || !Hash::check($request->password, $user->password, [])) {
                 return response()->json([
@@ -126,7 +126,8 @@ class AuthController extends Controller
             }
 
             return response()->json([
-                'data' => $user
+                'data' => $user,
+                'access_token' => $user->createToken('authToken')->plainTextToken
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
@@ -144,10 +145,10 @@ class AuthController extends Controller
      */
     public function sendToken(Request $request) {
         $request->validate([
-            'mail' => 'required|email'
+            'email' => 'required|email'
         ]);
         try {
-            $user = User::where('mail', $request->mail)->first();
+            $user = User::where('email', $request->email)->first();
 
             if (!$user) {
                 return response()->json([
@@ -155,13 +156,15 @@ class AuthController extends Controller
                 ], 200);
             }
 
+            //Token is random 6 digits
             $tokenValidate = random_int(100000, 999999);
 
             $user->token_validate = $tokenValidate;
 
             $user->save();
 
-            $emailAuthenticationNotification = new EmailAuthenticationNotification($request->mail, $tokenValidate);
+            //Send email contains token to user
+            $emailAuthenticationNotification = new EmailAuthenticationNotification($request->email, $tokenValidate);
 
             $user->notify($emailAuthenticationNotification);
 
@@ -188,7 +191,8 @@ class AuthController extends Controller
         try {
             $user = User::where('wallet_address', $request->wallet_address)->first();
 
-            if (Carbon::parse($user->updated_at)->addMinutes(1)->isPast()) {
+            //Token's duration is 10 minutes
+            if (Carbon::parse($user->updated_at)->addMinutes(10)->isPast()) {
                 $user->token_validate = null;
                 $user->save();
                 return response()->json([
@@ -196,6 +200,7 @@ class AuthController extends Controller
                 ], 200);
             }
 
+            //User input wrong token
             if ($user->token_validate != $request->token_validate) {
                 return response()->json([
                     'success' => false,
