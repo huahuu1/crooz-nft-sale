@@ -3,8 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Database\Seeders\RoleSeeder;
-use Database\Seeders\UserSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,9 +13,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+
         $this->call([
-            RoleSeeder::class,
-            UserSeeder::class,
+            TokenMasterSeeder::class,
         ]);
+
+        \App\Models\LockInfo::factory(1)->create();
+        \App\Models\TokenSaleInfo::factory(1)->create();
+        \App\Models\NftAuctionInfo::factory(1)->create();
     }
 }

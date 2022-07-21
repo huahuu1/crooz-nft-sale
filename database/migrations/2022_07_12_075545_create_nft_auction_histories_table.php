@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('balances', function (Blueprint $table) {
+        Schema::create('nft_auction_histories', function (Blueprint $table) {
             $table->id()->autoIncrement();
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('token_id')->constrained('tokens');
-            $table->decimal('amount', 12, 10);
-            $table->boolean('status')->default(1);
+            $table->foreignId('token_id')->constrained('token_masters');
+            $table->foreignId('nft_auction_id')->constrained('nft_auction_infos');
+            $table->decimal('amount', 20, 15);
+            $table->enum('status', ['PROCESSING', 'CLOSE', 'FORCECLOSE']);
+            $table->char('tx_hash', 150);
             $table->timestamps();
         });
     }
@@ -30,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('balances');
+        Schema::dropIfExists('nft_auction_histories');
     }
 };

@@ -15,13 +15,10 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id()->autoIncrement();
-            $table->foreignId('role_id')->nullable()->constrained('roles');
-            $table->string('mail', 150)->unique()->nullable();
+            $table->string('email', 150)->unique()->nullable();
             $table->string('wallet_address', 150)->nullable();
-            $table->boolean('status')->default(1);
-            $table->string('password', 200)->nullable();
-            $table->boolean('is_verified')->default(0);
             $table->char('token_validate', 20)->nullable();
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }
