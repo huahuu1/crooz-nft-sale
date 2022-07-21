@@ -13,12 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tokens', function (Blueprint $table) {
+        Schema::create('token_sale_infos', function (Blueprint $table) {
             $table->id()->autoIncrement();
-            $table->string('name', 100);
-            $table->char('code', 100);
-            $table->boolean('staking_status')->default(1);
-            $table->text('description')->nullable();
+            $table->foreignId('lock_id')->constrained('lock_infos');
+            $table->dateTime('start_date');
+            $table->dateTime('end_date');
+            $table->integer('total');
+            $table->decimal('price', 20, 15);
             $table->boolean('status')->default(1);
             $table->timestamps();
         });
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tokens');
+        Schema::dropIfExists('token_sale_infos');
     }
 };
