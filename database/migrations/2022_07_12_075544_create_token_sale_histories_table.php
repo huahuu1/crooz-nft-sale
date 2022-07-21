@@ -13,16 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('earning_wallets', function (Blueprint $table) {
+        Schema::create('token_sale_histories', function (Blueprint $table) {
             $table->id()->autoIncrement();
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('token_id')->constrained('tokens');
-            $table->foreignId('lock_time_id')->constrained('lock_times')->nullable();
-            $table->decimal('amount', 12, 10);
-            $table->enum('type', ['STAKING', 'AUCTION']);
-            $table->enum('status', ['REQUESTING', 'PROCESSING', 'CLOSE', 'FORCECLOSE']);
-            $table->decimal('interest', 12, 10)->nullable();
-            $table->string('dividend', 150)->nullable();
+            $table->foreignId('token_id')->constrained('token_masters');
+            $table->foreignId('token_sale_id')->constrained('token_sale_infos');
+            $table->decimal('amount', 20, 15);
+            $table->enum('status', ['PROCESSING', 'CLOSE', 'FORCECLOSE']);
             $table->char('tx_hash', 150);
             $table->timestamps();
         });
@@ -35,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('stakings');
+        Schema::dropIfExists('token_sale_histories');
     }
 };

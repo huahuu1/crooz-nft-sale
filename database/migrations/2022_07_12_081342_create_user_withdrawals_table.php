@@ -13,10 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('user_withdrawals', function (Blueprint $table) {
             $table->id()->autoIncrement();
-            $table->string('name', 100);
-            $table->text('description')->nullable();
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('token_id')->constrained('token_masters');
+            $table->decimal('amount', 20, 15);
+            $table->timestamp('request_time');
+            $table->enum('status', ['REQUESTING', 'PROCESSING', 'CLOSE', 'FORCECLOSE','REJECT']);
             $table->timestamps();
         });
     }
@@ -28,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('user_withdrawals');
     }
 };

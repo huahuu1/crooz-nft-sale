@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
 
-class EarningWallet extends Model
+class LockInfo extends Model
 {
     use HasApiTokens, HasFactory;
 
-    protected $table = 'earning_wallets';
+    protected $table = 'lock_infos';
 
     /**
      * The attributes that are mass assignable.
@@ -18,14 +18,8 @@ class EarningWallet extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id',
-        'token_id',
-        'lock_time_id',
-        'amount',
-        'type',
+        'lock_day',
+        'unlock_percentages',
         'status',
-        'interest',
-        'dividend',
-        'tx_hash',
     ];
 }

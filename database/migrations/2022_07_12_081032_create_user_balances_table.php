@@ -13,16 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('deposits', function (Blueprint $table) {
+        Schema::create('user_balances', function (Blueprint $table) {
             $table->id()->autoIncrement();
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('token_id')->constrained('tokens');
-            $table->decimal('amount', 12, 10);
-            $table->boolean('type')->default(1);
-            $table->enum('status', ['PROCESSING', 'CLOSE', 'FORCECLOSE']);
-            $table->char('from_wallet', 100);
-            $table->char('to_wallet', 100);
-            $table->char('tx_hash', 150);
+            $table->foreignId('token_id')->constrained('token_masters');
+            $table->decimal('amount_total', 20, 15);
+            $table->decimal('amount_lock', 20, 15);
             $table->timestamps();
         });
     }
@@ -34,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('deposits');
+        Schema::dropIfExists('user_balances');
     }
 };

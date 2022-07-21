@@ -13,13 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('nfts', function (Blueprint $table) {
+        Schema::create('nft_auction_infos', function (Blueprint $table) {
             $table->id()->autoIncrement();
-            $table->foreignId('user_id')->constrained('users');
-            $table->char('nft_token_id', 100);
-            $table->string('name', 100);
-            $table->text('storage')->nullable();
-            $table->enum('status', ['GENERAL', 'CLOSE', 'WALLET', 'WITHDRAWAL', 'SELLING']);
+            $table->dateTime('start_date');
+            $table->dateTime('end_date');
+            $table->decimal('min_price', 20, 15);
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('nfts');
+        Schema::dropIfExists('nft_auction_infos');
     }
 };

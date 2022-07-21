@@ -13,11 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('lock_times', function (Blueprint $table) {
+        Schema::create('token_masters', function (Blueprint $table) {
             $table->id()->autoIncrement();
             $table->string('name', 100);
-            $table->string('value', 100);
+            $table->char('code', 20);
             $table->text('description')->nullable();
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lock_times');
+        Schema::dropIfExists('token_masters');
     }
 };
