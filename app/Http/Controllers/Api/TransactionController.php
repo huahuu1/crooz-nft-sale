@@ -51,6 +51,7 @@ class TransactionController extends Controller
                 'message' => 'Deposit transaction successfully'
             ], 200);
         } catch (Exception $e) {
+            Log::error($e);
             return response()->json([
                 'message' => 'Deposit transaction failed',
                 'error' => $e,

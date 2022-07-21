@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\WalletAddressRequest;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -41,10 +42,34 @@ class UserController extends Controller
                 'message' => 'Update email successfully'
             ], 200);
         } catch (Exception $e) {
+            Log::error($e);
             return response()->json([
                 'message' => 'Update email failed',
                 'error' => $e,
             ], 500);
         }
+    }
+
+    /**
+     * Checking user has email or not by wallet address.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function checkEmailUserByWalletAddress($walletAddress)
+    {
+        try {
+            $user = User::select('mail')->where('wallet_address', $walletAddress)
+                                    ->whereNotNull('mail')
+                                    ->count();
+            return response()->json([
+                'data' => $user ? true : false
+            ], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+            return response()->json([
+                'error' => $e,
+            ], 500);
+        }
+
     }
 }

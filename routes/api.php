@@ -21,6 +21,17 @@ Route::controller(AuthController::class)->group(function() {
     Route::post('register', 'register');
     Route::post('register-wallet', 'registerByWalletAddress');
     Route::post('login', 'login');
+
+    Route::group([
+        'prefix' => 'authentication'
+    ], function () {
+        //Send email include token to the user
+        Route::post('send_token', 'sendToken');
+        //confirm the token is correct or not
+        Route::post('confirm_token', 'confirmToken');
+        //check email is existed by wallet address
+        Route::get('check-email/{wallet_address}', [UserController::class, 'checkEmailUserByWalletAddress']);
+    });
 });
 
 //Must login routes

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->boolean('status')->default(1);
             $table->string('password', 200)->nullable();
             $table->boolean('is_verified')->default(0);
+            $table->char('token_validate', 20)->nullable();
             $table->timestamps();
         });
     }
