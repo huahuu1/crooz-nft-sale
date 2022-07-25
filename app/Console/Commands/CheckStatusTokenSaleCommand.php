@@ -1,0 +1,97 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Models\TokenSaleHistory;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Http;
+
+class CheckStatusTokenSaleCommand extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'check:token-sale';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Check Transactions Token Sale Command';
+
+    protected $transactions;
+
+    /**
+     * Create a new command instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->transactions = new TokenSaleHistory();
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * @return int
+     */
+    public function handle()
+    {
+        return $this->validateTransactions();
+    }
+
+    /**
+     * Validate Metamask Transaction
+     *
+     * @return void
+     */
+    public function validateTransactions()
+    {
+        $company_wallet = env('COMPANY_WALLET');
+
+        $transactions = $this->transactions->pendingTokenSaleTransactions();
+
+        foreach ($transactions as $transaction) {
+            //get transaction information from etherscan
+            $response = $this->checkWithEtherScan($transaction->tx_hash);
+            //validate response
+            if ($response && array_key_exists('result', $response) && $response['result'] != null) {
+                $result = $response['result'];
+                //validate transaction destination with our account
+                if (strtolower($result['to']) == strtolower($company_wallet)) {
+                    // Update Transaction As Success
+                    $transaction->status = 2;
+                    $transaction->update();
+                }
+            } else {
+                // Update Transaction As Canceled
+                $transaction->status = 3;
+                $transaction->update();
+            }
+        }
+    }
+
+    /**
+     * Check Transaction With Ether Scan
+     *
+     * @param  mixed $transaction_hash
+     * @return mixed
+     */
+    public function checkWithEtherScan($transaction_hash)
+    {
+        $api_key = "ENBK5HBW1JFGY2INMUN28UDA88VM1Y6GJS"; // api from from Etherscan.io
+        $test_network = "https://api-ropsten.etherscan.io"; //use in testnet
+        $main_network = "https://etherscan.io"; //use in mainnet
+        $response = Http::get(
+            $test_network
+            . "/api/?module=proxy&action=eth_getTransactionByHash&txhash="
+            . $transaction_hash
+            . '&apikey=' . $api_key);
+        return $response->json();
+    }
+}

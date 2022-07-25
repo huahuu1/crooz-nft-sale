@@ -25,4 +25,14 @@ class NftAuctionHistory extends Model
         'status',
         'tx_hash',
     ];
+
+    /**
+     * Get ALl Pending Transactions
+     *
+     * @return mixed
+     */
+    public function pendingNftAuctionTransactions()
+    {
+        return $this->where('status', 'PROCESSING')->get();
+    }
 }
