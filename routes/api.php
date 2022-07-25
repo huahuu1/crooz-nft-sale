@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Api\InformationController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\TransactionController;
 use Illuminate\Support\Facades\Route;
 
@@ -52,3 +53,6 @@ Route::controller(TransactionController::class)->group(function() {
     Route::post('buy-token-transaction', 'createDepositTokenTransaction');
     Route::post('buy-nft-transaction', 'createDepositNftTransaction');
 });
+
+Route::get('token-sale', [InformationController::class, 'getInfoTokenSale']);
+
