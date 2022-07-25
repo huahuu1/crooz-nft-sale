@@ -33,6 +33,7 @@ class UserController extends Controller
         try {
             $user = User::where('wallet_address', $request->wallet_address)->first();
             $user->email = $request->email;
+            $user->token_validate = null;
             $user->save();
 
             return response()->json([
