@@ -54,5 +54,5 @@ Route::controller(TransactionController::class)->group(function() {
     Route::post('buy-nft-transaction', 'createDepositNftTransaction');
 });
 
-Route::get('token-sale', [InformationController::class, 'getInfoTokenSale']);
+Route::get('token-sale/{id}', [InformationController::class, 'getInfoTokenSaleById']);
 

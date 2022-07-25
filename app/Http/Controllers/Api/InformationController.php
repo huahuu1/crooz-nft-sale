@@ -13,10 +13,10 @@ class InformationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getInfoTokenSale()
+    public function getInfoTokenSaleById($id)
     {
         return response()->json([
-            'data' => TokenSaleInfo::all(),
+            'data' => TokenSaleInfo::find($id),
         ]);
     }
 }
