@@ -66,12 +66,12 @@ class CheckStatusNftAuctionCommand extends Command
                 //validate transaction destination with our account
                 if (strtolower($result['to']) == strtolower($company_wallet)) {
                     // Update Transaction As Success
-                    $transaction->status = 2;
+                    $transaction->status = 'CLOSE';
                     $transaction->update();
                 }
             } else {
                 // Update Transaction As Canceled
-                $transaction->status = 3;
+                $transaction->status = 'FORCECLOSE';
                 $transaction->update();
             }
         }
@@ -85,7 +85,7 @@ class CheckStatusNftAuctionCommand extends Command
      */
     public function checkWithEtherScan($transaction_hash)
     {
-        $api_key = "ENBK5HBW1JFGY2INMUN28UDA88VM1Y6GJS"; // api from from Etherscan.io
+        $api_key = env('ETHERSCAN_API_KEY'); // api from from Etherscan.io
         $test_network = "https://api-ropsten.etherscan.io"; //use in testnet
         $main_network = "https://etherscan.io"; //use in mainnet
         $response = Http::get(
