@@ -45,10 +45,11 @@ Route::middleware('auth:sanctum')->group( function () {
     //logout route
     Route::get('logout', [AuthController::class, 'logout']);
 
+    //transaction routes
+    Route::controller(TransactionController::class)->group(function() {
+        Route::post('buy-token-transaction', 'createDepositTokenTransaction');
+        Route::post('buy-nft-transaction', 'createDepositNftTransaction');
+    });
 });
 
-//transaction routes
-Route::controller(TransactionController::class)->group(function() {
-    Route::post('buy-token-transaction', 'createDepositTokenTransaction');
-    Route::post('buy-nft-transaction', 'createDepositNftTransaction');
-});
+

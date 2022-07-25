@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmTokenRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\UserRequest;
 use App\Http\Requests\WalletAddressRequest;
 use App\Models\User;
 use App\Notifications\EmailAuthenticationNotification;
@@ -143,16 +144,13 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function sendToken(Request $request) {
-        $request->validate([
-            'email' => 'required|email'
-        ]);
+    public function sendToken(UserRequest $request) {
         try {
-            $user = User::where('email', $request->email)->first();
+            $user = User::where('wallet_address', $request->wallet_address)->first();
 
             if (!$user) {
                 return response()->json([
-                    'message' => 'Email does not exist'
+                    'message' => 'User does not exist',
                 ], 200);
             }
 
