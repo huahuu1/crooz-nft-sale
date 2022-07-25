@@ -25,4 +25,14 @@ class TokenSaleHistory extends Model
         'status',
         'tx_hash',
     ];
+
+    /**
+     * Get ALl Pending Transactions
+     *
+     * @return mixed
+     */
+    public function pendingTokenSaleTransactions()
+    {
+        return $this->where('status', 'PROCESSING')->get();
+    }
 }
