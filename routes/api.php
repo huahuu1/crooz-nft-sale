@@ -54,7 +54,9 @@ Route::middleware('auth:sanctum')->group( function () {
 });
 
 //display token sale info
+Route::get('token-sale', [InformationController::class, 'getLatestInfoTokenSale']);
 Route::get('token-sale/{id}', [InformationController::class, 'getInfoTokenSaleById']);
 //display nft auction info
+Route::get('nft-auction', [InformationController::class, 'getLatestInfoNftAuction']);
 Route::get('nft-auction/{id}', [InformationController::class, 'getInfoNftAuctionById']);
 
