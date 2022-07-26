@@ -60,3 +60,13 @@ Route::get('token-sale/{id}', [InformationController::class, 'getInfoTokenSaleBy
 Route::get('nft-auction', [InformationController::class, 'getLatestInfoNftAuction']);
 Route::get('nft-auction/{id}', [InformationController::class, 'getInfoNftAuctionById']);
 
+//purchase list
+Route::group([
+    'prefix' => 'purchase-list'
+], function () {
+    //purchase list of token sale
+    Route::get('token-sale', [TransactionController::class, 'getPurchaseListOfTokenSale']);
+
+});
+
+

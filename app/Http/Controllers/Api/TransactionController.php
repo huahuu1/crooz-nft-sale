@@ -123,4 +123,21 @@ class TransactionController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get purchase list of token sale
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getPurchaseListOfTokenSale()
+    {
+        $tokeSaleHistory = TokenSaleHistory::where('status', TokenSaleHistory::SUCCESS_STATUS)
+                                           ->orderby('amount', 'desc')
+                                           ->with('user')
+                                           ->get();
+        return response()->json([
+            'data' => $tokeSaleHistory
+        ]);
+    }
+
 }

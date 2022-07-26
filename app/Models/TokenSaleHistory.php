@@ -26,6 +26,10 @@ class TokenSaleHistory extends Model
         'tx_hash',
     ];
 
+    const PENDING_STATUS = 1;
+    const SUCCESS_STATUS = 2;
+    const FAILED_STATUS = 3;
+
     /**
      * Get ALl Pending Transactions
      *
@@ -34,5 +38,13 @@ class TokenSaleHistory extends Model
     public function pendingTokenSaleTransactions()
     {
         return $this->where('status', 'PROCESSING')->get();
+    }
+
+    /**
+     * Get the user that owns the transaction.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
