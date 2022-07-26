@@ -10,7 +10,19 @@ use App\Models\TokenSaleInfo;
 class InformationController extends Controller
 {
     /**
-     * Display information of token sale.
+     * Display information of the latest token sale follow Id.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getLatestInfoTokenSale()
+    {
+        return response()->json([
+            'data' => TokenSaleInfo::orderby('id', 'desc')->first(),
+        ]);
+    }
+
+    /**
+     * Display information of token sale by Id.
      *
      * @return \Illuminate\Http\Response
      */
@@ -22,7 +34,19 @@ class InformationController extends Controller
     }
 
     /**
-     * Display information of NFT auction.
+     * Display information of the latest NFT auction follow Id.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getLatestInfoNftAuction()
+    {
+        return response()->json([
+            'data' => NftAuctionInfo::orderby('id', 'desc')->first(),
+        ]);
+    }
+
+    /**
+     * Display information of NFT auction by Id.
      *
      * @return \Illuminate\Http\Response
      */
