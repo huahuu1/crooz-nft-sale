@@ -140,4 +140,19 @@ class TransactionController extends Controller
         ]);
     }
 
+    /**
+     * Get purchase list of nft auction
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getPurchaseListOfNftAuction()
+    {
+        $nftAuctionHistory = NftAuctionHistory::where('status', NftAuctionHistory::SUCCESS_STATUS)
+                                              ->orderby('amount', 'desc')
+                                              ->with('user')
+                                              ->get();
+        return response()->json([
+            'data' => $nftAuctionHistory
+        ]);
+    }
 }
