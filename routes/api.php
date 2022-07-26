@@ -66,7 +66,8 @@ Route::group([
 ], function () {
     //purchase list of token sale
     Route::get('token-sale', [TransactionController::class, 'getPurchaseListOfTokenSale']);
-
+    //purchase list of nft auction
+    Route::get('nft-auction', [TransactionController::class, 'getPurchaseListOfNftAuction']);
 });
 
 
