@@ -65,6 +65,8 @@ Route::middleware('auth:sanctum')->group( function () {
             //get success purchase list in my page
             Route::get('success-token-sale/{wallet_address}', 'getSuccessListOfTokenSaleByWalletAddress');
             Route::get('success-nft-auction/{wallet_address}', 'getSuccessListOfNftAuctionByWalletAddress');
+            //get balances of a user by wallet address
+            Route::get('balance/{wallet_address}', 'getBalanceByWalletAddress');
         });
     });
 

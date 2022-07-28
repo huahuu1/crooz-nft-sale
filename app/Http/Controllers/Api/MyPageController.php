@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\NftAuctionHistory;
 use App\Models\TokenSaleHistory;
 use App\Models\User;
+use App\Models\UserBalance;
 
 class MyPageController extends Controller
 {
@@ -79,6 +80,22 @@ class MyPageController extends Controller
                                               ->get();
         return response()->json([
             'data' => $nftAuctionHistory
+        ]);
+    }
+
+    /**
+     * Get balances of a user by wallet address
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getBalanceByWalletAddress($walletAddress)
+    {
+        $user = User::where('wallet_address', $walletAddress)->first();
+        $balances = UserBalance::where('user_id', $user->id)
+                               ->with('token_master')
+                               ->get();
+        return response()->json([
+            'data' => $balances
         ]);
     }
 }

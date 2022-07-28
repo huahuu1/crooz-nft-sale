@@ -23,4 +23,12 @@ class UserBalance extends Model
         'amount_total',
         'amount_lock',
     ];
+
+    /**
+     * Get the token relates to user balanace.
+     */
+    public function token_master()
+    {
+        return $this->belongsTo(TokenMaster::class, 'token_id');
+    }
 }
