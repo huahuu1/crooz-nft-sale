@@ -65,7 +65,7 @@ Route::group([
     'prefix' => 'purchase-list'
 ], function () {
     //purchase list of token sale
-    Route::get('token-sale', [TransactionController::class, 'getPurchaseListOfTokenSale']);
+    Route::get('token-sale/{wallet_address}', [TransactionController::class, 'getPurchaseListOfTokenSaleByWalletAddress']);
     //purchase list of nft auction
     Route::get('nft-auction', [TransactionController::class, 'getPurchaseListOfNftAuction']);
 });
