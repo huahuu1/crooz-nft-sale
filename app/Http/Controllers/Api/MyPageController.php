@@ -20,7 +20,7 @@ class MyPageController extends Controller
         $user = User::where('wallet_address', $walletAddress)->first();
         $tokenSaleHistory = TokenSaleHistory::where('status', TokenSaleHistory::PENDING_STATUS)
                                             ->where('user_id', $user->id)
-                                            ->orderby('id', 'asc')
+                                            ->orderby('id', 'desc')
                                             ->with('user')
                                             ->get();
         return response()->json([
@@ -38,7 +38,7 @@ class MyPageController extends Controller
         $user = User::where('wallet_address', $walletAddress)->first();
         $tokenSaleHistory = TokenSaleHistory::where('status', TokenSaleHistory::SUCCESS_STATUS)
                                             ->where('user_id', $user->id)
-                                            ->orderby('id', 'asc')
+                                            ->orderby('id', 'desc')
                                             ->with('user')
                                             ->get();
         return response()->json([
@@ -56,7 +56,7 @@ class MyPageController extends Controller
         $user = User::where('wallet_address', $walletAddress)->first();
         $nftAuctionHistory = NftAuctionHistory::where('status', NftAuctionHistory::PENDING_STATUS)
                                               ->where('user_id', $user->id)
-                                              ->orderby('id', 'asc')
+                                              ->orderby('id', 'desc')
                                               ->with('user')
                                               ->get();
         return response()->json([
@@ -74,7 +74,7 @@ class MyPageController extends Controller
         $user = User::where('wallet_address', $walletAddress)->first();
         $nftAuctionHistory = NftAuctionHistory::where('status', NftAuctionHistory::SUCCESS_STATUS)
                                               ->where('user_id', $user->id)
-                                              ->orderby('id', 'asc')
+                                              ->orderby('id', 'desc')
                                               ->with('user')
                                               ->get();
         return response()->json([
