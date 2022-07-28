@@ -151,7 +151,7 @@ class AuthController extends Controller
             if (!$user) {
                 return response()->json([
                     'message' => 'User does not exist',
-                ], 200);
+                ], 404);
             }
 
             //Token is random 6 digits
@@ -195,7 +195,7 @@ class AuthController extends Controller
                 $user->save();
                 return response()->json([
                     'message' => 'Token has expired'
-                ], 200);
+                ], 404);
             }
 
             //User input wrong token
@@ -203,7 +203,7 @@ class AuthController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Verify email token wrong'
-                ], 200);
+                ], 500);
             }
 
             return response()->json([

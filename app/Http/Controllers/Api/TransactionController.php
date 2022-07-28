@@ -129,9 +129,11 @@ class TransactionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getPurchaseListOfTokenSale()
+    public function getPurchaseListOfTokenSaleByWalletAddress($walletAddress)
     {
+        $user = User::where('wallet_address', $walletAddress)->first();
         $tokeSaleHistory = TokenSaleHistory::where('status', TokenSaleHistory::SUCCESS_STATUS)
+                                           ->where('user_id', $user->id)
                                            ->orderby('amount', 'desc')
                                            ->with('user')
                                            ->get();
