@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Api\InformationController;
+use App\Http\Controllers\Api\MyPageController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\TransactionController;
 use Illuminate\Support\Facades\Route;
@@ -48,9 +49,25 @@ Route::middleware('auth:sanctum')->group( function () {
 
     //transaction routes
     Route::controller(TransactionController::class)->group(function() {
+        //send transaction
         Route::post('buy-token-transaction', 'createDepositTokenTransaction');
         Route::post('buy-nft-transaction', 'createDepositNftTransaction');
     });
+
+    //my page routes
+    Route::controller(MyPageController::class)->group(function() {
+        Route::group([
+            'prefix' => 'my-page'
+        ], function () {
+            //get pending purchase list in my page
+            Route::get('pending-token-sale/{wallet_address}', 'getPendingListOfTokenSaleWalletAddress');
+            Route::get('pending-nft-auction/{wallet_address}', 'getPendingListOfNftAuctionByWalletAddress');
+            //get success purchase list in my page
+            Route::get('success-token-sale/{wallet_address}', 'getSuccessListOfTokenSaleByWalletAddress');
+            Route::get('success-nft-auction/{wallet_address}', 'getSuccessListOfNftAuctionByWalletAddress');
+        });
+    });
+
 });
 
 //display token sale info
