@@ -37,7 +37,7 @@ class NftAuctionHistory extends Model
      */
     public function pendingNftAuctionTransactions()
     {
-        return $this->where('status', 'PROCESSING')->get();
+        return $this->where('status', $this::PENDING_STATUS)->get();
     }
 
     /**
