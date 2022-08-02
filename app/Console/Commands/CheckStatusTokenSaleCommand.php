@@ -56,40 +56,39 @@ class CheckStatusTokenSaleCommand extends Command
     {
         $company_wallet = env('COMPANY_WALLET');
 
-        $transactions = $this->transactions->pendingTokenSaleTransactions();
+        $pendingTransactions = $this->transactions->pendingTokenSaleTransactions();
 
-        foreach ($transactions as $transaction) {
-            //get transaction information from etherscan
-            $result = $this->checkWithEtherScan($transaction->tx_hash);
-            $response = $result->get('response');
-            $blockNumberCount = $result->get('block_count');
-            $transactionStatus = $result->get('transaction_status');
+        $pendingTransactions->chunkById(100, function ($transactions) use ($company_wallet) {
+            foreach ($transactions as $transaction) {
+                //get transaction information from etherscan
+                $result = $this->checkWithEtherScan($transaction->tx_hash);
+                $response = $result->get('response');
+                $blockNumberCount = $result->get('block_count');
+                $transactionStatus = $result->get('transaction_status')['status'];
 
-            //validate response
-            if ($response && array_key_exists('result', $response) && $response['result'] != null) {
-                $result = $response['result'];
-                //Validate transaction destination with our account
-                if (strtolower($result['to']) == strtolower($company_wallet)) {
+                if ($response['result']['blockHash'] == null) {
                     //Update Transaction As Pending
                     $transaction->status = TokenSaleHistory::PENDING_STATUS;
                     $transaction->update();
+                    return;
+                }
 
-                    if ($blockNumberCount >= env('SUCCESS_TRANSACTION_BLOCK_COUNT') && $transactionStatus) {
+                //validate response
+                if ($response && array_key_exists('result', $response)) {
+                    $result = $response['result'];
+                    //Validate transaction destination with our account
+                    if (strtolower($result['to']) == strtolower($company_wallet) && $blockNumberCount >= env('SUCCESS_TRANSACTION_BLOCK_COUNT') && $transactionStatus) {
                         //Update Transaction As Success
                         $transaction->status = TokenSaleHistory::SUCCESS_STATUS;
                         $transaction->update();
                     }
+                } else {
+                    //Update Transaction As Fail
+                    $transaction->status = TokenSaleHistory::FAILED_STATUS;
+                    $transaction->update();
                 }
-            } else if (!$transactionStatus) {
-                //Update Transaction As Fail
-                $transaction->status = TokenSaleHistory::FAILED_STATUS;
-                $transaction->update();
-            } else {
-                //Update Transaction As Fail
-                $transaction->status = TokenSaleHistory::FAILED_STATUS;
-                $transaction->update();
             }
-        }
+        }, 'id');
     }
 
     /**

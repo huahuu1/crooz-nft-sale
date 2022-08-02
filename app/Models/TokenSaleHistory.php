@@ -37,7 +37,7 @@ class TokenSaleHistory extends Model
      */
     public function pendingTokenSaleTransactions()
     {
-        return $this->where('status', $this::PENDING_STATUS)->get();
+        return $this->where('status', $this::PENDING_STATUS);
     }
 
     /**
