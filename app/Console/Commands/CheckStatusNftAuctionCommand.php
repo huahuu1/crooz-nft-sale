@@ -3,9 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Models\NftAuctionHistory;
-use App\Models\TokenSaleHistory;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Etherscan\APIConf;
+use Etherscan\Client;
 
 class CheckStatusNftAuctionCommand extends Command
 {
@@ -59,19 +60,33 @@ class CheckStatusNftAuctionCommand extends Command
 
         foreach ($transactions as $transaction) {
             //get transaction information from etherscan
-            $response = $this->checkWithEtherScan($transaction->tx_hash);
+            $result = $this->checkWithEtherScan($transaction->tx_hash);
+            $response = $result->get('response');
+            $blockNumberCount = $result->get('block_count');
+            $transactionStatus = $result->get('transaction_status');
+
             //validate response
             if ($response && array_key_exists('result', $response) && $response['result'] != null) {
                 $result = $response['result'];
-                //validate transaction destination with our account
+                //Validate transaction destination with our account
                 if (strtolower($result['to']) == strtolower($company_wallet)) {
-                    // Update Transaction As Success
-                    $transaction->status = 'CLOSE';
+                    //Update Transaction As Pending
+                    $transaction->status = NftAuctionHistory::PENDING_STATUS;
                     $transaction->update();
+
+                    if ($blockNumberCount >= env('SUCCESS_TRANSACTION_BLOCK_COUNT') && $transactionStatus) {
+                        //Update Transaction As Success
+                        $transaction->status = NftAuctionHistory::SUCCESS_STATUS;
+                        $transaction->update();
+                    }
                 }
+            } else if (!$transactionStatus) {
+                //Update Transaction As Fail
+                $transaction->status = NftAuctionHistory::FAILED_STATUS;
+                $transaction->update();
             } else {
-                // Update Transaction As Canceled
-                $transaction->status = 'FORCECLOSE';
+                //Update Transaction As Fail
+                $transaction->status = NftAuctionHistory::FAILED_STATUS;
                 $transaction->update();
             }
         }
@@ -88,11 +103,30 @@ class CheckStatusNftAuctionCommand extends Command
         $api_key = env('ETHERSCAN_API_KEY'); // api from from Etherscan.io
         $test_network = "https://api-ropsten.etherscan.io"; //use in testnet
         $main_network = "https://etherscan.io"; //use in mainnet
+
+        //use lib maslakoff/php-etherscan-api
+        $client = new Client($api_key, APIConf::TESTNET_ROPSTEN);
+
+        //get block of the transaction
+        $transactionBlockNumber = $client->api('proxy')->getTransactionByHash($transaction_hash)['result']['blockNumber'];
+        //get current block
+        $currentBlockNumber = $client->api('proxy')->blockNumber()['result'];
+
+        $blockCount = hexdec($currentBlockNumber) - hexdec($transactionBlockNumber);
+
+        //get transaction status
+        $transactionStatus = $client->api('transaction')->getTransactionReceiptStatus($transaction_hash);
+
         $response = Http::get(
             $test_network
             . "/api/?module=proxy&action=eth_getTransactionByHash&txhash="
             . $transaction_hash
             . '&apikey=' . $api_key);
-        return $response->json();
+
+        return collect([
+            'response' => $response->json(),
+            'block_count' => $blockCount,
+            'transaction_status' => $transactionStatus
+        ]);;
     }
 }

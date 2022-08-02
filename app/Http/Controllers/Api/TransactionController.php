@@ -45,7 +45,7 @@ class TransactionController extends Controller
                 "token_id" => 1,
                 "token_sale_id" => 1,
                 "amount" => $request->amount,
-                "status" => 'PROCESSING',
+                "status" => TokenSaleHistory::PENDING_STATUS,
                 "tx_hash" => $request->tx_hash,
             ]);
 
@@ -100,7 +100,7 @@ class TransactionController extends Controller
                 "token_id" => 1,
                 "nft_auction_id" => 1,
                 "amount" => $request->amount,
-                "status" => 'PROCESSING',
+                "status" => NftAuctionHistory::PENDING_STATUS,
                 "tx_hash" => $request->tx_hash,
             ]);
 

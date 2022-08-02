@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('token_id')->constrained('token_masters');
             $table->foreignId('nft_auction_id')->constrained('nft_auction_infos');
             $table->decimal('amount', 20, 15);
-            $table->enum('status', ['PROCESSING', 'CLOSE', 'FORCECLOSE']);
+            $table->enum('status', ['PENDING','SUCCESS','FAIL']);
             $table->char('tx_hash', 150);
             $table->timestamps();
         });
