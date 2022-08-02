@@ -24,4 +24,10 @@ class UserWithdrawal extends Model
         'request_time',
         'status',
     ];
+
+    const REQUESTING_STATUS = 1;
+    const PROCESSING_STATUS = 2;
+    const CLOSE_STATUS = 3;
+    const FORCECLOSE_STATUS = 4;
+    const REJECT_STATUS = 5;
 }

@@ -67,6 +67,10 @@ Route::middleware('auth:sanctum')->group( function () {
             Route::get('success-nft-auction/{wallet_address}', 'getSuccessListOfNftAuctionByWalletAddress');
             //get balances of a user by wallet address
             Route::get('balance/{wallet_address}', 'getBalanceByWalletAddress');
+            //user requests to withdrawl token
+            Route::post('withdraw-token', 'requestToWithdrawToken');
+            //update status of user_withdrawals
+            Route::put('withdraw-token/update-status', 'updateStatusWithdrawRequest');
         });
     });
 
