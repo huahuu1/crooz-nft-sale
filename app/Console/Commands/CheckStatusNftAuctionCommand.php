@@ -74,7 +74,7 @@ class CheckStatusNftAuctionCommand extends Command
                     $transaction->status = NftAuctionHistory::PENDING_STATUS;
                     $transaction->update();
 
-                    if ($blockNumberCount >= 24 && $transactionStatus) {
+                    if ($blockNumberCount >= env('SUCCESS_TRANSACTION_BLOCK_COUNT') && $transactionStatus) {
                         //Update Transaction As Success
                         $transaction->status = NftAuctionHistory::SUCCESS_STATUS;
                         $transaction->update();

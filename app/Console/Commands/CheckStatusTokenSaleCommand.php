@@ -74,7 +74,7 @@ class CheckStatusTokenSaleCommand extends Command
                     $transaction->status = TokenSaleHistory::PENDING_STATUS;
                     $transaction->update();
 
-                    if ($blockNumberCount >= 24 && $transactionStatus) {
+                    if ($blockNumberCount >= env('SUCCESS_TRANSACTION_BLOCK_COUNT') && $transactionStatus) {
                         //Update Transaction As Success
                         $transaction->status = TokenSaleHistory::SUCCESS_STATUS;
                         $transaction->update();
