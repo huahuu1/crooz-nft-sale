@@ -71,6 +71,8 @@ Route::middleware('auth:sanctum')->group( function () {
             Route::post('withdraw-token', 'requestToWithdrawToken');
             //update status of user_withdrawals
             Route::put('withdraw-token/update-status', 'updateStatusWithdrawRequest');
+            //swap between token
+            Route::put('swap-token', 'requestToSwapToken');
         });
     });
 
