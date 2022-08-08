@@ -154,6 +154,14 @@ class AuthController extends Controller
                 ], 404);
             }
 
+            $checkDuplicateEmail = User::where('email', $request->email)->count();
+
+            if ($checkDuplicateEmail > 0) {
+                return response()->json([
+                    'message' => 'The Email Address entered already exists in the system',
+                ], 500);
+            }
+
             //Token is random 6 digits
             $tokenValidate = random_int(100000, 999999);
 
