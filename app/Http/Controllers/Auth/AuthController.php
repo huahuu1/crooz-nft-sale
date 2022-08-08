@@ -147,11 +147,18 @@ class AuthController extends Controller
     public function sendToken(UserRequest $request) {
         try {
             $user = User::where('wallet_address', $request->wallet_address)->first();
-
             if (!$user) {
                 return response()->json([
                     'message' => 'User does not exist',
                 ], 404);
+            }
+
+            $checkDuplicateEmail = User::where('email', $request->email)->count();
+
+            if ($checkDuplicateEmail > 0) {
+                return response()->json([
+                    'message' => 'Duplicate email address',
+                ], 500);
             }
 
             //Token is random 6 digits
