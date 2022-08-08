@@ -9,11 +9,24 @@ use Illuminate\Http\Request;
 use App\Models\NftAuctionHistory;
 use App\Models\TokenSaleHistory;
 use App\Models\User;
+use App\Services\UserService;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
 class TransactionController extends Controller
 {
+    protected $userService;
+
+    /**
+     * TransactionController constructor.
+     *
+     * @param use userService $userService
+     */
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     /**
      * Create transaction when a user deposit crypto.
      *
@@ -32,7 +45,7 @@ class TransactionController extends Controller
                 ], 500);
             }
 
-            $user = User::where('wallet_address', $request->wallet_address)->first();
+            $user = $this->userService->getUserByWalletAddress($request->wallet_address);
 
             if (!$user) {
                 return response()->json([
@@ -87,7 +100,7 @@ class TransactionController extends Controller
                 ], 500);
             }
 
-            $user = User::where('wallet_address', $request->wallet_address)->first();
+            $user = $this->userService->getUserByWalletAddress($request->wallet_address);
 
             if (!$user) {
                 return response()->json([
