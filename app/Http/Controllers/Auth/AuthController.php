@@ -9,6 +9,7 @@ use App\Http\Requests\UserRequest;
 use App\Http\Requests\WalletAddressRequest;
 use App\Models\User;
 use App\Notifications\EmailAuthenticationNotification;
+use App\Services\UserService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -18,6 +19,18 @@ use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
+    protected $userService;
+
+    /**
+     * AuthController constructor.
+     *
+     * @param use UserService $userService
+     */
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     /**
      * Register api
      *
@@ -108,14 +121,14 @@ class AuthController extends Controller
     public function registerByWalletAddress(WalletAddressRequest $request)
     {
         try {
-            $user = User::where('wallet_address', $request->wallet_address)->first();
+            $user = $this->userService->getUserByWalletAddress($request->wallet_address);
 
             if (!$user) {
                 User::create([
                     'wallet_address' => $request->wallet_address
                 ]);
 
-                $user = User::where('wallet_address', $request->wallet_address)->first();
+                $user = $this->userService->getUserByWalletAddress($request->wallet_address);
 
                 $token = $user->createToken('authToken')->plainTextToken;
 
@@ -146,7 +159,7 @@ class AuthController extends Controller
      */
     public function sendToken(UserRequest $request) {
         try {
-            $user = User::where('wallet_address', $request->wallet_address)->first();
+            $user = $this->userService->getUserByWalletAddress($request->wallet_address);
 
             if (!$user) {
                 return response()->json([
@@ -195,7 +208,7 @@ class AuthController extends Controller
      */
     public function confirmToken(ConfirmTokenRequest $request) {
         try {
-            $user = User::where('wallet_address', $request->wallet_address)->first();
+            $user = $this->userService->getUserByWalletAddress($request->wallet_address);
 
             //Token's duration is 10 minutes
             if (Carbon::parse($user->updated_at)->addMinutes(10)->isPast()) {

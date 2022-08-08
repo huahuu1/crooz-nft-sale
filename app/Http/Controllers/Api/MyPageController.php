@@ -27,7 +27,7 @@ class MyPageController extends Controller
     /**
      * MyPageController constructor.
      *
-     * @param use UserBalanceService $userBalanceService
+     * @param use UserBalanceService $userBalanceService, UserService $userService, UserWithdrawalService $userWithdrawalService
      */
     public function __construct(UserBalanceService $userBalanceService,
                                 UserService $userService,

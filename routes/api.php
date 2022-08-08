@@ -42,6 +42,7 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::controller(UserController::class)->group(function(){
         Route::get('users', 'index');
         Route::put('update-email', 'updateEmailByWalletAddress');
+        Route::post('create-user-balance', 'createDefaultBalanceByWalletAddress');
     });
 
     //logout route
