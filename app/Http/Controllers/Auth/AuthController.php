@@ -147,6 +147,7 @@ class AuthController extends Controller
     public function sendToken(UserRequest $request) {
         try {
             $user = User::where('wallet_address', $request->wallet_address)->first();
+
             if (!$user) {
                 return response()->json([
                     'message' => 'User does not exist',
