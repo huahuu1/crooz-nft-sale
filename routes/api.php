@@ -60,12 +60,9 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::group([
             'prefix' => 'my-page'
         ], function () {
-            //get pending purchase list in my page
-            Route::get('pending-token-sale/{wallet_address}', 'getPendingListOfTokenSaleWalletAddress');
-            Route::get('pending-nft-auction/{wallet_address}', 'getPendingListOfNftAuctionByWalletAddress');
-            //get success purchase list in my page
-            Route::get('success-token-sale/{wallet_address}', 'getSuccessListOfTokenSaleByWalletAddress');
-            Route::get('success-nft-auction/{wallet_address}', 'getSuccessListOfNftAuctionByWalletAddress');
+            //get history purchase list in my page
+            Route::get('history-token-sale/{wallet_address}', 'getHistoryListOfTokenSaleByWalletAddress');
+            Route::get('history-nft-auction/{wallet_address}', 'getHistoryListOfNftAuctionByWalletAddress');
             //get balances of a user by wallet address
             Route::get('balance/{wallet_address}', 'getBalanceByWalletAddress');
             //user requests to withdrawl token

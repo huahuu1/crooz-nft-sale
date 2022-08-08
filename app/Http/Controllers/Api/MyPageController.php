@@ -43,11 +43,17 @@ class MyPageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getPendingListOfTokenSaleWalletAddress($walletAddress)
+    public function getHistoryListOfTokenSaleByWalletAddress($walletAddress)
     {
-        $user = User::where('wallet_address', $walletAddress)->first();
-        $tokenSaleHistory = TokenSaleHistory::where('status', TokenSaleHistory::PENDING_STATUS)
-                                            ->where('user_id', $user->id)
+        $user = $this->userService->getUserByWalletAddress($walletAddress);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        $tokenSaleHistory = TokenSaleHistory::where('user_id', $user->id)
                                             ->orderby('id', 'desc')
                                             ->with('user')
                                             ->get();
@@ -61,47 +67,17 @@ class MyPageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getSuccessListOfTokenSaleByWalletAddress($walletAddress)
+    public function getHistoryListOfNftAuctionByWalletAddress($walletAddress)
     {
-        $user = User::where('wallet_address', $walletAddress)->first();
-        $tokenSaleHistory = TokenSaleHistory::where('status', TokenSaleHistory::SUCCESS_STATUS)
-                                            ->where('user_id', $user->id)
-                                            ->orderby('id', 'desc')
-                                            ->with('user')
-                                            ->get();
-        return response()->json([
-            'data' => $tokenSaleHistory
-        ]);
-    }
+        $user = $this->userService->getUserByWalletAddress($walletAddress);
 
-    /**
-     * Get purchase list of nft auction
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function getPendingListOfNftAuctionByWalletAddress($walletAddress)
-    {
-        $user = User::where('wallet_address', $walletAddress)->first();
-        $nftAuctionHistory = NftAuctionHistory::where('status', NftAuctionHistory::PENDING_STATUS)
-                                              ->where('user_id', $user->id)
-                                              ->orderby('id', 'desc')
-                                              ->with('user')
-                                              ->get();
-        return response()->json([
-            'data' => $nftAuctionHistory
-        ]);
-    }
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
 
-    /**
-     * Get purchase list of nft auction
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function getSuccessListOfNftAuctionByWalletAddress($walletAddress)
-    {
-        $user = User::where('wallet_address', $walletAddress)->first();
-        $nftAuctionHistory = NftAuctionHistory::where('status', NftAuctionHistory::SUCCESS_STATUS)
-                                              ->where('user_id', $user->id)
+        $nftAuctionHistory = NftAuctionHistory::where('user_id', $user->id)
                                               ->orderby('id', 'desc')
                                               ->with('user')
                                               ->get();
