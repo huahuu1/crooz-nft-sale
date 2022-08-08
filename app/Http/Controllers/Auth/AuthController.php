@@ -158,7 +158,7 @@ class AuthController extends Controller
 
             if ($checkDuplicateEmail > 0) {
                 return response()->json([
-                    'message' => 'Duplicate email address',
+                    'message' => 'The Email Address entered already exists in the system',
                 ], 500);
             }
 
