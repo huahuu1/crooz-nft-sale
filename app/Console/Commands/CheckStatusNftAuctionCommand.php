@@ -124,7 +124,10 @@ class CheckStatusNftAuctionCommand extends Command
             . "/api/?module=proxy&action=eth_getTransactionByHash&txhash="
             . $transaction_hash
             . '&apikey=' . $api_key);
-
+        info($test_network
+        . "/api/?module=proxy&action=eth_getTransactionByHash&txhash="
+        . $transaction_hash
+        . '&apikey=' . $api_key);
         return collect([
             'response' => $response->json(),
             'block_count' => $blockCount,
