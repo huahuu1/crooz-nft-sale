@@ -66,6 +66,9 @@ class CheckStatusTokenSaleCommand extends Command
                 $blockNumberCount = $result->get('block_count');
                 $transactionStatus = $result->get('transaction_status')['status'];
 
+                info('CheckStatusTokenSaleCommand');
+                info($response);
+
                 if ($response['result']['blockHash'] == null) {
                     //Update Transaction As Pending
                     $transaction->status = TokenSaleHistory::PENDING_STATUS;

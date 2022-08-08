@@ -66,6 +66,9 @@ class CheckStatusNftAuctionCommand extends Command
                 $blockNumberCount = $result->get('block_count');
                 $transactionStatus = $result->get('transaction_status')['status'];
 
+                info('CheckStatusNftAuctionCommand');
+                info($response);
+
                 if ($response['result']['blockHash'] == null) {
                     //Update Transaction As Pending
                     $transaction->status = NftAuctionHistory::PENDING_STATUS;
