@@ -144,7 +144,14 @@ class TransactionController extends Controller
      */
     public function getPurchaseListOfTokenSaleByWalletAddress($walletAddress)
     {
-        $user = User::where('wallet_address', $walletAddress)->first();
+        $user = $this->userService->getUserByWalletAddress($walletAddress);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
+
         $tokeSaleHistory = TokenSaleHistory::where('status', TokenSaleHistory::SUCCESS_STATUS)
                                            ->where('user_id', $user->id)
                                            ->orderby('amount', 'desc')
