@@ -64,6 +64,7 @@ class UserController extends Controller
             $user->save();
 
             return response()->json([
+                'data' => $user,
                 'message' => 'Update email successfully'
             ], 200);
         } catch (Exception $e) {
