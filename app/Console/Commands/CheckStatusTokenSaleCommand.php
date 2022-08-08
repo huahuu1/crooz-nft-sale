@@ -62,6 +62,7 @@ class CheckStatusTokenSaleCommand extends Command
             foreach ($transactions as $transaction) {
                 //get transaction information from etherscan
                 $result = $this->checkWithEtherScan($transaction->tx_hash);
+                info($result);
                 $response = $result->get('response');
                 $blockNumberCount = $result->get('block_count');
                 $transactionStatus = $result->get('transaction_status')['status'];
@@ -119,16 +120,15 @@ class CheckStatusTokenSaleCommand extends Command
         //get transaction status
         $transactionStatus = $client->api('transaction')->getTransactionReceiptStatus($transaction_hash);
 
-        $response = Http::get(
+        $response = Http::withHeaders([
+            'User-Agent'=> 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML,like Gecko) Chrome/50.0.2661.102 Safari/537.36'
+        ])->get(
             $test_network
             . "/api/?module=proxy&action=eth_getTransactionByHash&txhash="
             . $transaction_hash
             . '&apikey=' . $api_key);
 
-        info($test_network
-        . "/api/?module=proxy&action=eth_getTransactionByHash&txhash="
-        . $transaction_hash
-        . '&apikey=' . $api_key);
+        info($response);
         return collect([
             'response' => $response->json(),
             'block_count' => $blockCount,
