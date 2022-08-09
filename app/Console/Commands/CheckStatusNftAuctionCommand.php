@@ -121,13 +121,14 @@ class CheckStatusNftAuctionCommand extends Command
 
         $response = Http::get(
             $test_network
-            . "/api/?module=proxy&action=eth_getTransactionByHash&txhash="
-            . $transaction_hash
-            . '&apikey=' . $api_key);
-        info($test_network
-        . "/api/?module=proxy&action=eth_getTransactionByHash&txhash="
-        . $transaction_hash
-        . '&apikey=' . $api_key);
+                . "/api/?module=proxy&action=eth_getTransactionByHash&txhash="
+                . $transaction_hash
+                . '&apikey=' . $api_key
+        );
+
+        $response->header(json_encode(['User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML,like Gecko) Chrome/50.0.2661.102 Safari/537.36"]));
+
+        info($response);
         return collect([
             'response' => $response->json(),
             'block_count' => $blockCount,
