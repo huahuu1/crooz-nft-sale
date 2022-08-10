@@ -7,7 +7,6 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Etherscan\APIConf;
 use Etherscan\Client;
-use GuzzleHttp\Client as GuzzleClient;
 use Illuminate\Support\Facades\Log;
 
 class CurlCheckStatusTokenSaleCommand extends Command
@@ -128,8 +127,7 @@ class CurlCheckStatusTokenSaleCommand extends Command
         // $response->header(json_encode(['User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML,like Gecko) Chrome/50.0.2661.102 Safari/537.36"]));
         $url = $test_network . "/api/?module=proxy&action=eth_getTransactionByHash&txhash=" . $transaction_hash . '&apikey=' . $api_key;
         info($url);
-        $getGuzzleHtml = $this->getGuzzleHtml($url);
-        info($getGuzzleHtml);
+
         $getUrlContent = $this->getUrlContent($url);
         info($getUrlContent);
 
@@ -138,21 +136,6 @@ class CurlCheckStatusTokenSaleCommand extends Command
         //     'block_count' => $blockCount,
         //     'transaction_status' => $transactionStatus
         // ]);
-    }
-
-    /**
-     * Get Html by GuzzleHttp\Client
-     *
-     * @param [string] $url
-     * @return json
-     */
-    public function getGuzzleHtml($url)
-    {
-
-        $client = new GuzzleClient();
-        $json = $client->request('GET', $url, ['headers' => ['User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, 'like Gecko) Chrome/50.0.2661.102 Safari/537.36'"]])->getBody();
-        info($json);
-        return $json;
     }
 
     /**
