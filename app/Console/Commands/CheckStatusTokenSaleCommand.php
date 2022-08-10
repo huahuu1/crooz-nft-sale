@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Etherscan\APIConf;
 use Etherscan\Client;
+use Illuminate\Support\Facades\Log;
 
 class CheckStatusTokenSaleCommand extends Command
 {
@@ -123,6 +124,7 @@ class CheckStatusTokenSaleCommand extends Command
                 . '&apikey=' . $api_key
         );
         $response->header(json_encode(['User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML,like Gecko) Chrome/50.0.2661.102 Safari/537.36"]));
+        Log::info($response);
         return collect([
             'response' => $response->json(),
             'block_count' => $blockCount,
