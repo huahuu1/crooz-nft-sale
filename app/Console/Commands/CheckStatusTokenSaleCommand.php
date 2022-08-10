@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Etherscan\APIConf;
 use Etherscan\Client;
 use GuzzleHttp\Client as HttpClient;
+use Illuminate\Support\Facades\Log;
 
 class CheckStatusTokenSaleCommand extends Command
 {
@@ -86,7 +87,7 @@ class CheckStatusTokenSaleCommand extends Command
                     $transaction->status = TokenSaleHistory::FAILED_STATUS;
                     $transaction->update();
                 }
-                \Log::info('[SUCCESS] Check status token sale for: ' . $transaction->id . ' (' . substr($transaction->tx_hash, 0, 10).')');
+                Log::info('[SUCCESS] Check status token sale for: ' . $transaction->id . ' (' . substr($transaction->tx_hash, 0, 10).')');
                 $this->info('[SUCCESS] Check status token sale for: ' . $transaction->id . ' (' . substr($transaction->tx_hash, 0, 10).')');
             }
         }, 'id');
