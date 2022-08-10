@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9f9adae250d948402b907fb65541aa6b",
+    "content-hash": "4b1248c0efbebca51758aa16f3768e74",
     "packages": [
         {
             "name": "brick/math",
@@ -1594,61 +1594,6 @@
                 }
             ],
             "time": "2022-04-17T13:12:02+00:00"
-        },
-        {
-            "name": "maslakoff/php-etherscan-api",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/maslakoff/php-etherscan-api.git",
-                "reference": "d871e512aa1821d71632262c6f346bbe6c051366"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/maslakoff/php-etherscan-api/zipball/d871e512aa1821d71632262c6f346bbe6c051366",
-                "reference": "d871e512aa1821d71632262c6f346bbe6c051366",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.6 || ^7.0 || ^8.0"
-            },
-            "require-dev": {
-                "guzzlehttp/guzzle": "~5.0",
-                "mockery/mockery": "~0.8",
-                "phpunit/phpunit": "^5.5 || ^6.0"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Etherscan\\": "lib/Etherscan/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Maslakou Ihar",
-                    "email": "igormaslakoff@gmail.com",
-                    "homepage": "https://github.com/maslakoff"
-                }
-            ],
-            "description": "PHP client for the Etherscan API",
-            "homepage": "https://github.com/maslakoff/php-etherscan-api",
-            "keywords": [
-                "EtherScan.io",
-                "api",
-                "ethereum",
-                "etherscan"
-            ],
-            "support": {
-                "email": "igormaslakoff@gmail.com",
-                "issues": "https://github.com/maslakoff/php-etherscan-api/issues",
-                "source": "https://github.com/maslakoff/php-etherscan-api/tree/1.3.9"
-            },
-            "time": "2022-04-15T07:49:08+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -7892,9 +7837,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "maslakoff/php-etherscan-api": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

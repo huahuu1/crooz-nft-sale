@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Etherscan\APIConf;
 use Etherscan\Client;
+use GuzzleHttp\Client as HttpClient;
 
 class CheckStatusTokenSaleCommand extends Command
 {
@@ -54,17 +55,15 @@ class CheckStatusTokenSaleCommand extends Command
      */
     public function validateTransactions()
     {
-
         $company_wallet = env('COMPANY_WALLET');
         $pendingTransactions = $this->transactions->pendingTokenSaleTransactions();
         $pendingTransactions->chunkById(100, function ($transactions) use ($company_wallet) {
             foreach ($transactions as $transaction) {
                 //get transaction information from etherscan
                 $result = $this->checkWithEtherScan($transaction->tx_hash);
-                $response = $result->get('response');
-                $blockNumberCount = $result->get('block_count');
-                $transactionStatus = $result->get('transaction_status')['status'];
-
+                $response = $result['response'];
+                $blockNumberCount = $result['block_count'];
+                $transactionStatus = $result['transaction_status']['status'];
 
                 if ($response['result']['blockHash'] == null) {
                     //Update Transaction As Pending
@@ -87,6 +86,8 @@ class CheckStatusTokenSaleCommand extends Command
                     $transaction->status = TokenSaleHistory::FAILED_STATUS;
                     $transaction->update();
                 }
+                \Log::info('[SUCCESS] Check status token sale for: ' . $transaction->id . ' (' . substr($transaction->tx_hash, 0, 10).')');
+                $this->info('[SUCCESS] Check status token sale for: ' . $transaction->id . ' (' . substr($transaction->tx_hash, 0, 10).')');
             }
         }, 'id');
     }
@@ -99,6 +100,8 @@ class CheckStatusTokenSaleCommand extends Command
      */
     public function checkWithEtherScan($transaction_hash)
     {
+        // ndx-todo: should move to config
+        $baseUri = 'https://api-ropsten.etherscan.io/api';
         $api_key = env('ETHERSCAN_API_KEY'); // api from from Etherscan.io
         $test_network = "https://api-ropsten.etherscan.io"; //use in testnet
         $main_network = "https://etherscan.io"; //use in mainnet
@@ -116,15 +119,30 @@ class CheckStatusTokenSaleCommand extends Command
         //get transaction status
         $transactionStatus = $client->api('transaction')->getTransactionReceiptStatus($transaction_hash);
 
-        $response = Http::acceptJson()->get(
-            $test_network
-                . "/api/?module=proxy&action=eth_getTransactionByHash&txhash="
-                . $transaction_hash
-                . '&apikey=' . $api_key
+        $client = new HttpClient(
+            [
+                'base_uri' => $baseUri,
+                'headers'  => []
+            ]
         );
-        $response->header(json_encode(['User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML,like Gecko) Chrome/50.0.2661.102 Safari/537.36"]));
+        $params = [
+            'query' => [
+                'module' => 'proxy',
+                'action' => 'eth_getTransactionByHash',
+                'txhash' => $transaction_hash,
+                'apikey' => $api_key,
+            ]
+        ];
+        $uri='?';
+        $response = $client->request(
+            'GET',
+            $uri,
+            $params
+        );
+        $responseData = json_decode($response->getBody()->getContents(), true);
+
         return collect([
-            'response' => $response->json(),
+            'response' => $responseData,
             'block_count' => $blockCount,
             'transaction_status' => $transactionStatus
         ]);
