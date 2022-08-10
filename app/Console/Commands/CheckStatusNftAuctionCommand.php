@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Etherscan\APIConf;
 use Etherscan\Client;
+use Illuminate\Support\Facades\Log;
 
 class CheckStatusNftAuctionCommand extends Command
 {
@@ -66,8 +67,8 @@ class CheckStatusNftAuctionCommand extends Command
                 $blockNumberCount = $result->get('block_count');
                 $transactionStatus = $result->get('transaction_status')['status'];
 
-                info('CheckStatusNftAuctionCommand');
-                info($response);
+                Log::info('CheckStatusNftAuctionCommand');
+                Log::info($response);
 
                 if ($response['result']['blockHash'] == null) {
                     //Update Transaction As Pending
@@ -128,7 +129,7 @@ class CheckStatusNftAuctionCommand extends Command
 
         $response->header(json_encode(['User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML,like Gecko) Chrome/50.0.2661.102 Safari/537.36"]));
 
-        info($response);
+        Log::info($response);
         return collect([
             'response' => $response->json(),
             'block_count' => $blockCount,

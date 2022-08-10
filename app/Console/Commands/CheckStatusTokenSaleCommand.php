@@ -7,6 +7,9 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Etherscan\APIConf;
 use Etherscan\Client;
+use Illuminate\Support\Facades\Log;
+
+use function Psy\debug;
 
 class CheckStatusTokenSaleCommand extends Command
 {
@@ -54,21 +57,17 @@ class CheckStatusTokenSaleCommand extends Command
      */
     public function validateTransactions()
     {
+
         $company_wallet = env('COMPANY_WALLET');
-
         $pendingTransactions = $this->transactions->pendingTokenSaleTransactions();
-
         $pendingTransactions->chunkById(100, function ($transactions) use ($company_wallet) {
             foreach ($transactions as $transaction) {
                 //get transaction information from etherscan
                 $result = $this->checkWithEtherScan($transaction->tx_hash);
-                info($result);
                 $response = $result->get('response');
                 $blockNumberCount = $result->get('block_count');
                 $transactionStatus = $result->get('transaction_status')['status'];
 
-                info('CheckStatusTokenSaleCommand');
-                info($response);
 
                 if ($response['result']['blockHash'] == null) {
                     //Update Transaction As Pending
@@ -120,19 +119,17 @@ class CheckStatusTokenSaleCommand extends Command
         //get transaction status
         $transactionStatus = $client->api('transaction')->getTransactionReceiptStatus($transaction_hash);
 
-        $response = Http::withHeaders([
-            'User-Agent'=> 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML,like Gecko) Chrome/50.0.2661.102 Safari/537.36'
-        ])->get(
+        $response = Http::acceptJson()->get(
             $test_network
-            . "/api/?module=proxy&action=eth_getTransactionByHash&txhash="
-            . $transaction_hash
-            . '&apikey=' . $api_key);
-
-        info($response);
+                . "/api/?module=proxy&action=eth_getTransactionByHash&txhash="
+                . $transaction_hash
+                . '&apikey=' . $api_key
+        );
+        $response->header(json_encode(['User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML,like Gecko) Chrome/50.0.2661.102 Safari/537.36"]));
         return collect([
             'response' => $response->json(),
             'block_count' => $blockCount,
             'transaction_status' => $transactionStatus
-        ]);;
+        ]);
     }
 }
