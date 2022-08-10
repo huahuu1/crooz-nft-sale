@@ -7,9 +7,6 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Etherscan\APIConf;
 use Etherscan\Client;
-use Illuminate\Support\Facades\Log;
-
-use function Psy\debug;
 
 class CheckStatusTokenSaleCommand extends Command
 {
