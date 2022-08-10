@@ -89,8 +89,8 @@ class CheckStatusNftAuctionCommand extends Command
                     $transaction->status = NftAuctionHistory::FAILED_STATUS;
                     $transaction->update();
                 }
-                Log::info('[SUCCESS] Check status token sale for: ' . $transaction->id . ' (' . substr($transaction->tx_hash, 0, 10).')');
-                $this->info('[SUCCESS] Check status token sale for: ' . $transaction->id . ' (' . substr($transaction->tx_hash, 0, 10).')');
+                Log::info('[SUCCESS] Check Status Nft Auction for: ' . $transaction->id . ' (' . substr($transaction->tx_hash, 0, 10).')');
+                $this->info('[SUCCESS] Check Status Nft Auction for: ' . $transaction->id . ' (' . substr($transaction->tx_hash, 0, 10).')');
             }
         }, 'id');
     }
@@ -143,8 +143,9 @@ class CheckStatusNftAuctionCommand extends Command
             $params
         );
         $responseData = json_decode($response->getBody()->getContents(), true);
+
         return collect([
-            'response' => $response->json(),
+            'response' => $responseData,
             'block_count' => $blockCount,
             'transaction_status' => $transactionStatus
         ]);;
