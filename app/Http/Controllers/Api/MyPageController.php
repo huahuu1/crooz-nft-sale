@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Exception;
 
-
 class MyPageController extends Controller
 {
     protected $userBalanceService;
@@ -39,11 +38,11 @@ class MyPageController extends Controller
     }
 
     /**
-     * Get purchase list of nft auction
+     * Get history list
      *
      * @return \Illuminate\Http\Response
      */
-    public function getHistoryListOfTokenSaleByWalletAddress($walletAddress)
+    public function getHistoryListByWalletAddress($walletAddress)
     {
         $user = $this->userService->getUserByWalletAddress($walletAddress);
 
@@ -54,35 +53,15 @@ class MyPageController extends Controller
         }
 
         $tokenSaleHistory = TokenSaleHistory::where('user_id', $user->id)
-                                            ->orderby('id', 'desc')
                                             ->with('user')
                                             ->get();
-        return response()->json([
-            'data' => $tokenSaleHistory
-        ]);
-    }
-
-    /**
-     * Get purchase list of nft auction
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function getHistoryListOfNftAuctionByWalletAddress($walletAddress)
-    {
-        $user = $this->userService->getUserByWalletAddress($walletAddress);
-
-        if (!$user) {
-            return response()->json([
-                'message' => 'User not found'
-            ], 404);
-        }
-
         $nftAuctionHistory = NftAuctionHistory::where('user_id', $user->id)
-                                              ->orderby('id', 'desc')
                                               ->with('user')
                                               ->get();
+        $result = collect($tokenSaleHistory)->merge(collect($nftAuctionHistory))->sortByDesc('created_at');
+
         return response()->json([
-            'data' => $nftAuctionHistory
+            'data' => $result->values()->all()
         ]);
     }
 
