@@ -56,7 +56,7 @@ class CheckStatusNftAuctionCommand extends Command
      */
     public function validateTransactions()
     {
-        $company_wallet = env('COMPANY_WALLET');
+        $company_wallet = env('NFT_COMPANY_WALLET');
 
         $pendingTransactions = $this->transactions->pendingNftAuctionTransactions();
 
