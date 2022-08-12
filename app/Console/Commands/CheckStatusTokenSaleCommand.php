@@ -87,8 +87,8 @@ class CheckStatusTokenSaleCommand extends Command
                     $transaction->status = TokenSaleHistory::FAILED_STATUS;
                     $transaction->update();
                 }
-                Log::info('[SUCCESS] Check status token sale for: ' . $transaction->id . ' (' . substr($transaction->tx_hash, 0, 10).')');
-                $this->info('[SUCCESS] Check status token sale for: ' . $transaction->id . ' (' . substr($transaction->tx_hash, 0, 10).')');
+                Log::info('[SUCCESS] Check status token sale for: ' . $transaction->id . ' (' . substr($transaction->tx_hash, 0, 10) . ')');
+                $this->info('[SUCCESS] Check status token sale for: ' . $transaction->id . ' (' . substr($transaction->tx_hash, 0, 10) . ')');
             }
         }, 'id');
     }
@@ -102,13 +102,17 @@ class CheckStatusTokenSaleCommand extends Command
     public function checkWithEtherScan($transaction_hash)
     {
         // ndx-todo: should move to config
-        $baseUri = 'https://api-ropsten.etherscan.io/api';
-        $api_key = env('ETHERSCAN_API_KEY'); // api from from Etherscan.io
-        $test_network = "https://api-ropsten.etherscan.io"; //use in testnet
-        $main_network = "https://etherscan.io"; //use in mainnet
 
-        //use lib maslakoff/php-etherscan-api
-        $client = new Client($api_key, APIConf::TESTNET_ROPSTEN);
+        $api_key = env('ETHERSCAN_API_KEY'); // api from from Etherscan.io
+
+        // check production or testnet
+        if (env('APP_ENV') == 'production') {
+            $baseUri = 'https://etherscan.io/api';
+            $client = new Client($api_key);
+        } else {
+            $baseUri = 'https://api-ropsten.etherscan.io/api';
+            $client = new Client($api_key, APIConf::TESTNET_ROPSTEN);
+        }
 
         //get block of the transaction
         $transactionBlockNumber = $client->api('proxy')->getTransactionByHash($transaction_hash)['result']['blockNumber'];
@@ -134,7 +138,7 @@ class CheckStatusTokenSaleCommand extends Command
                 'apikey' => $api_key,
             ]
         ];
-        $uri='?';
+        $uri = '?';
         $response = $client->request(
             'GET',
             $uri,
