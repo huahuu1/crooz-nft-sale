@@ -47,4 +47,12 @@ class TokenSaleHistory extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    /**
+     * Get the token master that owns the transaction.
+     */
+    public function token_master()
+    {
+        return $this->belongsTo(TokenMaster::class, 'token_id');
+    }
 }
