@@ -70,7 +70,7 @@ class MyPageController extends Controller
                                             ->where('nft_auction_histories.user_id', $user->id)
                                             ->get();
 
-        $result = collect($tokenSaleHistory)->merge(collect($nftAuctionHistory))->sortByDesc('created_at');
+        $result = collect($tokenSaleHistory)->merge(collect($nftAuctionHistory))->sortBy('created_at');
 
         return response()->json([
             'data' => $result->values()->all()
