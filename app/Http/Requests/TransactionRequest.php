@@ -17,6 +17,7 @@ class TransactionRequest extends FormRequest
             'amount' => 'required|numeric|min:0',
             'wallet_address' => 'required|regex:'. config('regex.wallet_address'),
             'tx_hash' => 'required',
+            'token_id' => 'required',
         ];
     }
 }

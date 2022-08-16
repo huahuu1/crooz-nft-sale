@@ -55,7 +55,7 @@ class TransactionController extends Controller
 
             TokenSaleHistory::create([
                 "user_id" => $user->id,
-                "token_id" => 1,
+                "token_id" => $request->token_id,
                 "token_sale_id" => 1,
                 "amount" => $request->amount,
                 "status" => TokenSaleHistory::PENDING_STATUS,
@@ -64,7 +64,7 @@ class TransactionController extends Controller
 
             CashFlow::create([
                 "user_id" => $user->id,
-                "token_id" => 1,
+                "token_id" => $request->token_id,
                 "amount" => $request->amount,
                 "transaction_type" => 'TOKEN_DEPOSIT',
                 "tx_hash" => $request->tx_hash,
@@ -110,7 +110,7 @@ class TransactionController extends Controller
 
             NftAuctionHistory::create([
                 "user_id" => $user->id,
-                "token_id" => 1,
+                "token_id" => $request->token_id,
                 "nft_auction_id" => 1,
                 "amount" => $request->amount,
                 "status" => NftAuctionHistory::PENDING_STATUS,
@@ -119,7 +119,7 @@ class TransactionController extends Controller
 
             CashFlow::create([
                 "user_id" => $user->id,
-                "token_id" => 1,
+                "token_id" => $request->token_id,
                 "amount" => $request->amount,
                 "transaction_type" => 'NFT_DEPOSIT',
                 "tx_hash" => $request->tx_hash,
