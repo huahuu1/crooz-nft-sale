@@ -57,7 +57,7 @@ class CheckStatusTokenSaleCommand extends Command
     public function validateTransactions()
     {
         $company_wallet = env('COMPANY_WALLET');
-        $contract_wallet = env('CONTRACT_WALLET');
+        $contract_wallet = env('CONTRACT_WALLET_USDT');
 
         $pendingTransactions = $this->transactions->pendingTokenSaleTransactions();
 
@@ -80,7 +80,6 @@ class CheckStatusTokenSaleCommand extends Command
                 if ($response && array_key_exists('result', $response)) {
                     $result = $response['result'];
                     //Validate transaction destination with our account
-                    info($result);
                     if (strtolower($result['to']) == strtolower($company_wallet) || strtolower($result['to']) == strtolower($contract_wallet) && $blockNumberCount >= env('SUCCESS_TRANSACTION_BLOCK_COUNT') && $transactionStatus) {
                         //Update Transaction As Success
                         $transaction->status = TokenSaleHistory::SUCCESS_STATUS;
