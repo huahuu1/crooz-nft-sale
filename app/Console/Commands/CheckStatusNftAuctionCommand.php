@@ -57,11 +57,10 @@ class CheckStatusNftAuctionCommand extends Command
     public function validateTransactions()
     {
         $company_wallet = env('NFT_COMPANY_WALLET');
-        $contract_wallet = env('CONTRACT_WALLET');
 
         $pendingTransactions = $this->transactions->pendingNftAuctionTransactions();
 
-        $pendingTransactions->chunkById(100, function ($transactions) use ($company_wallet, $contract_wallet) {
+        $pendingTransactions->chunkById(100, function ($transactions) use ($company_wallet) {
             foreach ($transactions as $transaction) {
                 //get transaction information from etherscan
                 $result = $this->checkWithEtherScan($transaction->tx_hash);
@@ -80,7 +79,7 @@ class CheckStatusNftAuctionCommand extends Command
                 if ($response && array_key_exists('result', $response)) {
                     $result = $response['result'];
                     //Validate transaction destination with our account
-                    if (strtolower($result['to']) == strtolower($company_wallet) || strtolower($result['to']) == strtolower($contract_wallet) && $blockNumberCount >= env('SUCCESS_TRANSACTION_BLOCK_COUNT') && $transactionStatus) {
+                    if (strtolower($result['to']) == strtolower($company_wallet) && $blockNumberCount >= env('SUCCESS_TRANSACTION_BLOCK_COUNT') && $transactionStatus) {
                         //Update Transaction As Success
                         $transaction->status = NftAuctionHistory::SUCCESS_STATUS;
                         $transaction->update();
