@@ -42,8 +42,10 @@ class MyPageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getHistoryListByWalletAddress($walletAddress)
+    public function getHistoryListByWalletAddress($walletAddress, $maxPerPage = null)
     {
+        $maxPerPage = $maxPerPage ?? env('MAX_PER_PAGE');
+
         $user = $this->userService->getUserByWalletAddress($walletAddress);
 
         if (!$user) {
@@ -70,7 +72,7 @@ class MyPageController extends Controller
                                             ->where('nft_auction_histories.user_id', $user->id)
                                             ->get();
 
-        $result = collect($tokenSaleHistory)->merge(collect($nftAuctionHistory))->sortByDesc('created_at')->paginate(env('MAX_PER_PAGE'));
+        $result = collect($tokenSaleHistory)->merge(collect($nftAuctionHistory))->sortByDesc('created_at')->paginate($maxPerPage);
 
         return response()->json([
             'data' => $result->values()->all()
