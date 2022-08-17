@@ -42,8 +42,10 @@ class MyPageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getHistoryListByWalletAddress($walletAddress)
+    public function getHistoryListByWalletAddress($walletAddress, $maxPerPage = null)
     {
+        $maxPerPage = $maxPerPage ?? env('MAX_PER_PAGE');
+
         $user = $this->userService->getUserByWalletAddress($walletAddress);
 
         if (!$user) {
@@ -52,16 +54,29 @@ class MyPageController extends Controller
             ], 404);
         }
 
-        $tokenSaleHistory = TokenSaleHistory::where('user_id', $user->id)
-                                            ->with('user')
+        $tokenSaleHistory = TokenSaleHistory::select(
+                                                'token_sale_histories.*',
+                                                'cash_flows.transaction_type as transaction_type'
+                                            )
+                                            ->with(['user', 'token_master'])
+                                            ->join('cash_flows', 'token_sale_histories.tx_hash', '=', 'cash_flows.tx_hash')
+                                            ->where('token_sale_histories.user_id', $user->id)
                                             ->get();
-        $nftAuctionHistory = NftAuctionHistory::where('user_id', $user->id)
-                                              ->with('user')
-                                              ->get();
-        $result = collect($tokenSaleHistory)->merge(collect($nftAuctionHistory))->sortByDesc('created_at');
+
+        $nftAuctionHistory = NftAuctionHistory::select(
+                                                'nft_auction_histories.*',
+                                                'cash_flows.transaction_type as transaction_type'
+                                            )
+                                            ->with(['user', 'token_master'])
+                                            ->join('cash_flows', 'nft_auction_histories.tx_hash', '=', 'cash_flows.tx_hash')
+                                            ->where('nft_auction_histories.user_id', $user->id)
+                                            ->get();
+
+        $result = collect($tokenSaleHistory)->merge(collect($nftAuctionHistory))->sortByDesc('created_at')->paginate($maxPerPage);
 
         return response()->json([
-            'data' => $result->values()->all()
+            'data' => $result->values()->all(),
+            'total_pages' => $result->lastPage()
         ]);
     }
 
