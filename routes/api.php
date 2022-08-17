@@ -61,7 +61,7 @@ Route::middleware('auth:sanctum')->group( function () {
             'prefix' => 'my-page'
         ], function () {
             //get history purchase list in my page
-            Route::get('history-list/{wallet_address}', 'getHistoryListByWalletAddress');
+            Route::get('history-list/{wallet_address}/{max_per_page?}', 'getHistoryListByWalletAddress');
             //get balances of a user by wallet address
             Route::get('balance/{wallet_address}', 'getBalanceByWalletAddress');
             //user requests to withdrawl token
