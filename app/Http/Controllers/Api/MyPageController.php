@@ -75,7 +75,8 @@ class MyPageController extends Controller
         $result = collect($tokenSaleHistory)->merge(collect($nftAuctionHistory))->sortByDesc('created_at')->paginate($maxPerPage);
 
         return response()->json([
-            'data' => $result->values()->all()
+            'data' => $result->values()->all(),
+            'total_pages' => $result->lastPage()
         ]);
     }
 
