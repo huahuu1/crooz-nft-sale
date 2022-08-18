@@ -41,6 +41,7 @@ class UserBalanceService
     public function getUserBalances($userId)
     {
         $balances = UserBalance::where('user_id', $userId)
+                               ->where('token_id', UserBalance::GT)
                                ->with('token_master')
                                ->get();
         return $balances;

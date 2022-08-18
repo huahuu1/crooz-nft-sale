@@ -27,6 +27,10 @@ class UserBalance extends Model
 
     protected $appends = ['amount_available'];
 
+    const USDT = 1;
+    const ETH = 2;
+    const GT = 3;
+
     /**
      * Get the token relates to user balanace.
      */
