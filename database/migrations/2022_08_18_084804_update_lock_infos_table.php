@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('lock_infos', function (Blueprint $table) {
-            $table->enum('lock_type', ['VESTING', 'LOCK'])->nullable()->default('VESTING')->after('unlock_percentages');
+            $table->enum('type', ['VESTING', 'LOCK'])->nullable()->default('VESTING')->after('unlock_percentages');
         });
     }
 
@@ -26,7 +26,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('lock_infos', function (Blueprint $table) {
-            $table->dropColumn('lock_type');
+            $table->dropColumn('type');
         });
     }
 };
