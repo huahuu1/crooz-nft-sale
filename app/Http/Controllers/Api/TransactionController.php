@@ -155,7 +155,7 @@ class TransactionController extends Controller
         $tokeSaleHistory = TokenSaleHistory::where('status', TokenSaleHistory::SUCCESS_STATUS)
                                            ->where('user_id', $user->id)
                                            ->orderby('amount', 'desc')
-                                           ->with('user')
+                                           ->with(['user', 'token_master'])
                                            ->get();
         return response()->json([
             'data' => $tokeSaleHistory
@@ -171,7 +171,7 @@ class TransactionController extends Controller
     {
         $nftAuctionHistory = NftAuctionHistory::where('status', NftAuctionHistory::SUCCESS_STATUS)
                                               ->orderby('amount', 'desc')
-                                              ->with('user')
+                                              ->with(['user', 'token_master'])
                                               ->get();
         return response()->json([
             'data' => $nftAuctionHistory
