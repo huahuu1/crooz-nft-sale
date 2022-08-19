@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             TokenMasterSeeder::class,
             UserSeeder::class,
             NftTypeSeeder::class,
+            AdminSeeder::class,
         ]);
 
         \App\Models\LockInfo::factory(1)->create();
