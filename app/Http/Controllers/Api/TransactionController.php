@@ -171,14 +171,18 @@ class TransactionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getPurchaseListOfNftAuction()
+    public function getPurchaseListOfNftAuction($maxPerPage = null)
     {
+        $maxPerPage = $maxPerPage ?? env('MAX_PER_PAGE_AUCTION');
+
         $nftAuctionHistory = NftAuctionHistory::where('status', NftAuctionHistory::SUCCESS_STATUS)
                                               ->orderby('amount', 'desc')
                                               ->with(['user', 'token_master'])
-                                              ->get();
+                                              ->get()
+                                              ->paginate($maxPerPage);
         return response()->json([
-            'data' => $nftAuctionHistory
+            'data' => $nftAuctionHistory->values()->all(),
+            'total_pages' => $nftAuctionHistory->lastPage()
         ]);
     }
 }
