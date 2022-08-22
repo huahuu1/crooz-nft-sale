@@ -142,8 +142,10 @@ class TransactionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getPurchaseListOfTokenSaleByWalletAddress($walletAddress)
+    public function getPurchaseListOfTokenSaleByWalletAddress($walletAddress, $maxPerPage = null)
     {
+        $maxPerPage = $maxPerPage ?? env('MAX_PER_PAGE_TOKENSALE');
+
         $user = $this->userService->getUserByWalletAddress($walletAddress);
 
         if (!$user) {
@@ -156,9 +158,11 @@ class TransactionController extends Controller
                                            ->where('user_id', $user->id)
                                            ->orderby('amount', 'desc')
                                            ->with(['user', 'token_master'])
-                                           ->get();
+                                           ->get()
+                                           ->paginate($maxPerPage);
         return response()->json([
-            'data' => $tokeSaleHistory
+            'data' => $tokeSaleHistory->values()->all(),
+            'total_pages' => $tokeSaleHistory->lastPage()
         ]);
     }
 
