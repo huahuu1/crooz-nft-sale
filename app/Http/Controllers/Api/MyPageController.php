@@ -44,7 +44,7 @@ class MyPageController extends Controller
      */
     public function getHistoryListByWalletAddress($walletAddress, $maxPerPage = null)
     {
-        $maxPerPage = $maxPerPage ?? env('MAX_PER_PAGE');
+        $maxPerPage = $maxPerPage ?? env('MAX_PER_PAGE_MYPAGE');
 
         $user = $this->userService->getUserByWalletAddress($walletAddress);
 
