@@ -23,4 +23,14 @@ class TokenMaster extends Model
         'description',
         'status',
     ];
+
+    /**
+     * Display information of the token master by id.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public static function getTokenMasterById($id)
+    {
+        return TokenMaster::find($id);
+    }
 }

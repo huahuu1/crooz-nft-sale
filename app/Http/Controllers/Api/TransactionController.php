@@ -7,6 +7,8 @@ use App\Http\Requests\TransactionRequest;
 use App\Models\CashFlow;
 use Illuminate\Http\Request;
 use App\Models\NftAuctionHistory;
+use App\Models\NftAuctionInfo;
+use App\Models\TokenMaster;
 use App\Models\TokenSaleHistory;
 use App\Models\User;
 use App\Services\UserService;
@@ -92,11 +94,20 @@ class TransactionController extends Controller
     {
         try {
             $depositTransaction = NftAuctionHistory::where('tx_hash', $request->tx_hash)->first();
+            $minPrice = (int)NftAuctionInfo::getLatestInfoNftAuction()->min_price;
+            $tokenName = TokenMaster::getTokenMasterById($request->token_id)->code;
 
             //prevent duplicate transactions
             if ($depositTransaction) {
                 return response()->json([
                     'message' => 'This deposit transaction is duplicated'
+                ], 500);
+            }
+
+            //prevent amount smaller than min price
+            if ($request->amount < $minPrice) {
+                return response()->json([
+                    'message' => "The amount of {$tokenName} must be larger or equal to {$minPrice}"
                 ], 500);
             }
 
@@ -171,14 +182,18 @@ class TransactionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getPurchaseListOfNftAuction()
+    public function getPurchaseListOfNftAuction($maxPerPage = null)
     {
+        $maxPerPage = $maxPerPage ?? env('MAX_PER_PAGE_AUCTION');
+
         $nftAuctionHistory = NftAuctionHistory::where('status', NftAuctionHistory::SUCCESS_STATUS)
                                               ->orderby('amount', 'desc')
                                               ->with(['user', 'token_master'])
-                                              ->get();
+                                              ->get()
+                                              ->paginate($maxPerPage);
         return response()->json([
-            'data' => $nftAuctionHistory
+            'data' => $nftAuctionHistory->values()->all(),
+            'total_pages' => $nftAuctionHistory->lastPage()
         ]);
     }
 }
