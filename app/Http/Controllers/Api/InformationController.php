@@ -41,7 +41,7 @@ class InformationController extends Controller
     public function getLatestInfoNftAuction()
     {
         return response()->json([
-            'data' => NftAuctionInfo::orderby('id', 'desc')->first(),
+            'data' => NftAuctionInfo::getLatestInfoNftAuction(),
         ]);
     }
 

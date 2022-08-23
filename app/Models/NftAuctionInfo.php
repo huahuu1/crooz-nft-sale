@@ -23,4 +23,14 @@ class NftAuctionInfo extends Model
         'min_price',
         'status',
     ];
+
+    /**
+     * Display information of the latest nft auction follow Id.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public static function getLatestInfoNftAuction()
+    {
+        return NftAuctionInfo::orderby('id', 'desc')->first();
+    }
 }
