@@ -12,6 +12,7 @@ use App\Models\UserWithdrawal;
 use App\Models\User;
 use App\Services\UserWithdrawalService;
 use App\Services\UserBalanceService;
+use App\Services\UserNftService;
 use App\Services\UserService;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -22,6 +23,7 @@ class MyPageController extends Controller
     protected $userBalanceService;
     protected $userService;
     protected $userWithdrawalService;
+    protected $userNftService;
 
     /**
      * MyPageController constructor.
@@ -30,11 +32,13 @@ class MyPageController extends Controller
      */
     public function __construct(UserBalanceService $userBalanceService,
                                 UserService $userService,
-                                UserWithdrawalService $userWithdrawalService)
+                                UserWithdrawalService $userWithdrawalService,
+                                UserNftService $userNftService)
     {
         $this->userBalanceService = $userBalanceService;
         $this->userService = $userService;
         $this->userWithdrawalService = $userWithdrawalService;
+        $this->userNftService = $userNftService;
     }
 
     /**
@@ -96,6 +100,25 @@ class MyPageController extends Controller
         $balances = $this->userBalanceService->getUserBalances($user->id);
         return response()->json([
             'data' => $balances
+        ]);
+    }
+
+    /**
+     * Get nfts of a user by wallet address
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getNftByWalletAddress($walletAddress)
+    {
+        $user = $this->userService->getUserByWalletAddress($walletAddress);
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
+        $nfts = $this->userNftService->getUserNfts($user->id);
+        return response()->json([
+            'data' => $nfts
         ]);
     }
 

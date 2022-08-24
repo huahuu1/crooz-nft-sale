@@ -2,23 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use App\Models\UserBalance;
 
 class UserBalanceService
 {
-    protected $userService;
-
-    /**
-     * UserBalanceService constructor.
-     *
-     * @param use UserService $userService
-     */
-    public function __construct(UserService $userService)
-    {
-        $this->userService = $userService;
-    }
-
     /**
      * Get balances of a user follow token id
      * @param walletAddress
