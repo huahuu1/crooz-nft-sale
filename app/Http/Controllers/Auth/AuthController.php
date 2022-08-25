@@ -13,8 +13,8 @@ use App\Services\UserService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
@@ -46,10 +46,11 @@ class AuthController extends Controller
             ]);
 
             return response()->json([
-                'message' => 'User registered successfully.'
+                'message' => 'User registered successfully.',
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
+
             return response()->json([
                 'message' => 'User registration failed',
                 'error' => $e,
@@ -66,15 +67,15 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
         ]);
 
         try {
             $user = User::where('email', $request->email)->first();
 
-            if (!$user || !Hash::check($request->password, $user->password, [])) {
+            if (! $user || ! Hash::check($request->password, $user->password, [])) {
                 return response()->json([
-                    'message' => 'The username or password is incorrect'
+                    'message' => 'The username or password is incorrect',
                 ], 404);
             }
 
@@ -82,10 +83,11 @@ class AuthController extends Controller
 
             return response()->json([
                 'access_token' => $token,
-                'data' => $user
+                'data' => $user,
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
+
             return response()->json([
                 'message' => 'Error in Login',
                 'error' => $e,
@@ -103,13 +105,15 @@ class AuthController extends Controller
         // Revoke all tokens
         try {
             Auth::user()->tokens()->delete();
+
             return response()->json([
-                'message' => 'Logout'
+                'message' => 'Logout',
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
+
             return response()->json([
-                'error' => $e
+                'error' => $e,
             ], 500);
         }
     }
@@ -124,9 +128,9 @@ class AuthController extends Controller
         try {
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
 
-            if (!$user) {
+            if (! $user) {
                 User::create([
-                    'wallet_address' => $request->wallet_address
+                    'wallet_address' => $request->wallet_address,
                 ]);
 
                 $user = $this->userService->getUserByWalletAddress($request->wallet_address);
@@ -136,16 +140,17 @@ class AuthController extends Controller
                 return response()->json([
                     'message' => 'User registered successfully.',
                     'data' => $user,
-                    'access_token' => $token
+                    'access_token' => $token,
                 ], 200);
             }
 
             return response()->json([
                 'data' => $user,
-                'access_token' => $user->createToken('authToken')->plainTextToken
+                'access_token' => $user->createToken('authToken')->plainTextToken,
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
+
             return response()->json([
                 'message' => 'User registration failed',
                 'error' => $e,
@@ -163,7 +168,7 @@ class AuthController extends Controller
         try {
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
 
-            if (!$user) {
+            if (! $user) {
                 return response()->json([
                     'message' => 'User does not exist',
                 ], 404);
@@ -195,6 +200,7 @@ class AuthController extends Controller
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Send email failed',
@@ -217,8 +223,9 @@ class AuthController extends Controller
             if (Carbon::parse($user->updated_at)->addMinutes(10)->isPast()) {
                 $user->token_validate = null;
                 $user->save();
+
                 return response()->json([
-                    'message' => 'Token has expired'
+                    'message' => 'Token has expired',
                 ], 404);
             }
 
@@ -226,16 +233,17 @@ class AuthController extends Controller
             if ($user->token_validate != $request->token_validate) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Verify email token wrong'
+                    'message' => 'Verify email token wrong',
                 ], 500);
             }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Verify email token successfully'
+                'message' => 'Verify email token successfully',
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
+
             return response()->json([
                 'error' => $e,
             ], 500);

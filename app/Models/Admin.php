@@ -17,6 +17,7 @@ class Admin extends Model
      * @var array
      */
     protected $guard = 'admin';
+
     /**
      * The attributes that are mass assignable.
      *

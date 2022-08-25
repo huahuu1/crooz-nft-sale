@@ -28,7 +28,9 @@ class UserBalance extends Model
     protected $appends = ['amount_available'];
 
     public const USDT = 1;
+
     public const ETH = 2;
+
     public const GT = 3;
 
     /**
@@ -46,6 +48,6 @@ class UserBalance extends Model
      */
     protected function getAmountAvailableAttribute()
     {
-        return (string)($this->amount_total - $this->amount_lock);
+        return (string) ($this->amount_total - $this->amount_lock);
     }
 }

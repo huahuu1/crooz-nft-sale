@@ -12,7 +12,9 @@ class EmailAuthenticationMail extends Mailable
     use SerializesModels;
 
     public $email;
+
     public $token_validate;
+
     /**
      * Create a new message instance.
      *

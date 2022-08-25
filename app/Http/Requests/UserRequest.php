@@ -15,7 +15,7 @@ class UserRequest extends FormRequest
     {
         return [
             'email' => 'required|email',
-            'wallet_address' => 'required|regex:'. config('regex.wallet_address'),
+            'wallet_address' => 'required|regex:'.config('regex.wallet_address'),
         ];
     }
 }

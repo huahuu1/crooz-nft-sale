@@ -8,6 +8,7 @@ class UserBalanceService
 {
     /**
      * Get balances of a user follow token id
+     *
      * @param walletAddress
      * @param tokenId
      * @return balance
@@ -17,11 +18,13 @@ class UserBalanceService
         $balance = UserBalance::where('user_id', $userId)
                               ->where('token_id', $tokenId)
                               ->first();
+
         return $balance;
     }
 
     /**
      * Get balances of a user
+     *
      * @param walletAddress
      * @return balances
      */
@@ -31,6 +34,7 @@ class UserBalanceService
                                ->where('token_id', UserBalance::GT)
                                ->with('token_master')
                                ->get();
+
         return $balances;
     }
 }

@@ -6,7 +6,7 @@ use Etherscan\APIConf;
 
 /**
  * Class EventLog
- * @package Etherscan\Api
+ *
  * @author Maslakou Ihar <igormaslakoff@gmail.com>
  */
 class EventLog extends AbstractApi
@@ -16,9 +16,10 @@ class EventLog extends AbstractApi
      *
      * @param $address
      * @param $topic
-     * @param int $startBlock
-     * @param string $endBlock
+     * @param  int  $startBlock
+     * @param  string  $endBlock
      * @return mixed
+     *
      * @throws \Etherscan\Exception\ErrorException
      */
     public function getLogs($address, $topic, $startBlock = 0, $endBlock = APIConf::TAG_LATEST)

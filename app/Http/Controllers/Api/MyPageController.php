@@ -3,26 +3,29 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Http\Requests\SwapTokenRequest;
 use App\Http\Requests\WithdrawRequest;
 use App\Models\NftAuctionHistory;
 use App\Models\TokenSaleHistory;
-use App\Models\UserWithdrawal;
 use App\Models\User;
-use App\Services\UserWithdrawalService;
+use App\Models\UserWithdrawal;
 use App\Services\UserBalanceService;
 use App\Services\UserNftService;
 use App\Services\UserService;
-use Illuminate\Support\Facades\Log;
+use App\Services\UserWithdrawalService;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class MyPageController extends Controller
 {
     protected $userBalanceService;
+
     protected $userService;
+
     protected $userWithdrawalService;
+
     protected $userNftService;
 
     /**
@@ -35,8 +38,7 @@ class MyPageController extends Controller
         UserService $userService,
         UserWithdrawalService $userWithdrawalService,
         UserNftService $userNftService
-    )
-    {
+    ) {
         $this->userBalanceService = $userBalanceService;
         $this->userService = $userService;
         $this->userWithdrawalService = $userWithdrawalService;
@@ -54,9 +56,9 @@ class MyPageController extends Controller
 
         $user = $this->userService->getUserByWalletAddress($walletAddress);
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
-                'message' => 'User not found'
+                'message' => 'User not found',
             ], 404);
         }
 
@@ -82,7 +84,7 @@ class MyPageController extends Controller
 
         return response()->json([
             'data' => $result->values()->all(),
-            'total_pages' => $result->lastPage()
+            'total_pages' => $result->lastPage(),
         ]);
     }
 
@@ -94,14 +96,15 @@ class MyPageController extends Controller
     public function getBalanceByWalletAddress($walletAddress)
     {
         $user = $this->userService->getUserByWalletAddress($walletAddress);
-        if (!$user) {
+        if (! $user) {
             return response()->json([
-                'message' => 'User not found'
+                'message' => 'User not found',
             ], 404);
         }
         $balances = $this->userBalanceService->getUserBalances($user->id);
+
         return response()->json([
-            'data' => $balances
+            'data' => $balances,
         ]);
     }
 
@@ -113,14 +116,15 @@ class MyPageController extends Controller
     public function getNftByWalletAddress($walletAddress)
     {
         $user = $this->userService->getUserByWalletAddress($walletAddress);
-        if (!$user) {
+        if (! $user) {
             return response()->json([
-                'message' => 'User not found'
+                'message' => 'User not found',
             ], 404);
         }
         $nfts = $this->userNftService->getUserNfts($user->id);
+
         return response()->json([
-            'data' => $nfts
+            'data' => $nfts,
         ]);
     }
 
@@ -133,9 +137,9 @@ class MyPageController extends Controller
     {
         try {
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
-            if (!$user) {
+            if (! $user) {
                 return response()->json([
-                    'message' => 'User not found'
+                    'message' => 'User not found',
                 ], 404);
             }
 
@@ -145,16 +149,16 @@ class MyPageController extends Controller
 
             if ($request->amount > $amountAvailable) {
                 return response()->json([
-                    'message' => 'The amount must be smaller than or equal to the available amount'
+                    'message' => 'The amount must be smaller than or equal to the available amount',
                 ], 500);
             }
 
             UserWithdrawal::create([
-                "user_id" => $user->id,
-                "token_id" => $request->token_id,
-                "amount" => $request->amount,
-                "request_time" => Carbon::now(),
-                "status" => UserWithdrawal::REQUESTING_STATUS,
+                'user_id' => $user->id,
+                'token_id' => $request->token_id,
+                'amount' => $request->amount,
+                'request_time' => Carbon::now(),
+                'status' => UserWithdrawal::REQUESTING_STATUS,
             ]);
 
             //update amount total
@@ -162,10 +166,11 @@ class MyPageController extends Controller
             $userBalance->save();
 
             return response()->json([
-                'message' => 'Withdraw request successfully'
+                'message' => 'Withdraw request successfully',
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
+
             return response()->json([
                 'message' => 'Withdraw request failed',
                 'error' => $e,
@@ -183,9 +188,9 @@ class MyPageController extends Controller
         try {
             $userWithdrawal = $this->userWithdrawalService->getUserWithdrawalById($request->id);
 
-            if (!$userWithdrawal) {
+            if (! $userWithdrawal) {
                 return response()->json([
-                    'message' => 'Withdraw request not found'
+                    'message' => 'Withdraw request not found',
                 ], 404);
             }
 
@@ -205,10 +210,11 @@ class MyPageController extends Controller
             }
 
             return response()->json([
-                'message' => 'Change status successfully'
+                'message' => 'Change status successfully',
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
+
             return response()->json([
                 'message' => 'Change status failed',
                 'error' => $e,
@@ -225,9 +231,9 @@ class MyPageController extends Controller
     {
         try {
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
-            if (!$user) {
+            if (! $user) {
                 return response()->json([
-                    'message' => 'User not found'
+                    'message' => 'User not found',
                 ], 404);
             }
 
@@ -238,7 +244,7 @@ class MyPageController extends Controller
 
             if ($request->amount > $amountAvailableFrom) {
                 return response()->json([
-                    'message' => 'The amount must be smaller than or equal to the available amount'
+                    'message' => 'The amount must be smaller than or equal to the available amount',
                 ], 500);
             }
 
@@ -249,10 +255,11 @@ class MyPageController extends Controller
             $userBalanceTokenTo->save();
 
             return response()->json([
-                'message' => 'Swap token successfully'
+                'message' => 'Swap token successfully',
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
+
             return response()->json([
                 'message' => 'Swap token failed',
                 'error' => $e,

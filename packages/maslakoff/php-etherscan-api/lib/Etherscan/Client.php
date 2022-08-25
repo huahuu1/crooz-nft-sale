@@ -9,7 +9,7 @@ use Etherscan\Exception\InvalidArgumentException;
  * Simple PHP Etherscan client.
  *
  * Class Client
- * @package Etherscan
+ *
  * @author Maslakou Ihar <igormaslakoff@gmail.com>
  */
 class Client
@@ -22,7 +22,7 @@ class Client
     private $apiKeyToken;
 
     /**
-     * @var string $netName testnet name or mainnet by default.
+     * @var string testnet name or mainnet by default.
      */
     private $netName;
 
@@ -37,11 +37,10 @@ class Client
     }
 
     /**
-     * @param string $name
+     * @param  string  $name
+     * @return ApiInterface
      *
      * @throws InvalidArgumentException
-     *
-     * @return ApiInterface
      */
     public function api($name)
     {
@@ -80,6 +79,7 @@ class Client
             default:
                 throw new InvalidArgumentException(sprintf('Undefined api instance called: "%s"', $name));
         }
+
         return $api;
     }
 

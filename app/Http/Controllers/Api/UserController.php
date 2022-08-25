@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 class UserController extends Controller
 {
     protected $userService;
+
     protected $userBalanceService;
 
     /**
@@ -26,8 +27,7 @@ class UserController extends Controller
     public function __construct(
         UserService $userService,
         UserBalanceService $userBalanceService
-    )
-    {
+    ) {
         $this->userBalanceService = $userBalanceService;
         $this->userService = $userService;
     }
@@ -54,9 +54,9 @@ class UserController extends Controller
         try {
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
 
-            if (!$user) {
+            if (! $user) {
                 return response()->json([
-                    'message' => 'User not found'
+                    'message' => 'User not found',
                 ], 404);
             }
 
@@ -66,10 +66,11 @@ class UserController extends Controller
 
             return response()->json([
                 'data' => $user,
-                'message' => 'Update email successfully'
+                'message' => 'Update email successfully',
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
+
             return response()->json([
                 'message' => 'Update email failed',
                 'error' => $e,
@@ -86,34 +87,35 @@ class UserController extends Controller
     {
         try {
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
-            if (!$user) {
+            if (! $user) {
                 return response()->json([
-                    'message' => 'User not found'
+                    'message' => 'User not found',
                 ], 404);
             }
 
             $userBalance = $this->userBalanceService->getUserBalances($user->id);
             if ($userBalance->count() > 0) {
                 return response()->json([
-                    'message' => 'The balance of this user already exists'
+                    'message' => 'The balance of this user already exists',
                 ], 500);
             }
 
             $tokenList = TokenMaster::all();
             foreach ($tokenList as $token) {
                 UserBalance::create([
-                    "user_id" => $user->id,
-                    "token_id" => $token->id,
-                    "amount_total" => 0,
-                    "amount_lock" => 0,
+                    'user_id' => $user->id,
+                    'token_id' => $token->id,
+                    'amount_total' => 0,
+                    'amount_lock' => 0,
                 ]);
             }
 
             return response()->json([
-                'message' => 'Create default balance successfully'
+                'message' => 'Create default balance successfully',
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
+
             return response()->json([
                 'message' => 'Create default balance failed',
                 'error' => $e,
@@ -132,11 +134,13 @@ class UserController extends Controller
             $user = User::select('email')->where('wallet_address', $walletAddress)
                                          ->whereNotNull('email')
                                          ->count();
+
             return response()->json([
-                'data' => $user ? true : false
+                'data' => $user ? true : false,
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
+
             return response()->json([
                 'error' => $e,
             ], 500);

@@ -20,15 +20,15 @@ class AuthAdminController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
         ]);
 
         try {
             $admin = Admin::where('email', $request->email)->first();
 
-            if (!$admin || !Hash::check($request->password, $admin->password, [])) {
+            if (! $admin || ! Hash::check($request->password, $admin->password, [])) {
                 return response()->json([
-                    'message' => 'The username or password is incorrect'
+                    'message' => 'The username or password is incorrect',
                 ], 404);
             }
 
@@ -36,10 +36,11 @@ class AuthAdminController extends Controller
 
             return response()->json([
                 'access_token' => $token,
-                'data' => $token
+                'data' => $token,
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
+
             return response()->json([
                 'message' => 'Error in Login',
                 'error' => $e,

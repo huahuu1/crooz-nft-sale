@@ -28,7 +28,9 @@ class TokenSaleHistory extends Model
     ];
 
     public const PENDING_STATUS = 1;
+
     public const SUCCESS_STATUS = 2;
+
     public const FAILED_STATUS = 3;
 
     /**

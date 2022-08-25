@@ -27,8 +27,12 @@ class UserWithdrawal extends Model
     ];
 
     public const REQUESTING_STATUS = 1;
+
     public const PROCESSING_STATUS = 2;
+
     public const CLOSE_STATUS = 3;
+
     public const FORCECLOSE_STATUS = 4;
+
     public const REJECT_STATUS = 5;
 }

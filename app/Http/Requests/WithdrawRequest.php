@@ -17,7 +17,7 @@ class WithdrawRequest extends FormRequest
             'amount' => 'required|numeric|gt:0',
             'wallet_address' => [
                 'required',
-                'regex:'. config('regex.wallet_address'),
+                'regex:'.config('regex.wallet_address'),
             ],
         ];
     }

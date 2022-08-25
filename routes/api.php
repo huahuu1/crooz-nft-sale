@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Api\InformationController;
 use App\Http\Controllers\Api\MyPageController;
-use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\TransactionController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,7 +25,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
 
     Route::group([
-        'prefix' => 'authentication'
+        'prefix' => 'authentication',
     ], function () {
         //Send email include token to the user
         Route::post('send_token', 'sendToken');
@@ -58,7 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
     //my page routes
     Route::controller(MyPageController::class)->group(function () {
         Route::group([
-            'prefix' => 'my-page'
+            'prefix' => 'my-page',
         ], function () {
             //get history purchase list in my page
             Route::get('history-list/{wallet_address}/{max_per_page?}', 'getHistoryListByWalletAddress');
@@ -85,7 +85,7 @@ Route::get('nft-auction/{id}', [InformationController::class, 'getInfoNftAuction
 
 //purchase list
 Route::group([
-    'prefix' => 'purchase-list'
+    'prefix' => 'purchase-list',
 ], function () {
     //purchase list of token sale
     Route::get('token-sale/{wallet_address}/{max_per_page?}', [TransactionController::class, 'getPurchaseListOfTokenSaleByWalletAddress']);
