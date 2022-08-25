@@ -2,8 +2,6 @@
 
 namespace Etherscan\Api;
 
-use Etherscan\APIConf;
-
 /**
  * Class Gas
  * @package Etherscan\Api
@@ -11,7 +9,6 @@ use Etherscan\APIConf;
  */
 class Gas extends AbstractApi
 {
-
     /**
      * Get Estimation of Confirmation Time
      * Returns the estimated time, in seconds, for a transaction to be confirmed on the blockchain.

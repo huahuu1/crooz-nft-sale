@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Models\TokenSaleHistory;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
 use Etherscan\APIConf;
 use Etherscan\Client;
 use GuzzleHttp\Client as HttpClient;

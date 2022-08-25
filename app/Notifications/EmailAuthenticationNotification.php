@@ -33,14 +33,14 @@ class EmailAuthenticationNotification extends Notification
     {
         return ['mail'];
     }
-     /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
-     public function toMail($notifiable)
-     {
+    /**
+    * Get the mail representation of the notification.
+    *
+    * @param  mixed  $notifiable
+    * @return \Illuminate\Notifications\Messages\MailMessage
+    */
+    public function toMail($notifiable)
+    {
         return (new EmailAuthenticationMail($this->email, $this->token_validate))->to($this->email);
     }
 }

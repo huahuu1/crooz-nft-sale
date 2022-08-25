@@ -14,7 +14,6 @@ use Etherscan\Exception\InvalidArgumentException;
  */
 class Client
 {
-
     /**
      * Etherscan API key token.
      *

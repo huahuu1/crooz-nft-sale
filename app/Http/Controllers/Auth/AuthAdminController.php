@@ -45,6 +45,5 @@ class AuthAdminController extends Controller
                 'error' => $e,
             ], 500);
         }
-
     }
 }

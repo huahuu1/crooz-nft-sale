@@ -9,5 +9,4 @@ namespace Etherscan\Exception;
  */
 class ErrorException extends \ErrorException implements ExceptionInterface
 {
-
 }

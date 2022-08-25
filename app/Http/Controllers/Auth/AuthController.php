@@ -98,7 +98,8 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function logout() {
+    public function logout()
+    {
         // Revoke all tokens
         try {
             Auth::user()->tokens()->delete();
@@ -157,7 +158,8 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function sendToken(UserRequest $request) {
+    public function sendToken(UserRequest $request)
+    {
         try {
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
 
@@ -206,7 +208,8 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function confirmToken(ConfirmTokenRequest $request) {
+    public function confirmToken(ConfirmTokenRequest $request)
+    {
         try {
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
 

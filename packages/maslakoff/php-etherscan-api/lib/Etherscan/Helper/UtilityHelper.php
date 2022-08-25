@@ -9,7 +9,6 @@ namespace Etherscan\Helper;
  */
 class UtilityHelper
 {
-
     /**
      * Converts Wei value to the Ether float value.
      *
@@ -17,7 +16,8 @@ class UtilityHelper
      *
      * @return float
      */
-    public static function convertEtherAmount($amount) {
+    public static function convertEtherAmount($amount)
+    {
         return (float)$amount / pow(10, 18);
     }
 
@@ -29,7 +29,8 @@ class UtilityHelper
      *
      * @return bool
      */
-    public static function isInputTransaction($address, $transactionData) {
+    public static function isInputTransaction($address, $transactionData)
+    {
         return (strtolower($transactionData['to']) === strtolower($address));
     }
 
@@ -41,7 +42,8 @@ class UtilityHelper
      *
      * @return bool
      */
-    public static function isOutputTransaction($address, $transactionData) {
+    public static function isOutputTransaction($address, $transactionData)
+    {
         return (strtolower($transactionData['from']) === strtolower($address));
     }
 }

@@ -9,7 +9,6 @@ namespace Etherscan\Api;
  */
 class Transaction extends AbstractApi
 {
-
     /**
      * Check Contract Execution Status (if there was an error during contract execution).
      * Note: isError":"0" = Pass , isError":"1" = Error during Contract Execution.
@@ -19,7 +18,8 @@ class Transaction extends AbstractApi
      * @return array
      * @throws \Etherscan\Exception\ErrorException
      */
-    public function getStatus($transactionHash) {
+    public function getStatus($transactionHash)
+    {
         return $this->request->exec([
             'module' => "transaction",
             'action' => "getstatus",
@@ -36,7 +36,8 @@ class Transaction extends AbstractApi
      * @return array
      * @throws \Etherscan\Exception\ErrorException
      */
-    public function getTransactionReceiptStatus($transactionHash) {
+    public function getTransactionReceiptStatus($transactionHash)
+    {
         return $this->request->exec([
             'module' => "transaction",
             'action' => "gettxreceiptstatus",
@@ -53,7 +54,8 @@ class Transaction extends AbstractApi
      * @return array
      * @throws \Etherscan\Exception\ErrorException
      */
-    public function getContractExecutionStatus($transactionHash) {
+    public function getContractExecutionStatus($transactionHash)
+    {
         return $this->getStatus($transactionHash);
     }
 }

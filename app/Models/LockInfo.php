@@ -8,7 +8,8 @@ use Laravel\Sanctum\HasApiTokens;
 
 class LockInfo extends Model
 {
-    use HasApiTokens, HasFactory;
+    use HasApiTokens;
+    use HasFactory;
 
     protected $table = 'lock_infos';
 

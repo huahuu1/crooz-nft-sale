@@ -9,5 +9,4 @@ namespace Etherscan\Exception;
  */
 interface ExceptionInterface
 {
-
 }

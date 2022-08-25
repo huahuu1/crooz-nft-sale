@@ -8,7 +8,8 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Admin extends Model
 {
-    use HasFactory, HasApiTokens;
+    use HasFactory;
+    use HasApiTokens;
 
     /**
      * The attributes that aren't mass assignable.

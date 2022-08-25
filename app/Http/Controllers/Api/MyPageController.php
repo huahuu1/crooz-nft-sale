@@ -30,10 +30,12 @@ class MyPageController extends Controller
      *
      * @param use UserBalanceService $userBalanceService, UserService $userService, UserWithdrawalService $userWithdrawalService
      */
-    public function __construct(UserBalanceService $userBalanceService,
-                                UserService $userService,
-                                UserWithdrawalService $userWithdrawalService,
-                                UserNftService $userNftService)
+    public function __construct(
+        UserBalanceService $userBalanceService,
+        UserService $userService,
+        UserWithdrawalService $userWithdrawalService,
+        UserNftService $userNftService
+    )
     {
         $this->userBalanceService = $userBalanceService;
         $this->userService = $userService;
@@ -59,18 +61,18 @@ class MyPageController extends Controller
         }
 
         $tokenSaleHistory = TokenSaleHistory::select(
-                                                'token_sale_histories.*',
-                                                'cash_flows.transaction_type as transaction_type'
-                                            )
+            'token_sale_histories.*',
+            'cash_flows.transaction_type as transaction_type'
+        )
                                             ->with(['user', 'token_master'])
                                             ->join('cash_flows', 'token_sale_histories.tx_hash', '=', 'cash_flows.tx_hash')
                                             ->where('token_sale_histories.user_id', $user->id)
                                             ->get();
 
         $nftAuctionHistory = NftAuctionHistory::select(
-                                                'nft_auction_histories.*',
-                                                'cash_flows.transaction_type as transaction_type'
-                                            )
+            'nft_auction_histories.*',
+            'cash_flows.transaction_type as transaction_type'
+        )
                                             ->with(['user', 'token_master'])
                                             ->join('cash_flows', 'nft_auction_histories.tx_hash', '=', 'cash_flows.tx_hash')
                                             ->where('nft_auction_histories.user_id', $user->id)

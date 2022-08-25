@@ -2,7 +2,6 @@
 
 namespace Etherscan\Api;
 
-
 use Etherscan\APIConf;
 use Etherscan\Exception\ErrorException;
 use Etherscan\Exception\InvalidArgumentException;
@@ -361,7 +360,8 @@ class Account extends AbstractApi
      * @return array
      * @throws \Etherscan\Exception\ErrorException
      */
-    public function getBalanceHistory($address, $blockNumber) {
+    public function getBalanceHistory($address, $blockNumber)
+    {
         return $this->request->exec([
             'module' => "account",
             'action' => "balancehistory",

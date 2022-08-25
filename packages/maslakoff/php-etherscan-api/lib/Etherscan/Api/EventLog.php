@@ -11,7 +11,6 @@ use Etherscan\APIConf;
  */
 class EventLog extends AbstractApi
 {
-
     /**
      * Get Event Logs
      *

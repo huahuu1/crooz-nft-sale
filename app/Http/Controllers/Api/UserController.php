@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UserBalanceRequest;
 use App\Http\Requests\UserRequest;
 use App\Models\TokenMaster;
-use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserBalance;
 use App\Services\UserBalanceService;
@@ -24,8 +23,10 @@ class UserController extends Controller
      *
      * @param use UserBalanceService $userBalanceService, UserService $userService
      */
-    public function __construct(UserService $userService,
-                                UserBalanceService $userBalanceService)
+    public function __construct(
+        UserService $userService,
+        UserBalanceService $userBalanceService
+    )
     {
         $this->userBalanceService = $userBalanceService;
         $this->userService = $userService;
@@ -140,6 +141,5 @@ class UserController extends Controller
                 'error' => $e,
             ], 500);
         }
-
     }
 }

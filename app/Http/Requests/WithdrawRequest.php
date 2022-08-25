@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\UserBalance;
 use Illuminate\Foundation\Http\FormRequest;
 
 class WithdrawRequest extends FormRequest

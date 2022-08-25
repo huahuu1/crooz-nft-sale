@@ -9,5 +9,4 @@ namespace Etherscan\Api;
  */
 class Websocket extends AbstractApi
 {
-
 }

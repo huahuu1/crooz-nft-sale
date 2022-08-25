@@ -8,7 +8,8 @@ use Illuminate\Queue\SerializesModels;
 
 class EmailAuthenticationMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     public $email;
     public $token_validate;

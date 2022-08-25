@@ -8,7 +8,8 @@ use Laravel\Sanctum\HasApiTokens;
 
 class NftType extends Model
 {
-    use HasApiTokens, HasFactory;
+    use HasApiTokens;
+    use HasFactory;
 
     protected $table = 'nft_types';
 

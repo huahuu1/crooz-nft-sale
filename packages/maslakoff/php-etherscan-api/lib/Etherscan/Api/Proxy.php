@@ -1,7 +1,10 @@
 <?php
+
 namespace Etherscan\Api;
+
 use Etherscan\APIConf;
 use Etherscan\Exception\ErrorException;
+
 /**
  * Class Proxy
  * @package Etherscan\Api

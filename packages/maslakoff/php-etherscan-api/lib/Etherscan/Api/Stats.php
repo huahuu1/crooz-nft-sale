@@ -3,7 +3,6 @@
 namespace Etherscan\Api;
 
 use Etherscan\APIConf;
-use Etherscan\Exception\ErrorException;
 use Etherscan\Exception\InvalidArgumentException;
 
 /**

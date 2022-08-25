@@ -9,5 +9,4 @@ namespace Etherscan\Api;
  */
 interface ApiInterface
 {
-
 }

@@ -9,7 +9,6 @@ namespace Etherscan\Api;
  */
 class Contract extends AbstractApi
 {
-
     /**
      * Get Contract ABI for Verified Contract Source Codes.
      * (Newly verified Contracts are synched to the API servers within 5 minutes or less).

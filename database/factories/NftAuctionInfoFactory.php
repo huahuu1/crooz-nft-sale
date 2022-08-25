@@ -18,7 +18,7 @@ class NftAuctionInfoFactory extends Factory
     {
         return [
             'start_date' => date('Y-m-d H:i:s'),
-            'end_date' => date('Y-m-d H:i:s', strtotime('+30 days',time())),
+            'end_date' => date('Y-m-d H:i:s', strtotime('+30 days', time())),
             'min_price' => '100.00',
             'status' => 1,
             'created_at' => date('Y-m-d H:i:s'),

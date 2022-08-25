@@ -8,7 +8,8 @@ use Laravel\Sanctum\HasApiTokens;
 
 class UserWithdrawal extends Model
 {
-    use HasApiTokens, HasFactory;
+    use HasApiTokens;
+    use HasFactory;
 
     protected $table = 'user_withdrawals';
 
@@ -25,9 +26,9 @@ class UserWithdrawal extends Model
         'status',
     ];
 
-    const REQUESTING_STATUS = 1;
-    const PROCESSING_STATUS = 2;
-    const CLOSE_STATUS = 3;
-    const FORCECLOSE_STATUS = 4;
-    const REJECT_STATUS = 5;
+    public const REQUESTING_STATUS = 1;
+    public const PROCESSING_STATUS = 2;
+    public const CLOSE_STATUS = 3;
+    public const FORCECLOSE_STATUS = 4;
+    public const REJECT_STATUS = 5;
 }

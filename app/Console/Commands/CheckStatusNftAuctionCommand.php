@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Models\NftAuctionHistory;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
 use Etherscan\APIConf;
 use Etherscan\Client;
 use GuzzleHttp\Client as HttpClient;
@@ -151,6 +150,7 @@ class CheckStatusNftAuctionCommand extends Command
             'response' => $responseData,
             'block_count' => $blockCount,
             'transaction_status' => $transactionStatus
-        ]);;
+        ]);
+        ;
     }
 }
