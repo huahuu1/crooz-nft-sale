@@ -64,6 +64,8 @@ Route::middleware('auth:sanctum')->group( function () {
             Route::get('history-list/{wallet_address}/{max_per_page?}', 'getHistoryListByWalletAddress');
             //get balances of a user by wallet address
             Route::get('balance/{wallet_address}', 'getBalanceByWalletAddress');
+            //get nfts of a user by wallet address
+            Route::get('nft/{wallet_address}', 'getNftByWalletAddress');
             //user requests to withdrawl token
             Route::post('withdraw-token', 'requestToWithdrawToken');
             //update status of user_withdrawals
