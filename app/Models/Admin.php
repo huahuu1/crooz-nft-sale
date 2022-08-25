@@ -11,6 +11,12 @@ class Admin extends Model
     use HasFactory, HasApiTokens;
 
     /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guard = 'admin';
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
