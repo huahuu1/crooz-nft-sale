@@ -93,6 +93,4 @@ Route::group([
     Route::get('nft-auction/{max_per_page?}', [TransactionController::class, 'getPurchaseListOfNftAuction']);
 });
 
-
-
-require __DIR__ . '/admin.php';
+require __DIR__.'/admin.php';
