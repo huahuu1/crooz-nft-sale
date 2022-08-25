@@ -26,7 +26,7 @@ class AuthAdminController extends Controller
         try {
             $admin = Admin::where('email', $request->email)->first();
 
-            if (! $admin || ! Hash::check($request->password, $admin->password, [])) {
+            if (!$admin || !Hash::check($request->password, $admin->password, [])) {
                 return response()->json([
                     'message' => 'The username or password is incorrect',
                 ], 404);
