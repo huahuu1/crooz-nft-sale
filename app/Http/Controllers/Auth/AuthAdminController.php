@@ -36,7 +36,7 @@ class AuthAdminController extends Controller
 
             return response()->json([
                 'access_token' => $token,
-                'data' => $token,
+                'data' => $admin,
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
