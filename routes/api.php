@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\NftController;
 use App\Http\Controllers\Api\InformationController;
 use App\Http\Controllers\Api\MyPageController;
 use App\Http\Controllers\Api\TransactionController;
@@ -93,7 +94,9 @@ Route::group([
     Route::get('nft-auction/{max_per_page?}', [TransactionController::class, 'getPurchaseListOfNftAuction']);
 });
 
-Route::post('import-nft', [MyPageController::class, 'importNft']);
+Route::post('import-nft', [NftController::class, 'importNft']);
+Route::get('export-nft', [NftController::class, 'exportNft']);
+
+Route::post('/upload', [NftController::class, 'postUpload']);
 
 require __DIR__.'/admin.php';
-

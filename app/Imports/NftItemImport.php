@@ -3,16 +3,39 @@
 namespace App\Imports;
 
 use App\Models\Nft;
-use Illuminate\Http\Request;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\RemembersRowNumber;
+use Maatwebsite\Excel\Validators\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Log;
 
-class NftItemImport implements ToModel, WithHeadingRow
+class NftItemImport implements ToModel, WithHeadingRow, WithChunkReading, ShouldQueue
 {
+    use RemembersRowNumber;
+
+    protected $nft;
+
+    public function __construct(Nft $nft)
+    {
+        $this->nft = $nft;
+    }
+
     public function headingRow() : int
     {
         return 1;
+    }
+
+    public function chunkSize(): int
+    {
+        return 100;
+    }
+
+    public function batchSize(): int
+    {
+        return 100;
     }
 
     /**
@@ -22,6 +45,9 @@ class NftItemImport implements ToModel, WithHeadingRow
     */
     public function model(array $row)
     {
+        $currentRowNumber = $this->getRowNumber();
+        Log::info('[SUCCESS] Insert excel row: '.$currentRowNumber);
+        info($row['image_url']);
         return new Nft([
             'serial_no'     => $row['serial_no'],
             'type_id'       => $row['type_id'],
@@ -33,8 +59,12 @@ class NftItemImport implements ToModel, WithHeadingRow
         ]);
     }
 
-    public function import()
+    public function importNft()
     {
-        Excel::import(new NftItemImport, request()->file('file'));
+        try {
+            Excel::import(new NftItemImport($this->nft), request()->file('file'));
+        } catch (ValidationException $e) {
+            Log::info($e);
+        }
     }
 }
