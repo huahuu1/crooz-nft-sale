@@ -8,6 +8,7 @@ class UserNftService
 {
     /**
      * Get nfts of a user
+     *
      * @param walletAddress
      * @return nfts
      */
@@ -16,6 +17,7 @@ class UserNftService
         $nfts = Nft::where('nft_owner_id', $userId)
                    ->with('nft_type')
                    ->get();
+
         return $nfts;
     }
 }

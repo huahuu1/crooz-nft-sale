@@ -8,7 +8,8 @@ use Laravel\Sanctum\HasApiTokens;
 
 class TokenSaleInfo extends Model
 {
-    use HasApiTokens, HasFactory;
+    use HasApiTokens;
+    use HasFactory;
 
     protected $table = 'token_sale_infos';
 

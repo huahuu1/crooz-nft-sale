@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
 
 class UserBalance extends Model
 {
-    use HasApiTokens, HasFactory;
+    use HasApiTokens;
+    use HasFactory;
 
     protected $table = 'user_balances';
 
@@ -27,9 +27,11 @@ class UserBalance extends Model
 
     protected $appends = ['amount_available'];
 
-    const USDT = 1;
-    const ETH = 2;
-    const GT = 3;
+    public const USDT = 1;
+
+    public const ETH = 2;
+
+    public const GT = 3;
 
     /**
      * Get the token relates to user balanace.
@@ -46,6 +48,6 @@ class UserBalance extends Model
      */
     protected function getAmountAvailableAttribute()
     {
-        return (string)($this->amount_total - $this->amount_lock);
+        return (string) ($this->amount_total - $this->amount_lock);
     }
 }

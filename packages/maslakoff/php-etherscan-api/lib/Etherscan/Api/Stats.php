@@ -3,12 +3,11 @@
 namespace Etherscan\Api;
 
 use Etherscan\APIConf;
-use Etherscan\Exception\ErrorException;
 use Etherscan\Exception\InvalidArgumentException;
 
 /**
  * Class Stats
- * @package Etherscan\Api
+ *
  * @author Maslakou Ihar <igormaslakoff@gmail.com>
  */
 class Stats extends AbstractApi
@@ -18,27 +17,30 @@ class Stats extends AbstractApi
      * Returns the current amount of Ether in circulation.
      *
      * @return array Result returned in Wei, to get value in Ether divide resultAbove / 1000000000000000000
+     *
      * @throws \Etherscan\Exception\ErrorException
      */
     public function ethSupply()
     {
         return $this->request->exec([
-            'module' => "stats",
-            'action' => "ethsupply",
+            'module' => 'stats',
+            'action' => 'ethsupply',
         ]);
     }
+
     /**
      * Get Total Supply of Ether 2
      * Returns the current amount of Ether in circulation, ETH2 Staking rewards and EIP1559 burnt fees statistics.
      *
      * @return array Result returned in Wei, to get value in Ether divide resultAbove / 1000000000000000000
+     *
      * @throws \Etherscan\Exception\ErrorException
      */
     public function eth2Supply()
     {
         return $this->request->exec([
-            'module' => "stats",
-            'action' => "ethsupply2",
+            'module' => 'stats',
+            'action' => 'ethsupply2',
         ]);
     }
 
@@ -47,13 +49,14 @@ class Stats extends AbstractApi
      * Returns the latest price of 1 ETH.
      *
      * @return array
+     *
      * @throws \Etherscan\Exception\ErrorException
      */
     public function ethPrice()
     {
         return $this->request->exec([
-            'module' => "stats",
-            'action' => "ethprice",
+            'module' => 'stats',
+            'action' => 'ethprice',
         ]);
     }
 
@@ -61,34 +64,34 @@ class Stats extends AbstractApi
      * Get Ethereum Nodes Size
      * Returns the size of the Ethereum blockchain, in bytes, over a date range.
      *
-     * @param string $startdate the starting date in yyyy-MM-dd format, eg. 2019-02-01
-     * @param string $enddate the ending date in yyyy-MM-dd format, eg. 2019-02-28
-     * @param string $clienttype the Ethereum node client to use, either geth or parity
-     * @param string $syncmode the type of node to run, either default or archive
-     * @param string $sort 'asc' or 'desc'
-     *
+     * @param  string  $startdate the starting date in yyyy-MM-dd format, eg. 2019-02-01
+     * @param  string  $enddate the ending date in yyyy-MM-dd format, eg. 2019-02-28
+     * @param  string  $clienttype the Ethereum node client to use, either geth or parity
+     * @param  string  $syncmode the type of node to run, either default or archive
+     * @param  string  $sort 'asc' or 'desc'
      * @return array
+     *
      * @throws \Etherscan\Exception\ErrorException
      * @throws \Etherscan\Exception\InvalidArgumentException
      */
-    public function getNodesSize($startdate, $enddate, $clienttype, $syncmode, $sort = "asc")
+    public function getNodesSize($startdate, $enddate, $clienttype, $syncmode, $sort = 'asc')
     {
-        if (!in_array($clienttype, APIConf::$clientTypes)) {
-            throw new InvalidArgumentException("Invalid client type");
+        if (! in_array($clienttype, APIConf::$clientTypes)) {
+            throw new InvalidArgumentException('Invalid client type');
         }
 
-        if (!in_array($syncmode, APIConf::$syncModes)) {
-            throw new InvalidArgumentException("Invalid sync mode type");
+        if (! in_array($syncmode, APIConf::$syncModes)) {
+            throw new InvalidArgumentException('Invalid sync mode type');
         }
 
         return $this->request->exec([
-            'module' => "stats",
-            'action' => "chainsize",
+            'module' => 'stats',
+            'action' => 'chainsize',
             'startdate' => $startdate,
             'enddate' => $enddate,
             'clienttype' => $clienttype,
             'syncmode' => $syncmode,
-            'sort' => $sort
+            'sort' => $sort,
         ]);
     }
 
@@ -97,13 +100,14 @@ class Stats extends AbstractApi
      * Returns the total number of discoverable Ethereum nodes.
      *
      * @return array
+     *
      * @throws \Etherscan\Exception\ErrorException
      */
     public function getNodesCount()
     {
         return $this->request->exec([
-            'module' => "stats",
-            'action' => "nodecount",
+            'module' => 'stats',
+            'action' => 'nodecount',
         ]);
     }
 
@@ -111,21 +115,21 @@ class Stats extends AbstractApi
      * Get Daily Network Transaction Fee
      * Returns the amount of transaction fees paid to miners per day.
      *
-     * @param string $startdate the starting date in yyyy-MM-dd format, eg. 2019-02-01
-     * @param string $enddate the ending date in yyyy-MM-dd format, eg. 2019-02-28
-     * @param string $sort 'asc' or 'desc'
-     *
+     * @param  string  $startdate the starting date in yyyy-MM-dd format, eg. 2019-02-01
+     * @param  string  $enddate the ending date in yyyy-MM-dd format, eg. 2019-02-28
+     * @param  string  $sort 'asc' or 'desc'
      * @return array
+     *
      * @throws \Etherscan\Exception\ErrorException
      */
-    public function getDailyTransactionFee($startdate, $enddate, $sort = "asc")
+    public function getDailyTransactionFee($startdate, $enddate, $sort = 'asc')
     {
         return $this->request->exec([
-            'module' => "stats",
-            'action' => "dailytxnfee",
+            'module' => 'stats',
+            'action' => 'dailytxnfee',
             'startdate' => $startdate,
             'enddate' => $enddate,
-            'sort' => $sort
+            'sort' => $sort,
         ]);
     }
 
@@ -133,21 +137,21 @@ class Stats extends AbstractApi
      * Get Daily New Address Count
      * Returns the number of new Ethereum addresses created per day.
      *
-     * @param string $startdate the starting date in yyyy-MM-dd format, eg. 2019-02-01
-     * @param string $enddate the ending date in yyyy-MM-dd format, eg. 2019-02-28
-     * @param string $sort 'asc' or 'desc'
-     *
+     * @param  string  $startdate the starting date in yyyy-MM-dd format, eg. 2019-02-01
+     * @param  string  $enddate the ending date in yyyy-MM-dd format, eg. 2019-02-28
+     * @param  string  $sort 'asc' or 'desc'
      * @return array
+     *
      * @throws \Etherscan\Exception\ErrorException
      */
-    public function getDailyNewAddressCount($startdate, $enddate, $sort = "asc")
+    public function getDailyNewAddressCount($startdate, $enddate, $sort = 'asc')
     {
         return $this->request->exec([
-            'module' => "stats",
-            'action' => "dailynewaddress",
+            'module' => 'stats',
+            'action' => 'dailynewaddress',
             'startdate' => $startdate,
             'enddate' => $enddate,
-            'sort' => $sort
+            'sort' => $sort,
         ]);
     }
 
@@ -155,21 +159,21 @@ class Stats extends AbstractApi
      * Get Daily Network Utilization
      * Returns the daily average gas used over gas limit, in percentage.
      *
-     * @param string $startdate the starting date in yyyy-MM-dd format, eg. 2019-02-01
-     * @param string $enddate the ending date in yyyy-MM-dd format, eg. 2019-02-28
-     * @param string $sort 'asc' or 'desc'
-     *
+     * @param  string  $startdate the starting date in yyyy-MM-dd format, eg. 2019-02-01
+     * @param  string  $enddate the ending date in yyyy-MM-dd format, eg. 2019-02-28
+     * @param  string  $sort 'asc' or 'desc'
      * @return array
+     *
      * @throws \Etherscan\Exception\ErrorException
      */
-    public function getDailyNetworkUtilization($startdate, $enddate, $sort = "asc")
+    public function getDailyNetworkUtilization($startdate, $enddate, $sort = 'asc')
     {
         return $this->request->exec([
-            'module' => "stats",
-            'action' => "dailynetutilization",
+            'module' => 'stats',
+            'action' => 'dailynetutilization',
             'startdate' => $startdate,
             'enddate' => $enddate,
-            'sort' => $sort
+            'sort' => $sort,
         ]);
     }
 
@@ -177,21 +181,21 @@ class Stats extends AbstractApi
      * Get Daily Average Network Hash Rate
      * Returns the historical measure of processing power of the Ethereum network.
      *
-     * @param string $startdate the starting date in yyyy-MM-dd format, eg. 2019-02-01
-     * @param string $enddate the ending date in yyyy-MM-dd format, eg. 2019-02-28
-     * @param string $sort 'asc' or 'desc'
-     *
+     * @param  string  $startdate the starting date in yyyy-MM-dd format, eg. 2019-02-01
+     * @param  string  $enddate the ending date in yyyy-MM-dd format, eg. 2019-02-28
+     * @param  string  $sort 'asc' or 'desc'
      * @return array
+     *
      * @throws \Etherscan\Exception\ErrorException
      */
-    public function getDailyAverageHashRate($startdate, $enddate, $sort = "asc")
+    public function getDailyAverageHashRate($startdate, $enddate, $sort = 'asc')
     {
         return $this->request->exec([
-            'module' => "stats",
-            'action' => "dailyavghashrate",
+            'module' => 'stats',
+            'action' => 'dailyavghashrate',
             'startdate' => $startdate,
             'enddate' => $enddate,
-            'sort' => $sort
+            'sort' => $sort,
         ]);
     }
 
@@ -199,21 +203,21 @@ class Stats extends AbstractApi
      * Get Daily Transaction Count
      * Returns the number of transactions performed on the Ethereum blockchain per day.
      *
-     * @param string $startdate the starting date in yyyy-MM-dd format, eg. 2019-02-01
-     * @param string $enddate the ending date in yyyy-MM-dd format, eg. 2019-02-28
-     * @param string $sort 'asc' or 'desc'
-     *
+     * @param  string  $startdate the starting date in yyyy-MM-dd format, eg. 2019-02-01
+     * @param  string  $enddate the ending date in yyyy-MM-dd format, eg. 2019-02-28
+     * @param  string  $sort 'asc' or 'desc'
      * @return array
+     *
      * @throws \Etherscan\Exception\ErrorException
      */
-    public function getDailyTransactionCount($startdate, $enddate, $sort = "asc")
+    public function getDailyTransactionCount($startdate, $enddate, $sort = 'asc')
     {
         return $this->request->exec([
-            'module' => "stats",
-            'action' => "dailytx",
+            'module' => 'stats',
+            'action' => 'dailytx',
             'startdate' => $startdate,
             'enddate' => $enddate,
-            'sort' => $sort
+            'sort' => $sort,
         ]);
     }
 
@@ -221,21 +225,21 @@ class Stats extends AbstractApi
      * Get Daily Average Network Difficulty
      * Returns the historical mining difficulty of the Ethereum network.
      *
-     * @param string $startdate the starting date in yyyy-MM-dd format, eg. 2019-02-01
-     * @param string $enddate the ending date in yyyy-MM-dd format, eg. 2019-02-28
-     * @param string $sort 'asc' or 'desc'
-     *
+     * @param  string  $startdate the starting date in yyyy-MM-dd format, eg. 2019-02-01
+     * @param  string  $enddate the ending date in yyyy-MM-dd format, eg. 2019-02-28
+     * @param  string  $sort 'asc' or 'desc'
      * @return array
+     *
      * @throws \Etherscan\Exception\ErrorException
      */
-    public function getDailyAverageNetworkDifficulty($startdate, $enddate, $sort = "asc")
+    public function getDailyAverageNetworkDifficulty($startdate, $enddate, $sort = 'asc')
     {
         return $this->request->exec([
-            'module' => "stats",
-            'action' => "dailyavgnetdifficulty",
+            'module' => 'stats',
+            'action' => 'dailyavgnetdifficulty',
             'startdate' => $startdate,
             'enddate' => $enddate,
-            'sort' => $sort
+            'sort' => $sort,
         ]);
     }
 
@@ -243,21 +247,21 @@ class Stats extends AbstractApi
      * Get Ether Historical Daily Market Cap
      * Returns the historical Ether daily market capitalization.
      *
-     * @param string $startdate the starting date in yyyy-MM-dd format, eg. 2019-02-01
-     * @param string $enddate the ending date in yyyy-MM-dd format, eg. 2019-02-28
-     * @param string $sort 'asc' or 'desc'
-     *
+     * @param  string  $startdate the starting date in yyyy-MM-dd format, eg. 2019-02-01
+     * @param  string  $enddate the ending date in yyyy-MM-dd format, eg. 2019-02-28
+     * @param  string  $sort 'asc' or 'desc'
      * @return array
+     *
      * @throws \Etherscan\Exception\ErrorException
      */
-    public function getDailyMarketCap($startdate, $enddate, $sort = "asc")
+    public function getDailyMarketCap($startdate, $enddate, $sort = 'asc')
     {
         return $this->request->exec([
-            'module' => "stats",
-            'action' => "ethdailymarketcap",
+            'module' => 'stats',
+            'action' => 'ethdailymarketcap',
             'startdate' => $startdate,
             'enddate' => $enddate,
-            'sort' => $sort
+            'sort' => $sort,
         ]);
     }
 
@@ -265,21 +269,21 @@ class Stats extends AbstractApi
      * Get Ether Historical Price
      * Returns the historical price of 1 ETH.
      *
-     * @param string $startdate the starting date in yyyy-MM-dd format, eg. 2019-02-01
-     * @param string $enddate the ending date in yyyy-MM-dd format, eg. 2019-02-28
-     * @param string $sort 'asc' or 'desc'
-     *
+     * @param  string  $startdate the starting date in yyyy-MM-dd format, eg. 2019-02-01
+     * @param  string  $enddate the ending date in yyyy-MM-dd format, eg. 2019-02-28
+     * @param  string  $sort 'asc' or 'desc'
      * @return array
+     *
      * @throws \Etherscan\Exception\ErrorException
      */
-    public function getHistoricalPrice($startdate, $enddate, $sort = "asc")
+    public function getHistoricalPrice($startdate, $enddate, $sort = 'asc')
     {
         return $this->request->exec([
-            'module' => "stats",
-            'action' => "ethdailyprice",
+            'module' => 'stats',
+            'action' => 'ethdailyprice',
             'startdate' => $startdate,
             'enddate' => $enddate,
-            'sort' => $sort
+            'sort' => $sort,
         ]);
     }
 
@@ -291,16 +295,16 @@ class Stats extends AbstractApi
      *
      * by ContractAddress.
      *
-     * @param string $tokenIdentifier Token name from the list or contract address.
-     *
+     * @param  string  $tokenIdentifier Token name from the list or contract address.
      * @return array
+     *
      * @throws \Etherscan\Exception\ErrorException
      */
     public function tokenSupply($tokenIdentifier)
     {
         $params = [
-            'module' => "stats",
-            'action' => "tokensupply",
+            'module' => 'stats',
+            'action' => 'tokensupply',
         ];
 
         if (strlen($tokenIdentifier) === 42) {

@@ -3,11 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Models\TokenSaleHistory;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
 use Etherscan\APIConf;
 use Etherscan\Client;
 use GuzzleHttp\Client as HttpClient;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
 class CheckStatusTokenSaleCommand extends Command
@@ -73,6 +72,7 @@ class CheckStatusTokenSaleCommand extends Command
                     //Update Transaction As Pending
                     $transaction->status = TokenSaleHistory::PENDING_STATUS;
                     $transaction->update();
+
                     return;
                 }
 
@@ -90,8 +90,8 @@ class CheckStatusTokenSaleCommand extends Command
                     $transaction->status = TokenSaleHistory::FAILED_STATUS;
                     $transaction->update();
                 }
-                Log::info('[SUCCESS] Check status token sale for: ' . $transaction->id . ' (' . substr($transaction->tx_hash, 0, 10) . ')');
-                $this->info('[SUCCESS] Check status token sale for: ' . $transaction->id . ' (' . substr($transaction->tx_hash, 0, 10) . ')');
+                Log::info('[SUCCESS] Check status token sale for: '.$transaction->id.' ('.substr($transaction->tx_hash, 0, 10).')');
+                $this->info('[SUCCESS] Check status token sale for: '.$transaction->id.' ('.substr($transaction->tx_hash, 0, 10).')');
             }
         }, 'id');
     }
@@ -99,7 +99,7 @@ class CheckStatusTokenSaleCommand extends Command
     /**
      * Check Transaction With Ether Scan
      *
-     * @param  mixed $transaction_hash
+     * @param  mixed  $transaction_hash
      * @return mixed
      */
     public function checkWithEtherScan($transaction_hash)
@@ -130,7 +130,7 @@ class CheckStatusTokenSaleCommand extends Command
         $client = new HttpClient(
             [
                 'base_uri' => $baseUri,
-                'headers'  => []
+                'headers' => [],
             ]
         );
         $params = [
@@ -139,7 +139,7 @@ class CheckStatusTokenSaleCommand extends Command
                 'action' => 'eth_getTransactionByHash',
                 'txhash' => $transaction_hash,
                 'apikey' => $api_key,
-            ]
+            ],
         ];
         $uri = '?';
         $response = $client->request(
@@ -152,7 +152,7 @@ class CheckStatusTokenSaleCommand extends Command
         return collect([
             'response' => $responseData,
             'block_count' => $blockCount,
-            'transaction_status' => $transactionStatus
+            'transaction_status' => $transactionStatus,
         ]);
     }
 }
