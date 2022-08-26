@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SwapTokenRequest;
 use App\Http\Requests\WithdrawRequest;
+use App\Imports\NftItemImport;
 use App\Models\NftAuctionHistory;
 use App\Models\TokenSaleHistory;
 use App\Models\User;
@@ -17,6 +18,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MyPageController extends Controller
 {
@@ -27,22 +29,26 @@ class MyPageController extends Controller
     protected $userWithdrawalService;
 
     protected $userNftService;
+    protected $nftItemImport;
 
     /**
      * MyPageController constructor.
      *
      * @param use UserBalanceService $userBalanceService, UserService $userService, UserWithdrawalService $userWithdrawalService
      */
+
     public function __construct(
         UserBalanceService $userBalanceService,
         UserService $userService,
         UserWithdrawalService $userWithdrawalService,
-        UserNftService $userNftService
+        UserNftService $userNftService,
+        NftItemImport $nftItemImport
     ) {
         $this->userBalanceService = $userBalanceService;
         $this->userService = $userService;
         $this->userWithdrawalService = $userWithdrawalService;
         $this->userNftService = $userNftService;
+        $this->nftItemImport = $nftItemImport;
     }
 
     /**
@@ -265,5 +271,22 @@ class MyPageController extends Controller
                 'error' => $e,
             ], 500);
         }
+    }
+
+    public function importNft(Request $request)
+    {
+        try {
+            $this->nftItemImport->import();
+            return response()->json([
+                'message' => 'Import successfully!!'
+            ], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+            return response()->json([
+                'message' => 'Import failed!!',
+                'error' => $e,
+            ], 500);
+        }
+
     }
 }

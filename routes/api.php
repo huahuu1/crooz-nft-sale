@@ -93,4 +93,7 @@ Route::group([
     Route::get('nft-auction/{max_per_page?}', [TransactionController::class, 'getPurchaseListOfNftAuction']);
 });
 
+Route::post('import-nft', [MyPageController::class, 'importNft']);
+
 require __DIR__.'/admin.php';
+
