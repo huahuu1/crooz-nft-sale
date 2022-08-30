@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Api\InformationController;
 use App\Http\Controllers\Api\MyPageController;
-use App\Http\Controllers\Api\NftController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Auth\AuthController;
