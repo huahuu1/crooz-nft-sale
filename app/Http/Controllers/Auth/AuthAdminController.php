@@ -32,7 +32,6 @@ class AuthAdminController extends Controller
                     'message' => 'The username or password is incorrect',
                 ], 404);
             }
-
             $token = $admin->createToken('authAminToken')->plainTextToken;
 
             return response()->json([
@@ -58,11 +57,17 @@ class AuthAdminController extends Controller
     {
         // Revoke all tokens
         try {
-            Auth::guard('admin')->user()->tokens()->delete();
+            if (Auth::guard('admin')->check()) {
+                Auth::guard('admin')->user()->tokens()->delete();
+
+                return response()->json([
+                    'message' => 'Logout',
+                ], 200);
+            }
 
             return response()->json([
-                'message' => 'Logout',
-            ], 200);
+                'message' => 'Access Denied',
+            ], 201);
         } catch (Exception $e) {
             Log::error($e);
 
