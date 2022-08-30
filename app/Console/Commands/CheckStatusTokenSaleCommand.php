@@ -66,7 +66,7 @@ class CheckStatusTokenSaleCommand extends Command
                 $result = $this->checkWithEtherScan($transaction->tx_hash);
                 $response = $result['response'];
                 $blockNumberCount = $result['block_count'];
-                $transactionStatus = $result['transaction_status']['status'];
+                $transactionStatus = $result['transaction_status']['result']['status'];
 
                 if ($response['result']['blockHash'] == null) {
                     //Update Transaction As Pending
@@ -83,6 +83,12 @@ class CheckStatusTokenSaleCommand extends Command
                     if (strtolower($result['to']) == strtolower($company_wallet) || strtolower($result['to']) == strtolower($contract_wallet) && $blockNumberCount >= env('SUCCESS_TRANSACTION_BLOCK_COUNT') && $transactionStatus) {
                         //Update Transaction As Success
                         $transaction->status = TokenSaleHistory::SUCCESS_STATUS;
+                        $transaction->update();
+                    }
+
+                    if (! $transactionStatus) {
+                        //Update Transaction As Fail
+                        $transaction->status = TokenSaleHistory::FAILED_STATUS;
                         $transaction->update();
                     }
                 } else {
