@@ -93,11 +93,4 @@ Route::group([
     Route::get('nft-auction/{max_per_page?}', [TransactionController::class, 'getPurchaseListOfNftAuction']);
 });
 
-//import nft excel
-Route::post('import-nft', [NftController::class, 'importNft']);
-Route::get('export-nft', [NftController::class, 'exportNft']);
-
-//import unlock user balance excel
-Route::post('import-unlock-balance', [TransactionController::class, 'importUnlockUserBalance']);
-
 require __DIR__.'/admin.php';

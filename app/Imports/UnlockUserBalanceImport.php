@@ -4,12 +4,10 @@ namespace App\Imports;
 
 use App\Models\UnlockUserBalance;
 use App\Models\UserBalance;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\RemembersRowNumber;
 use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
@@ -36,10 +34,9 @@ class UnlockUserBalanceImport implements ToModel, WithHeadingRow
     }
 
     /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
+     * @param  array  $row
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
     public function model(array $row)
     {
         $currentRowNumber = $this->getRowNumber();
@@ -48,9 +45,9 @@ class UnlockUserBalanceImport implements ToModel, WithHeadingRow
         UserBalance::where('user_id', $row['user_id'])
                    ->where('token_id', $row['token_id'])
                    ->update([
-                    'amount_total' => DB::raw('amount_total + '. $row['amount_lock']),
-                    'amount_lock' => DB::raw('amount_lock + '. $row['amount_lock'])
-                    ]);
+                       'amount_total' => DB::raw('amount_total + '.$row['amount_lock']),
+                       'amount_lock' => DB::raw('amount_lock + '.$row['amount_lock']),
+                   ]);
 
         return new UnlockUserBalance([
             'token_id' => $row['token_id'],

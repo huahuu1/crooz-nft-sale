@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Log;
 class TransactionController extends Controller
 {
     protected $userService;
+
     protected $unlockUserBalanceImport;
 
     /**
@@ -214,6 +215,7 @@ class TransactionController extends Controller
     {
         try {
             $this->unlockUserBalanceImport->importUnlockUserBalance();
+
             return response()->json([
                 'message' => 'Import unlock user balance successfully!!',
             ], 200);
