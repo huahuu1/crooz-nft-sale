@@ -7,6 +7,7 @@ use App\Models\Admin;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class AuthAdminController extends Controller
@@ -26,13 +27,13 @@ class AuthAdminController extends Controller
         try {
             $admin = Admin::where('email', $request->email)->first();
 
-            if (! $admin || ! Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password])) {
+            if (! $admin || ! Hash::check($request->password, $admin->password, [])) {
                 return response()->json([
                     'message' => 'The username or password is incorrect',
                 ], 404);
             }
 
-            $token = Auth::guard('admin')->user()->createToken('authAminToken')->plainTextToken;
+            $token = $admin->createToken('authAminToken')->plainTextToken;
 
             return response()->json([
                 'access_token' => $token,
@@ -55,7 +56,6 @@ class AuthAdminController extends Controller
      */
     public function logout()
     {
-        Log::alert('logout');
         // Revoke all tokens
         try {
             Auth::guard('admin')->user()->tokens()->delete();
