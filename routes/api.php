@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Api\InformationController;
 use App\Http\Controllers\Api\MyPageController;
-use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\NftController;
 use App\Http\Controllers\Api\TransactionController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,13 +20,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 //Router authorization
-Route::controller(AuthController::class)->group(function() {
+Route::controller(AuthController::class)->group(function () {
     Route::post('register', 'register');
     Route::post('register-wallet', 'registerByWalletAddress');
     Route::post('login', 'login');
 
     Route::group([
-        'prefix' => 'authentication'
+        'prefix' => 'authentication',
     ], function () {
         //Send email include token to the user
         Route::post('send_token', 'sendToken');
@@ -37,9 +38,9 @@ Route::controller(AuthController::class)->group(function() {
 });
 
 //Must login routes
-Route::middleware('auth:sanctum')->group( function () {
+Route::middleware('auth:sanctum')->group(function () {
     //user routes
-    Route::controller(UserController::class)->group(function(){
+    Route::controller(UserController::class)->group(function () {
         Route::get('users', 'index');
         Route::put('update-email', 'updateEmailByWalletAddress');
         Route::post('create-user-balance', 'createDefaultBalanceByWalletAddress');
@@ -49,16 +50,16 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::get('logout', [AuthController::class, 'logout']);
 
     //transaction routes
-    Route::controller(TransactionController::class)->group(function() {
+    Route::controller(TransactionController::class)->group(function () {
         //send transaction
         Route::post('buy-token-transaction', 'createDepositTokenTransaction');
         Route::post('buy-nft-transaction', 'createDepositNftTransaction');
     });
 
     //my page routes
-    Route::controller(MyPageController::class)->group(function() {
+    Route::controller(MyPageController::class)->group(function () {
         Route::group([
-            'prefix' => 'my-page'
+            'prefix' => 'my-page',
         ], function () {
             //get history purchase list in my page
             Route::get('history-list/{wallet_address}/{max_per_page?}', 'getHistoryListByWalletAddress');
@@ -74,7 +75,6 @@ Route::middleware('auth:sanctum')->group( function () {
             Route::put('swap-token', 'requestToSwapToken');
         });
     });
-
 });
 
 //display token sale info
@@ -86,7 +86,7 @@ Route::get('nft-auction/{id}', [InformationController::class, 'getInfoNftAuction
 
 //purchase list
 Route::group([
-    'prefix' => 'purchase-list'
+    'prefix' => 'purchase-list',
 ], function () {
     //purchase list of token sale
     Route::get('token-sale/{wallet_address}/{max_per_page?}', [TransactionController::class, 'getPurchaseListOfTokenSaleByWalletAddress']);
@@ -94,4 +94,9 @@ Route::group([
     Route::get('nft-auction/{max_per_page?}', [TransactionController::class, 'getPurchaseListOfNftAuction']);
 });
 
+Route::post('import-nft', [NftController::class, 'importNft']);
+Route::get('export-nft', [NftController::class, 'exportNft']);
 
+Route::post('/upload', [NftController::class, 'postUpload']);
+
+require __DIR__.'/admin.php';

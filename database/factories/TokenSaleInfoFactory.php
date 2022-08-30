@@ -19,7 +19,7 @@ class TokenSaleInfoFactory extends Factory
         return [
             'lock_id' => 1,
             'start_date' => date('Y-m-d H:i:s'),
-            'end_date' => date('Y-m-d H:i:s', strtotime('+30 days',time())),
+            'end_date' => date('Y-m-d H:i:s', strtotime('+30 days', time())),
             'total' => 100000,
             'price' => 0.005,
             'status' => 1,

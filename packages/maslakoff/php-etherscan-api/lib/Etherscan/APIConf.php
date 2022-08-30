@@ -4,48 +4,59 @@ namespace Etherscan;
 
 /**
  * Class APIConf
- * @package Etherscan
+ *
  * @author Maslakou Ihar <igormaslakoff@gmail.com>
  */
 class APIConf
 {
-    const API_URL = "https://api.etherscan.io/api";
+    public const API_URL = 'https://api.etherscan.io/api';
 
-    const TESTNET_GOERLI = "api-goerli";
-    const TESTNET_ROPSTEN = "api-ropsten";
-    const TESTNET_KOVAN = "api-kovan";
-    const TESTNET_RINKEBY = "api-rinkeby";
+    public const TESTNET_GOERLI = 'api-goerli';
 
-    const TAG_EARLIEST = "earliest";
-    const TAG_LATEST = "latest";
-    const TAG_PENDING = "pending";
+    public const TESTNET_ROPSTEN = 'api-ropsten';
 
-    const BLOCK_TYPE_BLOCKS = "blocks";
-    const BLOCK_TYPE_UNCLES = "uncles";
+    public const TESTNET_KOVAN = 'api-kovan';
 
-    const BLOCK_CLOSEST_BEFORE = "before";
-    const BLOCK_CLOSEST_AFTER = "after";
+    public const TESTNET_RINKEBY = 'api-rinkeby';
+
+    public const TAG_EARLIEST = 'earliest';
+
+    public const TAG_LATEST = 'latest';
+
+    public const TAG_PENDING = 'pending';
+
+    public const BLOCK_TYPE_BLOCKS = 'blocks';
+
+    public const BLOCK_TYPE_UNCLES = 'uncles';
+
+    public const BLOCK_CLOSEST_BEFORE = 'before';
+
+    public const BLOCK_CLOSEST_AFTER = 'after';
 
     public static $blockTypes = [
-        self::BLOCK_TYPE_BLOCKS, self::BLOCK_TYPE_UNCLES
+        self::BLOCK_TYPE_BLOCKS, self::BLOCK_TYPE_UNCLES,
     ];
 
-    const CLIENT_TYPE_GETH = "geth";
-    const CLIENT_TYPE_PARITY = "parity";
+    public const CLIENT_TYPE_GETH = 'geth';
+
+    public const CLIENT_TYPE_PARITY = 'parity';
+
     public static $clientTypes = [
-        self::CLIENT_TYPE_GETH, self::CLIENT_TYPE_PARITY
+        self::CLIENT_TYPE_GETH, self::CLIENT_TYPE_PARITY,
     ];
 
-    const SYNC_MODE_DEFAULT = "default";
-    const SYNC_MODE_ARCHIVE = "archive";
+    public const SYNC_MODE_DEFAULT = 'default';
+
+    public const SYNC_MODE_ARCHIVE = 'archive';
+
     public static $syncModes = [
-        self::SYNC_MODE_DEFAULT, self::SYNC_MODE_ARCHIVE
+        self::SYNC_MODE_DEFAULT, self::SYNC_MODE_ARCHIVE,
     ];
 
     /**
      * Returns API URL
      *
-     * @param null $net
+     * @param  null  $net
      * @return string
      */
     public static function getAPIUrl($net = null)

@@ -8,7 +8,8 @@ use Laravel\Sanctum\HasApiTokens;
 
 class NftAuctionHistory extends Model
 {
-    use HasApiTokens, HasFactory;
+    use HasApiTokens;
+    use HasFactory;
 
     protected $table = 'nft_auction_histories';
 
@@ -26,9 +27,11 @@ class NftAuctionHistory extends Model
         'tx_hash',
     ];
 
-    const PENDING_STATUS = 1;
-    const SUCCESS_STATUS = 2;
-    const FAILED_STATUS = 3;
+    public const PENDING_STATUS = 1;
+
+    public const SUCCESS_STATUS = 2;
+
+    public const FAILED_STATUS = 3;
 
     /**
      * Get ALl Pending Transactions

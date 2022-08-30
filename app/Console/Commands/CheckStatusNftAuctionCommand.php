@@ -3,11 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Models\NftAuctionHistory;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
 use Etherscan\APIConf;
 use Etherscan\Client;
 use GuzzleHttp\Client as HttpClient;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
 class CheckStatusNftAuctionCommand extends Command
@@ -67,12 +66,13 @@ class CheckStatusNftAuctionCommand extends Command
                 $result = $this->checkWithEtherScan($transaction->tx_hash);
                 $response = $result['response'];
                 $blockNumberCount = $result['block_count'];
-                $transactionStatus = $result['transaction_status']['status'];
+                $transactionStatus = $result['transaction_status']['result']['status'];
 
                 if ($response['result']['blockHash'] == null) {
                     //Update Transaction As Pending
                     $transaction->status = NftAuctionHistory::PENDING_STATUS;
                     $transaction->update();
+
                     return;
                 }
 
@@ -85,13 +85,19 @@ class CheckStatusNftAuctionCommand extends Command
                         $transaction->status = NftAuctionHistory::SUCCESS_STATUS;
                         $transaction->update();
                     }
+
+                    if (! $transactionStatus) {
+                        //Update Transaction As Fail
+                        $transaction->status = NftAuctionHistory::FAILED_STATUS;
+                        $transaction->update();
+                    }
                 } else {
                     //Update Transaction As Fail
                     $transaction->status = NftAuctionHistory::FAILED_STATUS;
                     $transaction->update();
                 }
-                Log::info('[SUCCESS] Check Status Nft Auction for: ' . $transaction->id . ' (' . substr($transaction->tx_hash, 0, 10) . ')');
-                $this->info('[SUCCESS] Check Status Nft Auction for: ' . $transaction->id . ' (' . substr($transaction->tx_hash, 0, 10) . ')');
+                Log::info('[SUCCESS] Check Status Nft Auction for: '.$transaction->id.' ('.substr($transaction->tx_hash, 0, 10).')');
+                $this->info('[SUCCESS] Check Status Nft Auction for: '.$transaction->id.' ('.substr($transaction->tx_hash, 0, 10).')');
             }
         }, 'id');
     }
@@ -99,7 +105,7 @@ class CheckStatusNftAuctionCommand extends Command
     /**
      * Check Transaction With Ether Scan
      *
-     * @param  mixed $transaction_hash
+     * @param  mixed  $transaction_hash
      * @return mixed
      */
     public function checkWithEtherScan($transaction_hash)
@@ -128,7 +134,7 @@ class CheckStatusNftAuctionCommand extends Command
         $client = new HttpClient(
             [
                 'base_uri' => $baseUri,
-                'headers'  => []
+                'headers' => [],
             ]
         );
         $params = [
@@ -137,7 +143,7 @@ class CheckStatusNftAuctionCommand extends Command
                 'action' => 'eth_getTransactionByHash',
                 'txhash' => $transaction_hash,
                 'apikey' => $api_key,
-            ]
+            ],
         ];
         $uri = '?';
         $response = $client->request(
@@ -150,7 +156,7 @@ class CheckStatusNftAuctionCommand extends Command
         return collect([
             'response' => $responseData,
             'block_count' => $blockCount,
-            'transaction_status' => $transactionStatus
-        ]);;
+            'transaction_status' => $transactionStatus,
+        ]);
     }
 }

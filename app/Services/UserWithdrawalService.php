@@ -8,6 +8,7 @@ class UserWithdrawalService
 {
     /**
      * Get balances of a user follow token id
+     *
      * @param walletAddress
      * @return user
      */

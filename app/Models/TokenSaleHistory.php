@@ -8,7 +8,8 @@ use Laravel\Sanctum\HasApiTokens;
 
 class TokenSaleHistory extends Model
 {
-    use HasApiTokens, HasFactory;
+    use HasApiTokens;
+    use HasFactory;
 
     protected $table = 'token_sale_histories';
 
@@ -26,9 +27,11 @@ class TokenSaleHistory extends Model
         'tx_hash',
     ];
 
-    const PENDING_STATUS = 1;
-    const SUCCESS_STATUS = 2;
-    const FAILED_STATUS = 3;
+    public const PENDING_STATUS = 1;
+
+    public const SUCCESS_STATUS = 2;
+
+    public const FAILED_STATUS = 3;
 
     /**
      * Get ALl Pending Transactions

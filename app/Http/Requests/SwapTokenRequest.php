@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\UserBalance;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SwapTokenRequest extends FormRequest
@@ -20,7 +19,7 @@ class SwapTokenRequest extends FormRequest
             'token_id_to' => 'required',
             'wallet_address' => [
                 'required',
-                'regex:'. config('regex.wallet_address'),
+                'regex:'.config('regex.wallet_address'),
             ],
         ];
     }

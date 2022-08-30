@@ -14,7 +14,7 @@ class WalletAddressRequest extends FormRequest
     public function rules()
     {
         return [
-            'wallet_address' => 'required|regex:'. config('regex.wallet_address'),
+            'wallet_address' => 'required|regex:'.config('regex.wallet_address'),
         ];
     }
 }

@@ -8,7 +8,8 @@ use Laravel\Sanctum\HasApiTokens;
 
 class CashFlow extends Model
 {
-    use HasApiTokens, HasFactory;
+    use HasApiTokens;
+    use HasFactory;
 
     protected $table = 'cash_flows';
 

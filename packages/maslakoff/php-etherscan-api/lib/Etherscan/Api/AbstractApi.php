@@ -7,7 +7,7 @@ use Etherscan\HttpClient\Request;
 
 /**
  * Class AbstractApi
- * @package Etherscan\Api
+ *
  * @author Maslakou Ihar <igormaslakoff@gmail.com>
  */
 abstract class AbstractApi implements ApiInterface
@@ -25,7 +25,7 @@ abstract class AbstractApi implements ApiInterface
     protected $request;
 
     /**
-     * @param Client $client
+     * @param  Client  $client
      */
     public function __construct(Client $client)
     {
