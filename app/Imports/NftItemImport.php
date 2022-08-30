@@ -3,14 +3,16 @@
 namespace App\Imports;
 
 use App\Models\Nft;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\RemembersRowNumber;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
 
-class NftItemImport implements ToModel, WithHeadingRow
+class NftItemImport implements ToModel, WithHeadingRow, WithChunkReading, ShouldQueue
 {
     use RemembersRowNumber;
 
