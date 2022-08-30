@@ -43,13 +43,13 @@ class NftController extends Controller
             }
 
             return response()->json([
-                'message' => 'Import successfully!!',
+                'message' => 'Import nft successfully!!',
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Import failed!!',
+                'message' => 'Import nft failed!!',
                 'error' => $e,
             ], 500);
         }
