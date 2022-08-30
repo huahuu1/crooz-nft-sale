@@ -7,7 +7,6 @@ use App\Http\Requests\SwapTokenRequest;
 use App\Http\Requests\WithdrawRequest;
 use App\Models\NftAuctionHistory;
 use App\Models\TokenSaleHistory;
-use App\Models\User;
 use App\Models\UserWithdrawal;
 use App\Services\UserBalanceService;
 use App\Services\UserNftService;
