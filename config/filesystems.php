@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DISK', 'local'),
+    'default' => env('FILESYSTEM_DISK', 's3'),
 
     /*
     |--------------------------------------------------------------------------
@@ -52,9 +52,10 @@ return [
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
             'throw' => true,
+            'visibility' => 'public',
         ],
 
-        'cloud' => env('FILESYSTEM_CLOUD', 's3')
+        'cloud' => env('FILESYSTEM_CLOUD', 's3'),
 
     ],
 

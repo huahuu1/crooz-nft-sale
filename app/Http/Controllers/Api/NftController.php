@@ -4,19 +4,16 @@ namespace App\Http\Controllers\Api;
 
 use App\Exports\NftItemExport;
 use App\Http\Controllers\Controller;
-
 use App\Imports\NftItemImport;
-use App\Models\Image;
+use App\Jobs\NftItemJob;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class NftController extends Controller
 {
     protected $nftItemImport;
+
     protected $nftItemExport;
-    protected $image;
 
     /**
      * NftController constructor.
@@ -26,11 +23,9 @@ class NftController extends Controller
     public function __construct(
         NftItemImport $nftItemImport,
         NftItemExport $nftItemExport,
-        Image $image
     ) {
         $this->nftItemImport = $nftItemImport;
         $this->nftItemExport = $nftItemExport;
-        $this->image = $image;
     }
 
     /**
@@ -42,6 +37,10 @@ class NftController extends Controller
     {
         try {
             $this->nftItemImport->importNft();
+            // get session nft to run job upload image to s3
+            if (! empty(session()->get('nft_item'))) {
+                NftItemJob::dispatch()->delay(now()->seconds(10));
+            }
 
             return response()->json([
                 'message' => 'Import successfully!!',
@@ -71,27 +70,6 @@ class NftController extends Controller
                 'message' => 'Export failed!!',
                 'error' => $e,
             ], 500);
-        }
-    }
-
-    public function postUpload(Request $request)
-    {
-        try {
-            $path = Storage::disk('s3')->put('/', $request->file, 'public');
-
-            $request->merge([
-                'size' => $request->file->getSize(),
-                'path' => $path,
-                'title' => 'test',
-                'auth_by' => 1
-            ]);
-            $test = $this->image->create($request->only('path', 'title', 'size', 'auth_by'));
-            info($test->toArray());
-            return response()->json([
-                'message' => 'Export successfully!!',
-            ], 200);
-        } catch (Exception $e) {
-            Log::info($e);
         }
     }
 }

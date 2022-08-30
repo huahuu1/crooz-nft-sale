@@ -3,16 +3,14 @@
 namespace App\Imports;
 
 use App\Models\Nft;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Concerns\RemembersRowNumber;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithChunkReading;
-use Maatwebsite\Excel\Concerns\RemembersRowNumber;
-use Maatwebsite\Excel\Validators\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Validators\ValidationException;
 
-class NftItemImport implements ToModel, WithHeadingRow, WithChunkReading, ShouldQueue
+class NftItemImport implements ToModel, WithHeadingRow
 {
     use RemembersRowNumber;
 
@@ -23,7 +21,7 @@ class NftItemImport implements ToModel, WithHeadingRow, WithChunkReading, Should
         $this->nft = $nft;
     }
 
-    public function headingRow() : int
+    public function headingRow(): int
     {
         return 1;
     }
@@ -39,23 +37,37 @@ class NftItemImport implements ToModel, WithHeadingRow, WithChunkReading, Should
     }
 
     /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
+     * @param  array  $row
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
     public function model(array $row)
     {
         $currentRowNumber = $this->getRowNumber();
         Log::info('[SUCCESS] Insert excel row: '.$currentRowNumber);
         info($row['image_url']);
+        // nft item
+        $nftItem = [
+            'image_url' => $row['image_url'],
+            'serial_no' => $row['serial_no'],
+        ];
+        // get session nft
+        $items = session()->get('nft_item', []);
+        if (empty($items)) {
+            // create session
+            session()->put('nft_item', [$nftItem]);
+        } else {
+            // update session
+            session()->push('nft_item', $nftItem);
+        }
+
         return new Nft([
-            'serial_no'     => $row['serial_no'],
-            'type_id'       => $row['type_id'],
-            'nft_id'        => $row['nft_id'],
-            'nft_owner_id'  => $row['nft_owner_id'],
-            'tx_hash'       => $row['tx_hash'],
-            'image_url'     => $row['image_url'],
-            'status'        => $row['status'],
+            'serial_no' => $row['serial_no'],
+            'type_id' => $row['type_id'],
+            'nft_id' => $row['nft_id'],
+            'nft_owner_id' => $row['nft_owner_id'],
+            'tx_hash' => $row['tx_hash'],
+            'image_url' => $row['image_url'],
+            'status' => $row['status'],
         ]);
     }
 
