@@ -17,7 +17,7 @@ class Admin
      */
     public function handle(Request $request, Closure $next)
     {
-        if (! $request->expectsJson() && ! Auth::guard('admin')->check()) {
+        if (! Auth::guard('admin')->check()) {
             return response()->json(['message' => 'Access Denied'], 201);
         }
 
