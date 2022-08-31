@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TransactionRequest;
+use App\Imports\UnlockUserBalanceImport;
 use App\Models\CashFlow;
 use App\Models\NftAuctionHistory;
 use App\Models\NftAuctionInfo;
@@ -18,14 +19,19 @@ class TransactionController extends Controller
 {
     protected $userService;
 
+    protected $unlockUserBalanceImport;
+
     /**
      * TransactionController constructor.
      *
      * @param use userService $userService
      */
-    public function __construct(UserService $userService)
-    {
+    public function __construct(
+        UserService $userService,
+        UnlockUserBalanceImport $unlockUserBalanceImport,
+    ) {
         $this->userService = $userService;
+        $this->unlockUserBalanceImport = $unlockUserBalanceImport;
     }
 
     /**
@@ -198,5 +204,28 @@ class TransactionController extends Controller
             'data' => $nftAuctionHistory->values()->all(),
             'total_pages' => $nftAuctionHistory->lastPage(),
         ]);
+    }
+
+    /**
+     * Import unlock user balance by excel
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function importUnlockUserBalance()
+    {
+        try {
+            $this->unlockUserBalanceImport->importUnlockUserBalance();
+
+            return response()->json([
+                'message' => 'Import unlock user balance successfully!!',
+            ], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'message' => 'Import unlock user balance failed!!',
+                'error' => $e,
+            ], 500);
+        }
     }
 }

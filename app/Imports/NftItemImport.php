@@ -33,11 +33,6 @@ class NftItemImport implements ToModel, WithHeadingRow, WithChunkReading, Should
         return 100;
     }
 
-    public function batchSize(): int
-    {
-        return 100;
-    }
-
     /**
      * @param  array  $row
      * @return \Illuminate\Database\Eloquent\Model|null
