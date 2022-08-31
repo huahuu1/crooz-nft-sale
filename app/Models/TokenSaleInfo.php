@@ -26,4 +26,12 @@ class TokenSaleInfo extends Model
         'price',
         'status',
     ];
+
+    /**
+     * Get the lock info that owns the token sale.
+     */
+    public function lock_info()
+    {
+        return $this->belongsTo(LockInfo::class, 'lock_id');
+    }
 }
