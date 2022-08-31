@@ -13,7 +13,7 @@ use App\Models\TokenSaleHistory;
 use App\Models\User;
 use App\Services\UserService;
 use Exception;
-use Illuminate\Http\Client\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
