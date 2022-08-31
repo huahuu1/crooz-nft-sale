@@ -13,7 +13,9 @@ use App\Models\TokenSaleHistory;
 use App\Models\User;
 use App\Services\UserService;
 use Exception;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class TransactionController extends Controller
 {
@@ -173,11 +175,11 @@ class TransactionController extends Controller
         }
 
         $tokeSaleHistory = TokenSaleHistory::where('status', TokenSaleHistory::SUCCESS_STATUS)
-                                           ->where('user_id', $user->id)
-                                           ->orderby('amount', 'desc')
-                                           ->with(['user', 'token_master'])
-                                           ->get()
-                                           ->paginate($maxPerPage);
+            ->where('user_id', $user->id)
+            ->orderby('amount', 'desc')
+            ->with(['user', 'token_master'])
+            ->get()
+            ->paginate($maxPerPage);
 
         return response()->json([
             'data' => $tokeSaleHistory->values()->all(),
@@ -195,10 +197,10 @@ class TransactionController extends Controller
         $maxPerPage = $maxPerPage ?? env('MAX_PER_PAGE_AUCTION');
 
         $nftAuctionHistory = NftAuctionHistory::where('status', NftAuctionHistory::SUCCESS_STATUS)
-                                              ->orderby('amount', 'desc')
-                                              ->with(['user', 'token_master'])
-                                              ->get()
-                                              ->paginate($maxPerPage);
+            ->orderby('amount', 'desc')
+            ->with(['user', 'token_master'])
+            ->get()
+            ->paginate($maxPerPage);
 
         return response()->json([
             'data' => $nftAuctionHistory->values()->all(),
@@ -211,21 +213,37 @@ class TransactionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function importUnlockUserBalance()
+    public function importUnlockUserBalance(Request $request)
     {
-        try {
-            $this->unlockUserBalanceImport->importUnlockUserBalance();
+        $validator = Validator::make(
+            [
+                'file' => $request->file,
+                'extension' => strtolower($request->file->getClientOriginalExtension()),
+            ],
+            [
+                'file' => 'required',
+                'extension' => 'required|in:csv,xlsx,xls',
+            ]
+        );
+        if (! $validator->fails()) {
+            try {
+                $this->unlockUserBalanceImport->importUnlockUserBalance();
 
-            return response()->json([
-                'message' => 'Import unlock user balance successfully!!',
-            ], 200);
-        } catch (Exception $e) {
-            Log::error($e);
+                return response()->json([
+                    'message' => 'Import unlock user balance successfully!!',
+                ], 200);
+            } catch (Exception $e) {
+                Log::error($e);
 
+                return response()->json([
+                    'message' => 'Import unlock user balance failed!!',
+                    'error' => $e,
+                ], 500);
+            }
+        } else {
             return response()->json([
-                'message' => 'Import unlock user balance failed!!',
-                'error' => $e,
-            ], 500);
+                'message' => $validator->messages(),
+            ], 201);
         }
     }
 }
