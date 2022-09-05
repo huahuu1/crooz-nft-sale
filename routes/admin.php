@@ -10,7 +10,7 @@ Route::prefix('admin')->group(function () {
     Route::post('login', [AuthAdminController::class, 'login']);
 
     //Must admin login route
-    Route::middleware(['auth.admin'])->group(function () {
+    Route::middleware(['auth:sanctum', 'auth.admin'])->group(function () {
         // import nft
         Route::post('import-nft', [NftController::class, 'importNft']);
         Route::get('export-nft', [NftController::class, 'exportNft']);

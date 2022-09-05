@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Imports\NftItemImport;
 use App\Jobs\NftItemJob;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class NftController extends Controller
 {
@@ -33,25 +35,42 @@ class NftController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function importNft()
+    public function importNft(Request $request)
     {
-        try {
-            $this->nftItemImport->importNft();
-            // get session nft to run job upload image to s3
-            if (! empty(session()->get('nft_item'))) {
-                NftItemJob::dispatch()->delay(now()->seconds(10));
+        $validator = Validator::make(
+            [
+                'file' => $request->file,
+                'extension' => strtolower($request->file->getClientOriginalExtension()),
+            ],
+            [
+                'file' => 'required',
+                'extension' => 'required|in:csv,xlsx,xls',
+            ]
+        );
+
+        if (! $validator->fails()) {
+            try {
+                $this->nftItemImport->importNft();
+                // get session nft to run job upload image to s3
+                if (! empty(session()->get('nft_item'))) {
+                    NftItemJob::dispatch()->delay(now()->seconds(10));
+                }
+
+                return response()->json([
+                    'message' => 'Import nft successfully!!',
+                ], 200);
+            } catch (Exception $e) {
+                Log::error($e);
+
+                return response()->json([
+                    'message' => 'Import nft failed!!',
+                    'error' => $e,
+                ], 500);
             }
-
+        } else {
             return response()->json([
-                'message' => 'Import nft successfully!!',
-            ], 200);
-        } catch (Exception $e) {
-            Log::error($e);
-
-            return response()->json([
-                'message' => 'Import nft failed!!',
-                'error' => $e,
-            ], 500);
+                'message' => $validator->messages(),
+            ], 201);
         }
     }
 
