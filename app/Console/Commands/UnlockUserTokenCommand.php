@@ -62,7 +62,7 @@ class UnlockUserTokenCommand extends Command
             foreach ($unlockUserBalances as $key => $unlockUserBalance) {
                 $userBalance = $this->userBalanceService->getUserBalanceByTokenId($unlockUserBalance->user_id, $unlockUserBalance->token_id);
 
-                $checkDate = $this->checkReleaseDate($unlockUserBalance->token_sale->end_date, $unlockUserBalance->token_sale->lock_info->lock_day);
+                $checkDate = $this->checkReleaseDate($unlockUserBalance->token_sale->end_date, $unlockUserBalance->token_sale->lock_info->lock_day, $unlockUserBalance->updated_at);
 
                 if ($unlockUserBalance->amount_lock_remain == 0) {
                     $unlockUserBalance->status = 0;
@@ -73,7 +73,7 @@ class UnlockUserTokenCommand extends Command
                     $unlockAmount = $unlockUserBalance->amount_lock * $unlockUserBalance->token_sale->lock_info->unlock_percentages / 100;
 
                     if ($unlockUserBalance->status != 0) {
-                        UpdateUnlockBalanceJob::dispatch($unlockUserBalance, $userBalance, $unlockAmount)->delay(now()->addSeconds(($key + 1) * 5));
+                        UpdateUnlockBalanceJob::dispatch($unlockUserBalance, $userBalance, $unlockAmount)->delay(now()->addSeconds(($key + 1) * 3));
                     }
 
                     Log::info('[SUCCESS] Unlock token for user ID: '.$unlockUserBalance->user_id . ' - sale token ID: ' . $unlockUserBalance->token_sale_id);
@@ -89,12 +89,13 @@ class UnlockUserTokenCommand extends Command
      * @param  mixed  $endDate, $lockDay
      * @return boolean
      */
-    public function checkReleaseDate($endDate, $lockDay)
+    public function checkReleaseDate($endDate, $lockDay, $updatedAt)
     {
         $today = Carbon::now();
-        $date = new Carbon($endDate);
-        $dueDate = $date->addDays($lockDay);
+        $endDate = new Carbon($endDate);
+        $updatedAt = new Carbon($updatedAt);
+        $dueDate = $endDate->addDays($lockDay);
 
-        return ($today->eq($dueDate) || $today->gt($dueDate));
+        return ($today->eq($dueDate) || $today->gt($dueDate) && ($today->diffInDays($updatedAt) > $lockDay));
     }
 }
