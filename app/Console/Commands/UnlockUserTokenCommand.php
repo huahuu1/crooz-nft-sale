@@ -3,10 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Jobs\UpdateUnlockBalanceJob;
-use Illuminate\Console\Command;
 use App\Models\UnlockUserBalance;
 use App\Services\UserBalanceService;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
 class UnlockUserTokenCommand extends Command
@@ -17,7 +17,9 @@ class UnlockUserTokenCommand extends Command
      * @var string
      */
     protected $signature = 'unlock:user-balance';
+
     protected $unlockUserBalance;
+
     protected $userBalanceService;
 
     /**
@@ -62,21 +64,24 @@ class UnlockUserTokenCommand extends Command
             foreach ($unlockUserBalances as $key => $unlockUserBalance) {
                 $userBalance = $this->userBalanceService->getUserBalanceByTokenId($unlockUserBalance->user_id, $unlockUserBalance->token_id);
 
-                $checkDate = $this->checkReleaseDate($unlockUserBalance->token_sale->end_date, $unlockUserBalance->token_sale->lock_info->lock_day, $unlockUserBalance->updated_at);
+                $checkDate = $this->checkReleaseDate($unlockUserBalance->next_run_date, $unlockUserBalance->updated_at);
 
+                // update status = 0 with case amount_lock_remain < unlockAmount or amount_lock_remain = 0
+                // this will update after a day the last run
                 if ($unlockUserBalance->amount_lock_remain == 0) {
                     $unlockUserBalance->status = 0;
                     $unlockUserBalance->update();
                 }
 
                 if ($checkDate) {
+                    //calculate the amount to unlock
                     $unlockAmount = $unlockUserBalance->amount_lock * $unlockUserBalance->token_sale->lock_info->unlock_percentages / 100;
 
                     if ($unlockUserBalance->status != 0) {
                         UpdateUnlockBalanceJob::dispatch($unlockUserBalance, $userBalance, $unlockAmount)->delay(now()->addSeconds(($key + 1) * 3));
 
-                        Log::info('[SUCCESS] Unlock token for user ID: '.$unlockUserBalance->user_id . ' - sale token ID: ' . $unlockUserBalance->token_sale_id);
-                        $this->info('[SUCCESS] Unlock token for user ID: '.$unlockUserBalance->user_id . ' - sale token ID: ' . $unlockUserBalance->token_sale_id);
+                        Log::info('[SUCCESS] Unlock token for user ID: '.$unlockUserBalance->user_id.' - sale token ID: '.$unlockUserBalance->token_sale_id);
+                        $this->info('[SUCCESS] Unlock token for user ID: '.$unlockUserBalance->user_id.' - sale token ID: '.$unlockUserBalance->token_sale_id);
                     }
                 }
             }
@@ -87,15 +92,15 @@ class UnlockUserTokenCommand extends Command
      * Check token release date
      *
      * @param  mixed  $endDate, $lockDay
-     * @return boolean
+     * @return bool
      */
-    public function checkReleaseDate($endDate, $lockDay, $updatedAt)
+    public function checkReleaseDate($nextRunDate, $updatedAt)
     {
         $today = Carbon::now();
-        $endDate = new Carbon($endDate);
-        $updatedAt = new Carbon($updatedAt);
-        $dueDate = $endDate->addDays($lockDay);
 
-        return ($today->eq($dueDate) || $today->gt($dueDate) && ($today->diffInDays($updatedAt) > $lockDay));
+        //the date must satisfy 3 conditions
+        //the current day must equal or larger than the next_run_date
+        //the number of day between the current day and updated_at must larger than 0
+        return ($today->eq($nextRunDate) || $today->gt($nextRunDate)) && $today->diffInDays($updatedAt);
     }
 }

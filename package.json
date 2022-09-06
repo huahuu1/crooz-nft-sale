@@ -4,7 +4,8 @@
         "dev": "vite",
         "build": "vite build",
         "pint": "php vendor/bin/pint",
-        "git": "npm run pint && git add . && git commit -m"
+        "git": "npm run pint && git add . && git commit -m",
+        "optimize": "php artisan optimize && php artisan config:clear && php artisan cache:clear && php artisan view:clear && php artisan route:clear && composer dump-autoload"
     },
     "devDependencies": {
         "axios": "^0.25",
