@@ -122,22 +122,22 @@ class CheckStatusTokenSaleCommand extends Command
         if (env('APP_ENV') == 'production') {
             switch (env('BLOCKCHAIN_SCAN_API')) {
                 case 'ETHERS':
-                    $baseUri = 'https://api.etherscan.io/api';
+                    $baseUri = env('ETHERSSCAN_API_URL');
                     $client = new ClientEthers($api_key);
                     break;
                 case 'BSC':
-                    $baseUri = 'https://api.bscscan.com/api';
+                    $baseUri = env('BSCSCAN_API_URL');
                     $client = new ClientBsc($api_key);
                     break;
             }
         } else {
             switch (env('BLOCKCHAIN_SCAN_API')) {
                 case 'ETHERS':
-                    $baseUri = 'https://api-ropsten.etherscan.io/api';
+                    $baseUri = env('ETHERSSCAN_ROPSTEN_API_URL');
                     $client = new ClientEthers($api_key, APIConfEthers::TESTNET_ROPSTEN);
                     break;
                 case 'BSC':
-                    $baseUri = 'https://api-testnet.bscscan.com/api';
+                    $baseUri = env('BSCSCAN_TESTNET_API_URL');
                     $client = new ClientBsc($api_key, APIConfBsc::TESTNET);
                     break;
             }
