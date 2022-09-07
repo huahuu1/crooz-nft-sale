@@ -34,7 +34,7 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "classmap": [
-            "packages/maslakoff/php-etherscan-api/"
+            "packages/maslakoff/"
         ]
     },
     "autoload-dev": {
