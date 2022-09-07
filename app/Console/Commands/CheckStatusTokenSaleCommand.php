@@ -3,8 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Models\TokenSaleHistory;
-use Etherscan\APIConf;
-use Etherscan\Client;
+use Etherscan\APIConf as APIConfEthers;
+use Etherscan\Client as ClientEthers;
+use Bscscan\APIConf as APIConfBsc;
+use Bscscan\Client as ClientBsc;
 use GuzzleHttp\Client as HttpClient;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -62,8 +64,8 @@ class CheckStatusTokenSaleCommand extends Command
 
         $pendingTransactions->chunkById(100, function ($transactions) use ($company_wallet, $contract_wallet) {
             foreach ($transactions as $transaction) {
-                //get transaction information from etherscan
-                $result = $this->checkWithEtherScan($transaction->tx_hash);
+                //get transaction information from bscscan
+                $result = $this->checkWithApiScan($transaction->tx_hash);
                 $response = $result['response'];
                 $blockNumberCount = $result['block_count'];
                 $transactionStatus = $result['transaction_status']['result']['status'];
@@ -80,7 +82,11 @@ class CheckStatusTokenSaleCommand extends Command
                 if ($response && array_key_exists('result', $response)) {
                     $result = $response['result'];
                     //Validate transaction destination with our account
-                    if (strtolower($result['to']) == strtolower($company_wallet) || strtolower($result['to']) == strtolower($contract_wallet) && $blockNumberCount >= env('SUCCESS_TRANSACTION_BLOCK_COUNT') && $transactionStatus) {
+                    if ((strtolower($result['to']) == strtolower($company_wallet)
+                        || strtolower($result['to']) == strtolower($contract_wallet))
+                        && $blockNumberCount >= env('SUCCESS_TRANSACTION_BNB_BLOCK_COUNT')
+                        && $transactionStatus
+                    ) {
                         //Update Transaction As Success
                         $transaction->status = TokenSaleHistory::SUCCESS_STATUS;
                         $transaction->update();
@@ -108,19 +114,33 @@ class CheckStatusTokenSaleCommand extends Command
      * @param  mixed  $transaction_hash
      * @return mixed
      */
-    public function checkWithEtherScan($transaction_hash)
+    public function checkWithApiScan($transaction_hash)
     {
-        // ndx-todo: should move to config
-
-        $api_key = env('ETHERSCAN_API_KEY'); // api from from Etherscan.io
+        $api_key = env('BSCSCAN_API_KEY');
 
         // check production or testnet
         if (env('APP_ENV') == 'production') {
-            $baseUri = 'https://etherscan.io/api';
-            $client = new Client($api_key);
+            switch (env('BLOCKCHAIN_SCAN_API')) {
+                case 'ETHERS':
+                    $baseUri = 'https://api.etherscan.io/api';
+                    $client = new ClientEthers($api_key);
+                    break;
+                case 'BSC':
+                    $baseUri = 'https://api.bscscan.com/api';
+                    $client = new ClientBsc($api_key);
+                    break;
+            }
         } else {
-            $baseUri = 'https://api-ropsten.etherscan.io/api';
-            $client = new Client($api_key, APIConf::TESTNET_ROPSTEN);
+            switch (env('BLOCKCHAIN_SCAN_API')) {
+                case 'ETHERS':
+                    $baseUri = 'https://api-ropsten.etherscan.io/api';
+                    $client = new ClientEthers($api_key, APIConfEthers::TESTNET_ROPSTEN);
+                    break;
+                case 'BSC':
+                    $baseUri = 'https://api-testnet.bscscan.com/api';
+                    $client = new ClientBsc($api_key, APIConfBsc::TESTNET);
+                    break;
+            }
         }
 
         //get block of the transaction
