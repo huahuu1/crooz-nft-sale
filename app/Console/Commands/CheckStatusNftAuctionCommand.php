@@ -117,32 +117,24 @@ class CheckStatusNftAuctionCommand extends Command
     public function checkWithApiScan($transaction_hash)
     {
         $api_key = env('BSCSCAN_API_KEY');
-
+        $apiConfEthers = APIConfEthers::TESTNET_ROPSTEN;
+        $apiConfBsc = APIConfBsc::TESTNET;
         // check production or testnet
         if (env('APP_ENV') == 'production') {
-            switch (env('BLOCKCHAIN_SCAN_API')) {
-                case 'ETHERS':
-                    $baseUri = env('ETHERSSCAN_API_URL');
-                    $client = new ClientEthers($api_key);
-                    break;
-                case 'BSC':
-                    $baseUri = env('BSCSCAN_API_URL');
-                    $client = new ClientBsc($api_key);
-                    break;
-            }
-        } else {
-            switch (env('BLOCKCHAIN_SCAN_API')) {
-                case 'ETHERS':
-                    $baseUri = env('ETHERSSCAN_ROPSTEN_API_URL');
-                    $client = new ClientEthers($api_key, APIConfEthers::TESTNET_ROPSTEN);
-                    break;
-                case 'BSC':
-                    $baseUri = env('BSCSCAN_TESTNET_API_URL');
-                    $client = new ClientBsc($api_key, APIConfBsc::TESTNET);
-                    break;
-            }
+            $apiConfEthers = null;
+            $apiConfBsc = null;
         }
 
+        switch (env('BLOCKCHAIN_SCAN_API')) {
+            case 'ETHERS':
+                $baseUri = env('ETHERSSCAN_API_URL');
+                $client = new ClientEthers($api_key, $apiConfEthers);
+                break;
+            case 'BSC':
+                $baseUri = env('BSCSCAN_API_URL');
+                $client = new ClientBsc($api_key, $apiConfBsc);
+                break;
+        }
         //get block of the transaction
         $transactionBlockNumber = $client->api('proxy')->getTransactionByHash($transaction_hash)['result']['blockNumber'];
         //get current block
