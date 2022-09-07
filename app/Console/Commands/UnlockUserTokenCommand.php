@@ -70,6 +70,7 @@ class UnlockUserTokenCommand extends Command
                 // this will update after a day the last run
                 if ($unlockUserBalance->amount_lock_remain == 0) {
                     $unlockUserBalance->status = 0;
+                    $unlockUserBalance->next_run_date = null;
                     $unlockUserBalance->update();
                 }
 
