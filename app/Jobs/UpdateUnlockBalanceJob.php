@@ -17,7 +17,9 @@ class UpdateUnlockBalanceJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $unlockUserBalance;
+
     protected $userBalance;
+
     protected $unlockAmount;
 
     /**
@@ -42,12 +44,12 @@ class UpdateUnlockBalanceJob implements ShouldQueue
         try {
             if ($this->unlockUserBalance->amount_lock_remain < $this->unlockAmount) {
                 $this->unlockUserBalance->amount_lock_remain -= $this->unlockUserBalance->amount_lock_remain;
+
+                $this->unlockUserBalance->next_run_date = null;
                 $this->unlockUserBalance->update();
 
                 $this->userBalance->amount_lock -= $this->userBalance->amount_lock;
                 $this->userBalance->update();
-
-
 
                 UnlockBalanceHistory::create([
                     'unlock_id' => $this->unlockUserBalance->id,
@@ -55,7 +57,17 @@ class UpdateUnlockBalanceJob implements ShouldQueue
                     'release_token_date' => Carbon::now(),
                 ]);
             } else {
+                $currentRunDate = new Carbon($this->unlockUserBalance->next_run_date);
+                $nextRunDate = $currentRunDate->addDays($this->unlockUserBalance->token_sale->lock_info->lock_day);
+
                 $this->unlockUserBalance->amount_lock_remain -= $this->unlockAmount;
+                $this->unlockUserBalance->next_run_date = $nextRunDate;
+
+                //case vesting update next_run_date = null after run
+                if ((int) $this->unlockUserBalance->amount_lock == $this->unlockAmount) {
+                    $this->unlockUserBalance->next_run_date = null;
+                }
+
                 $this->unlockUserBalance->update();
 
                 $this->userBalance->amount_lock -= $this->unlockAmount;

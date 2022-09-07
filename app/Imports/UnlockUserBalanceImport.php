@@ -2,8 +2,10 @@
 
 namespace App\Imports;
 
+use App\Models\TokenSaleInfo;
 use App\Models\UnlockUserBalance;
 use App\Models\UserBalance;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\RemembersRowNumber;
@@ -49,12 +51,18 @@ class UnlockUserBalanceImport implements ToModel, WithHeadingRow
                        'amount_lock' => DB::raw('amount_lock + '.$row['amount_lock']),
                    ]);
 
+        //create next_run_date column data
+        $tokenSaleInfo = TokenSaleInfo::where('id', $row['token_sale_id'])->with('lock_info')->first();
+        $endDate = new Carbon($tokenSaleInfo->end_date);
+        $nextRunDate = $endDate->addDays($tokenSaleInfo->lock_info->lock_day);
+
         return new UnlockUserBalance([
             'token_id' => $row['token_id'],
             'token_sale_id' => $row['token_sale_id'],
             'user_id' => $row['user_id'],
             'amount_lock' => $row['amount_lock'],
             'amount_lock_remain' => $row['amount_lock_remain'],
+            'next_run_date' => $nextRunDate,
         ]);
     }
 

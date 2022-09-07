@@ -24,6 +24,7 @@ class UnlockUserBalance extends Model
         'user_id',
         'amount_lock',
         'amount_lock_remain',
+        'next_run_date',
         'status',
     ];
 
@@ -34,7 +35,7 @@ class UnlockUserBalance extends Model
      */
     public function getUnlockUserBalances()
     {
-        return UnlockUserBalance::where('status', 1)->with(['token_master','token_sale', 'token_sale.lock_info']);
+        return UnlockUserBalance::where('status', 1)->with(['token_master', 'token_sale', 'token_sale.lock_info']);
     }
 
     /**
