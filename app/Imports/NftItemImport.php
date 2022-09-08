@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Jobs\NftItemJob;
 use App\Models\Nft;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
@@ -41,21 +42,12 @@ class NftItemImport implements ToModel, WithHeadingRow, WithChunkReading, Should
     {
         $currentRowNumber = $this->getRowNumber();
         Log::info('[SUCCESS] Insert excel row: '.$currentRowNumber);
-        info($row['image_url']);
-        // nft item
-        $nftItem = [
+
+        // nft to run job upload image to s3
+        NftItemJob::dispatch([
             'image_url' => $row['image_url'],
             'serial_no' => $row['serial_no'],
-        ];
-        // get session nft
-        $items = session()->get('nft_item', []);
-        if (empty($items)) {
-            // create session
-            session()->put('nft_item', [$nftItem]);
-        } else {
-            // update session
-            session()->push('nft_item', $nftItem);
-        }
+        ])->delay(now()->addSeconds($currentRowNumber * 5));
 
         return new Nft([
             'serial_no' => $row['serial_no'],
