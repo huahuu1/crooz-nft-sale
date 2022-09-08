@@ -97,10 +97,6 @@ class CheckStatusTokenSaleCommand extends Command
                         $transaction->status = TokenSaleHistory::FAILED_STATUS;
                         $transaction->update();
                     }
-                } else {
-                    //Update Transaction As Fail
-                    $transaction->status = TokenSaleHistory::FAILED_STATUS;
-                    $transaction->update();
                 }
                 Log::info('[SUCCESS] Check status token sale for: '.$transaction->id.' ('.substr($transaction->tx_hash, 0, 10).')');
                 $this->info('[SUCCESS] Check status token sale for: '.$transaction->id.' ('.substr($transaction->tx_hash, 0, 10).')');
