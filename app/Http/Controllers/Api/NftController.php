@@ -51,10 +51,6 @@ class NftController extends Controller
         if (! $validator->fails()) {
             try {
                 $this->nftItemImport->importNft();
-                // get session nft to run job upload image to s3
-                if (! empty(session()->get('nft_item'))) {
-                    NftItemJob::dispatch()->delay(now()->seconds(10));
-                }
 
                 return response()->json([
                     'message' => 'Import nft successfully!!',
