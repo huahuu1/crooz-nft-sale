@@ -75,7 +75,7 @@ class UnlockUserTokenCommand extends Command
                 }
 
                 if ($checkDate) {
-                    $tokenSaleInfo = TokenSaleInfo::select('rule_id', 'price', 'end_date')->where('id', $unlockUserBalance->token_sale_id)->withExists('token_unlock_rule:id,rule_code')->first();
+                    $tokenSaleInfo = TokenSaleInfo::select('rule_id', 'price', 'end_date')->where('id', $unlockUserBalance->token_sale_id)->with('token_unlock_rule:id,rule_code')->first();
 
                     $tokenUnlockRule = collect($tokenSaleInfo->token_unlock_rule->all()[0]);
 
@@ -85,7 +85,7 @@ class UnlockUserTokenCommand extends Command
                         $unlockAmount = $unlockUserBalance->amount_lock * $tokenUnlockRule['rule_code'][$orderRun]['unlock_percentages'] / 100;
                     }
                     if ($unlockUserBalance->status != 0) {
-                        UpdateUnlockBalanceJob::dispatch($unlockUserBalance, $userBalance, $unlockAmount ? $unlockAmoun : 0)->delay(now()->addSeconds(($key + 1) * 3));
+                        UpdateUnlockBalanceJob::dispatch($unlockUserBalance, $userBalance, $unlockAmount ? $unlockAmount : 0)->delay(now()->addSeconds(($key + 1) * 3));
 
                         Log::info('[SUCCESS] Unlock token for user ID: '.$unlockUserBalance->user_id.' - sale token ID: '.$unlockUserBalance->token_sale_id);
                         $this->info('[SUCCESS] Unlock token for user ID: '.$unlockUserBalance->user_id.' - sale token ID: '.$unlockUserBalance->token_sale_id);

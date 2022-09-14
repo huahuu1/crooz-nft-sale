@@ -27,6 +27,6 @@ class TokenUnlockRule extends Model
 
     public function rule_code()
     {
-        return $this->hasMany(TokenUnlockRule::class, 'rule_code');
+        return $this->hasMany(TokenUnlockRule::class, 'rule_code', 'rule_code');
     }
 }
