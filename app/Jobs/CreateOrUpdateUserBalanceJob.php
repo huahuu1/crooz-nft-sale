@@ -47,7 +47,7 @@ class CreateOrUpdateUserBalanceJob implements ShouldQueue
     public function handle()
     {
         try {
-            $tokenSaleInfo = TokenSaleInfo::select('rule_id', 'price', 'end_date')->where('id', $this->transaction->token_sale_id)->withExists('token_unlock_rule:id,rule_code')->first();
+            $tokenSaleInfo = TokenSaleInfo::select('rule_id', 'price', 'end_date')->where('id', $this->transaction->token_sale_id)->with('token_unlock_rule:id,rule_code')->first();
 
             $tokenUnlockRule = collect($tokenSaleInfo->token_unlock_rule->all()[0]);
 
@@ -56,10 +56,20 @@ class CreateOrUpdateUserBalanceJob implements ShouldQueue
 
             $endDate = new Carbon($tokenSaleInfo->end_date);
 
-            $nextRunDate = $endDate->addDays($tokenUnlockRule['rule_code'][0]['period']);
+            switch ($tokenUnlockRule['rule_code'][0]['unit']) {
+                case 'DAY':
+                    $nextRunDate = $endDate->addDays($tokenUnlockRule['rule_code'][0]['period']);
+                    break;
+                case 'MONTH':
+                    $nextRunDate = $endDate->addMonths($tokenUnlockRule['rule_code'][0]['period']);
+                    break;
+                case 'YEAR':
+                    $nextRunDate = $endDate->addYears($tokenUnlockRule['rule_code'][0]['period']);
+                    break;
+            }
 
             UnlockUserBalance::create([
-                'token_id' => $this->transaction->token_id,
+                'token_id' => TokenMaster::GT,
                 'token_sale_id' => $this->transaction->token_sale_id,
                 'user_id' => $this->transaction->user_id,
                 'amount_lock' => $amountLock,

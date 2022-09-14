@@ -25,6 +25,14 @@ class TokenMaster extends Model
         'status',
     ];
 
+    public const USDT = 1;
+
+    public const ETH = 2;
+
+    public const GT = 3;
+
+    public const BNB = 4;
+
     /**
      * Display information of the token master by id.
      *

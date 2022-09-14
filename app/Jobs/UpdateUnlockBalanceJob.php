@@ -67,7 +67,17 @@ class UpdateUnlockBalanceJob implements ShouldQueue
                 $orderRun = $this->unlockUserBalance->current_order_unlock;
 
                 if ($orderRun < count($tokenUnlockRule['rule_code'])) {
-                    $nextRunDate = $currentRunDate->addDays($tokenUnlockRule['rule_code'][$orderRun]['period']);
+                    switch ($tokenUnlockRule['rule_code'][$orderRun]['unit']) {
+                        case 'DAY':
+                            $nextRunDate = $currentRunDate->addDays($tokenUnlockRule['rule_code'][$orderRun]['period']);
+                            break;
+                        case 'MONTH':
+                            $nextRunDate = $currentRunDate->addMonths($tokenUnlockRule['rule_code'][$orderRun]['period']);
+                            break;
+                        case 'YEAR':
+                            $nextRunDate = $currentRunDate->addYears($tokenUnlockRule['rule_code'][$orderRun]['period']);
+                            break;
+                    }
                 }
 
                 $this->unlockUserBalance->amount_lock_remain -= $this->unlockAmount;
