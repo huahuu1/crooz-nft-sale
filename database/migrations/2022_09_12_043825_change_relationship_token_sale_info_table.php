@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('token_sale_infos', function (Blueprint $table) {
-            $table->dropForeign('token_sale_infos_lock_id_foreign');
+            $table->dropForeign(['lock_id']);
             $table->dropColumn('lock_id');
             $table->foreignId('rule_id')->after('id')->constrained('token_unlock_rules');
         });
@@ -28,7 +28,9 @@ return new class extends Migration
     public function down()
     {
         Schema::table('token_sale_infos', function (Blueprint $table) {
-            $table->dropColumn('rule_code');
+            $table->dropForeign(['rule_id']);
+            $table->dropColumn('rule_id');
+            $table->foreignId('lock_id')->after('id')->constrained('lock_infos');
         });
     }
 };
