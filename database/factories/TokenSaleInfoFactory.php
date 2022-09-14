@@ -17,7 +17,7 @@ class TokenSaleInfoFactory extends Factory
     public function definition()
     {
         return [
-            'lock_id' => 1,
+            'rule_id' => 1,
             'start_date' => date('Y-m-d H:i:s'),
             'end_date' => date('Y-m-d H:i:s', strtotime('+30 days', time())),
             'total' => 100000,

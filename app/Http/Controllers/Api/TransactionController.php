@@ -10,7 +10,6 @@ use App\Models\NftAuctionHistory;
 use App\Models\NftAuctionInfo;
 use App\Models\TokenMaster;
 use App\Models\TokenSaleHistory;
-use App\Models\User;
 use App\Services\UserService;
 use Exception;
 use Illuminate\Http\Request;
@@ -65,7 +64,7 @@ class TransactionController extends Controller
             TokenSaleHistory::create([
                 'user_id' => $user->id,
                 'token_id' => $request->token_id,
-                'token_sale_id' => 1,
+                'token_sale_id' => $request->token_sale_id,
                 'amount' => $request->amount,
                 'status' => TokenSaleHistory::PENDING_STATUS,
                 'tx_hash' => $request->tx_hash,
@@ -130,7 +129,7 @@ class TransactionController extends Controller
             NftAuctionHistory::create([
                 'user_id' => $user->id,
                 'token_id' => $request->token_id,
-                'nft_auction_id' => 1,
+                'nft_auction_id' => $request->nft_auction_id,
                 'amount' => $request->amount,
                 'status' => NftAuctionHistory::PENDING_STATUS,
                 'tx_hash' => $request->tx_hash,

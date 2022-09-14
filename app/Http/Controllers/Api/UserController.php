@@ -131,12 +131,10 @@ class UserController extends Controller
     public function checkEmailUserByWalletAddress($walletAddress)
     {
         try {
-            $user = User::select('email')->where('wallet_address', $walletAddress)
-                                         ->whereNotNull('email')
-                                         ->count();
+            $email = $this->userService->hasVerifiedEmailByWalletAddress($walletAddress);
 
             return response()->json([
-                'data' => $user ? true : false,
+                'data' => $email ? true : false,
             ], 200);
         } catch (Exception $e) {
             Log::error($e);

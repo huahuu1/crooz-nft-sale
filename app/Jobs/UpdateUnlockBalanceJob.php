@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\TokenSaleInfo;
 use App\Models\UnlockBalanceHistory;
 use Carbon\Carbon;
 use Exception;
@@ -27,7 +28,7 @@ class UpdateUnlockBalanceJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($unlockUserBalance, $userBalance, $unlockAmount)
+    public function __construct($unlockUserBalance, $userBalance, $unlockAmount = 0)
     {
         $this->unlockUserBalance = $unlockUserBalance;
         $this->userBalance = $userBalance;
@@ -57,8 +58,17 @@ class UpdateUnlockBalanceJob implements ShouldQueue
                     'release_token_date' => Carbon::now(),
                 ]);
             } else {
+                $tokenSaleInfo = TokenSaleInfo::select('rule_id', 'price', 'end_date')->where('id', $this->unlockUserBalance->token_sale_id)->with('token_unlock_rule:id,rule_code')->first();
+
+                $tokenUnlockRule = collect($tokenSaleInfo->token_unlock_rule->all()[0]);
+
                 $currentRunDate = new Carbon($this->unlockUserBalance->next_run_date);
-                $nextRunDate = $currentRunDate->addDays($this->unlockUserBalance->token_sale->lock_info->lock_day);
+
+                $orderRun = $this->unlockUserBalance->current_order_unlock;
+
+                if ($orderRun < count($tokenUnlockRule['rule_code'])) {
+                    $nextRunDate = $currentRunDate->addDays($tokenUnlockRule['rule_code'][$orderRun]['period']);
+                }
 
                 $this->unlockUserBalance->amount_lock_remain -= $this->unlockAmount;
                 $this->unlockUserBalance->next_run_date = $nextRunDate;
@@ -68,6 +78,7 @@ class UpdateUnlockBalanceJob implements ShouldQueue
                     $this->unlockUserBalance->next_run_date = null;
                 }
 
+                $this->unlockUserBalance->current_order_unlock = $orderRun + 1;
                 $this->unlockUserBalance->update();
 
                 $this->userBalance->amount_lock -= $this->unlockAmount;
