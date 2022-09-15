@@ -93,21 +93,18 @@ class UserController extends Controller
                 ], 404);
             }
 
-            $userBalance = $this->userBalanceService->getUserBalances($user->id);
-            if ($userBalance->count() > 0) {
-                return response()->json([
-                    'message' => 'The balance of this user already exists',
-                ], 500);
-            }
+            $userBalance = $this->userBalanceService->hasBalancesByUserId($user->id);
 
-            $tokenList = TokenMaster::all();
-            foreach ($tokenList as $token) {
-                UserBalance::create([
-                    'user_id' => $user->id,
-                    'token_id' => $token->id,
-                    'amount_total' => 0,
-                    'amount_lock' => 0,
-                ]);
+            if (! $userBalance) {
+                $tokenList = TokenMaster::all();
+                foreach ($tokenList as $token) {
+                    UserBalance::create([
+                        'user_id' => $user->id,
+                        'token_id' => $token->id,
+                        'amount_total' => 0,
+                        'amount_lock' => 0,
+                    ]);
+                }
             }
 
             return response()->json([

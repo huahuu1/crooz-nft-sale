@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\TokenUnlockRule;
-
 class TokenUnlockRuleService
 {
     /**
@@ -11,10 +9,8 @@ class TokenUnlockRuleService
      *
      * @return \Illuminate\Http\Response
      */
-    public function getUnlockInfo($id)
+    public function getUnlockRule($tokenUnlockRule)
     {
-        $tokenUnlockRule = TokenUnlockRule::where('id', $id)->first();
-
-        return TokenUnlockRule::where('rule_code', $tokenUnlockRule->rule_code)->get();
+        return collect($tokenUnlockRule);
     }
 }
