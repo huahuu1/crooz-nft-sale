@@ -51,7 +51,7 @@ class CreateOrUpdateUserBalanceJob implements ShouldQueue
     {
         try {
             //get info of token sale
-            $tokenSaleInfo = $this->saleInfoService->getSaleInfo($this->transaction->token_sale_id);
+            $tokenSaleInfo = $this->saleInfoService->getSaleInfoAndUnlockRule($this->transaction->token_sale_id);
             //the next date to run unlock
             $nextRunDate = $this->calculateNextRunDate($tokenSaleInfo->token_unlock_rules[0]->unit, $tokenSaleInfo->token_unlock_rules[0]->period, $tokenSaleInfo->end_date);
             //exchange rate between tokens and GT

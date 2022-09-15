@@ -64,7 +64,7 @@ class UpdateUnlockBalanceJob implements ShouldQueue
                 ]);
             } else {
                 //get info of token sale
-                $tokenSaleInfo = $this->saleInfoService->getSaleInfo($this->unlockUserBalance->token_sale_id);
+                $tokenSaleInfo = $this->saleInfoService->getSaleInfoAndUnlockRule($this->unlockUserBalance->token_sale_id);
                 //the order of unlock rule
                 $orderRun = $this->unlockUserBalance->current_order_unlock;
                 //the next date to run unlock

@@ -29,13 +29,6 @@ class TokenSaleInfo extends Model
     ];
 
     /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array
-     */
-    protected $appends = ['token_unlock_rules'];
-
-    /**
      * Get token unlock rule
      *
      * @return TokenUnlockRule

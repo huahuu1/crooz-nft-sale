@@ -12,8 +12,11 @@ class SaleInfoService
      * @param id
      * @return tokenSaleInfo
      */
-    public function getSaleInfo($id)
+    public function getSaleInfoAndUnlockRule($id)
     {
-        return TokenSaleInfo::select('rule_id', 'price', 'end_date')->where('id', $id)->first();
+        $tokenSaleInfo = TokenSaleInfo::select('rule_id', 'price', 'end_date')->where('id', $id)->first();
+        $tokenSaleInfo['token_unlock_rules'] = $tokenSaleInfo->token_unlock_rules;
+
+        return $tokenSaleInfo;
     }
 }
