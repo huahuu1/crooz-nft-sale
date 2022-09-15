@@ -6,7 +6,6 @@ use App\Models\TokenMaster;
 use App\Models\UnlockUserBalance;
 use App\Models\UserBalance;
 use App\Services\SaleInfoService;
-use App\Services\TokenUnlockRuleService;
 use App\Services\UserBalanceService;
 use App\Services\UserService;
 use App\Traits\CalculateNextRunDate;
@@ -30,8 +29,6 @@ class CreateOrUpdateUserBalanceJob implements ShouldQueue
 
     protected $saleInfoService;
 
-    protected $tokenUnlockRuleService;
-
     /**
      * Create a new job instance.
      *
@@ -42,7 +39,6 @@ class CreateOrUpdateUserBalanceJob implements ShouldQueue
         $this->userService = new UserService();
         $this->userBalanceService = new UserBalanceService();
         $this->saleInfoService = new SaleInfoService();
-        $this->tokenUnlockRuleService = new TokenUnlockRuleService();
         $this->transaction = $transaction;
     }
 
@@ -56,10 +52,8 @@ class CreateOrUpdateUserBalanceJob implements ShouldQueue
         try {
             //get info of token sale
             $tokenSaleInfo = $this->saleInfoService->getSaleInfo($this->transaction->token_sale_id);
-            //get token unlock rule
-            $tokenUnlockRule = $this->tokenUnlockRuleService->getUnlockRule($tokenSaleInfo->token_unlock_rule->all()[0]);
             //the next date to run unlock
-            $nextRunDate = $this->calculateNextRunDate($tokenUnlockRule['rule_code'][0]['unit'], $tokenUnlockRule['rule_code'][0]['period'], $tokenSaleInfo->end_date);
+            $nextRunDate = $this->calculateNextRunDate($tokenSaleInfo->token_unlock_rules[0]->unit, $tokenSaleInfo->token_unlock_rules[0]->period, $tokenSaleInfo->end_date);
             //exchange rate between tokens and GT
             $amountLock = $this->transaction->amount * $tokenSaleInfo->price;
 

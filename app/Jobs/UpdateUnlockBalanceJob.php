@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Models\UnlockBalanceHistory;
 use App\Services\SaleInfoService;
-use App\Services\TokenUnlockRuleService;
 use App\Traits\CalculateNextRunDate;
 use Carbon\Carbon;
 use Exception;
@@ -27,8 +26,6 @@ class UpdateUnlockBalanceJob implements ShouldQueue
 
     protected $saleInfoService;
 
-    protected $tokenUnlockRuleService;
-
     /**
      * Create a new job instance.
      *
@@ -40,7 +37,6 @@ class UpdateUnlockBalanceJob implements ShouldQueue
         $this->userBalance = $userBalance;
         $this->unlockAmount = $unlockAmount;
         $this->saleInfoService = new SaleInfoService();
-        $this->tokenUnlockRuleService = new TokenUnlockRuleService();
     }
 
     /**
@@ -69,13 +65,11 @@ class UpdateUnlockBalanceJob implements ShouldQueue
             } else {
                 //get info of token sale
                 $tokenSaleInfo = $this->saleInfoService->getSaleInfo($this->unlockUserBalance->token_sale_id);
-                //get token unlock rule
-                $tokenUnlockRule = $this->tokenUnlockRuleService->getUnlockRule($tokenSaleInfo->token_unlock_rule->all()[0]);
                 //the order of unlock rule
                 $orderRun = $this->unlockUserBalance->current_order_unlock;
                 //the next date to run unlock
-                if ($this->unlockUserBalance->current_order_unlock < count($tokenUnlockRule['rule_code'])) {
-                    $nextRunDate = $this->calculateNextRunDate($tokenUnlockRule['rule_code'][$orderRun]['unit'], $tokenUnlockRule['rule_code'][$orderRun]['period'], $this->unlockUserBalance->next_run_date);
+                if ($this->unlockUserBalance->current_order_unlock < $tokenSaleInfo->token_unlock_rules->count()) {
+                    $nextRunDate = $this->calculateNextRunDate($tokenSaleInfo->token_unlock_rules[$orderRun]->unit, $tokenSaleInfo->token_unlock_rules[$orderRun]->period, $this->unlockUserBalance->next_run_date);
                 }
                 //update unlock user balance then update the next run date
                 $this->unlockUserBalance->amount_lock_remain -= $this->unlockAmount;

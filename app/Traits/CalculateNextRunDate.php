@@ -7,7 +7,7 @@ use Carbon\Carbon;
 trait CalculateNextRunDate
 {
     /**
-     * @param  $unit, $period, $date
+     * @param    $unit, $period, $date
      * @return $runDate
      */
     public function calculateNextRunDate($unit, $period, $date)

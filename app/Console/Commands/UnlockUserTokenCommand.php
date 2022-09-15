@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Jobs\UpdateUnlockBalanceJob;
 use App\Models\UnlockUserBalance;
 use App\Services\SaleInfoService;
-use App\Services\TokenUnlockRuleService;
 use App\Services\UserBalanceService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -26,8 +25,6 @@ class UnlockUserTokenCommand extends Command
 
     protected $saleInfoService;
 
-    protected $tokenUnlockRuleService;
-
     /**
      * The console command description.
      *
@@ -46,7 +43,6 @@ class UnlockUserTokenCommand extends Command
         $this->unlockUserBalance = new UnlockUserBalance();
         $this->userBalanceService = new UserBalanceService();
         $this->saleInfoService = new SaleInfoService();
-        $this->tokenUnlockRuleService = new TokenUnlockRuleService();
     }
 
     /**
@@ -84,16 +80,12 @@ class UnlockUserTokenCommand extends Command
                 if ($checkDate) {
                     //get info of token sale
                     $tokenSaleInfo = $this->saleInfoService->getSaleInfo($unlockUserBalance->token_sale_id);
-                    //get token unlock rule
-                    $tokenUnlockRule = $this->tokenUnlockRuleService->getUnlockRule($tokenSaleInfo->token_unlock_rule->all()[0]);
                     //the order of unlock rule
                     $orderRun = $unlockUserBalance->current_order_unlock;
-
                     //calculate the amount to unlock
-                    if ($orderRun < count($tokenUnlockRule['rule_code'])) {
-                        $unlockAmount = $unlockUserBalance->amount_lock * $tokenUnlockRule['rule_code'][$orderRun]['unlock_percentages'] / 100;
+                    if ($orderRun < $tokenSaleInfo->token_unlock_rules->count()) {
+                        $unlockAmount = $unlockUserBalance->amount_lock * $tokenSaleInfo->token_unlock_rules[$orderRun]->unlock_percentages / 100;
                     }
-
                     //unlock when status is not 0
                     if ($unlockUserBalance->status != 0) {
                         UpdateUnlockBalanceJob::dispatch($unlockUserBalance, $userBalance, $unlockAmount ? $unlockAmount : 0)->delay(now()->addSeconds(($key + 1) * 3));
