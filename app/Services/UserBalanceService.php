@@ -15,11 +15,9 @@ class UserBalanceService
      */
     public function getUserBalanceByTokenId($userId, $tokenId)
     {
-        $balance = UserBalance::where('user_id', $userId)
-                              ->where('token_id', $tokenId)
-                              ->first();
-
-        return $balance;
+        return UserBalance::where('user_id', $userId)
+                          ->where('token_id', $tokenId)
+                          ->first();
     }
 
     /**
@@ -30,11 +28,20 @@ class UserBalanceService
      */
     public function getUserBalances($userId)
     {
-        $balances = UserBalance::where('user_id', $userId)
-                               ->where('token_id', UserBalance::GT)
-                               ->with('token_master')
-                               ->get();
+        return UserBalance::where('user_id', $userId)
+                          ->where('token_id', UserBalance::GT)
+                          ->with('token_master')
+                          ->get();
+    }
 
-        return $balances;
+    /**
+     * Checking user has balance or not by user id.
+     *
+     * @param walletAddress
+     * @return balances
+     */
+    public function hasBalancesByUserId($userId)
+    {
+        return UserBalance::where('user_id', $userId)->count();
     }
 }
