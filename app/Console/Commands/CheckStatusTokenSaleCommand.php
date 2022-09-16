@@ -54,13 +54,12 @@ class CheckStatusTokenSaleCommand extends Command
     {
         $company_wallet = env('COMPANY_WALLET');
         $contract_wallet = env('CONTRACT_WALLET_USDT');
-
-        $pendingTransactions = $this->transactions->pendingTokenSaleTransactions();
-
-        $pendingTransactions->chunkById(100, function ($transactions) use ($company_wallet, $contract_wallet) {
-            foreach ($transactions as $key => $transaction) {
+        // run 15 row in 1 min
+        $pendingTransactions = $this->transactions->pendingTokenSaleTransactions()->limit(15)->get();
+        if (! empty($pendingTransactions)) {
+            foreach ($pendingTransactions as $key => $transaction) {
                 UpdateStatusTokenSaleJob::dispatch($transaction, $company_wallet, $contract_wallet, $key)->delay(now()->addSeconds(($key + 1) * 3));
             }
-        }, 'id');
+        }
     }
 }
