@@ -26,4 +26,10 @@ class CashFlow extends Model
         'transaction_type',
         'tx_hash',
     ];
+
+    public const TOKEN_WITHDRAWAL = 1;
+
+    public const TOKEN_DEPOSIT = 2;
+
+    public const NFT_DEPOSIT = 3;
 }

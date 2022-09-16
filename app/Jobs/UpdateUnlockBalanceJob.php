@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Models\UnlockBalanceHistory;
 use App\Services\SaleInfoService;
+use App\Services\UnlockBalanceHistoryService;
 use App\Traits\CalculateNextRunDate;
 use Carbon\Carbon;
 use Exception;
@@ -26,6 +26,8 @@ class UpdateUnlockBalanceJob implements ShouldQueue
 
     protected $saleInfoService;
 
+    protected $unlockBalanceHistoryService;
+
     /**
      * Create a new job instance.
      *
@@ -37,6 +39,7 @@ class UpdateUnlockBalanceJob implements ShouldQueue
         $this->userBalance = $userBalance;
         $this->unlockAmount = $unlockAmount;
         $this->saleInfoService = new SaleInfoService();
+        $this->unlockBalanceHistoryService = new UnlockBalanceHistoryService();
     }
 
     /**
@@ -56,12 +59,8 @@ class UpdateUnlockBalanceJob implements ShouldQueue
                 //update user balance
                 $this->userBalance->amount_lock -= $this->userBalance->amount_lock;
                 $this->userBalance->update();
-
-                UnlockBalanceHistory::create([
-                    'unlock_id' => $this->unlockUserBalance->id,
-                    'amount' => $this->unlockAmount,
-                    'release_token_date' => Carbon::now(),
-                ]);
+                //create unlock balance history data
+                $this->unlockBalanceHistoryService->createUnlockBalanceHistory($this->unlockUserBalance->id, $this->unlockAmount, Carbon::now());
             } else {
                 //get info of token sale
                 $tokenSaleInfo = $this->saleInfoService->getSaleInfoAndUnlockRule($this->unlockUserBalance->token_sale_id);
@@ -74,7 +73,6 @@ class UpdateUnlockBalanceJob implements ShouldQueue
                 //update unlock user balance then update the next run date
                 $this->unlockUserBalance->amount_lock_remain -= $this->unlockAmount;
                 $this->unlockUserBalance->next_run_date = $nextRunDate;
-
                 //case unlock 100%: update next_run_date = null after run
                 if ((int) $this->unlockUserBalance->amount_lock == $this->unlockAmount) {
                     $this->unlockUserBalance->next_run_date = null;
@@ -85,12 +83,8 @@ class UpdateUnlockBalanceJob implements ShouldQueue
                 //update user balance
                 $this->userBalance->amount_lock -= $this->unlockAmount;
                 $this->userBalance->update();
-
-                UnlockBalanceHistory::create([
-                    'unlock_id' => $this->unlockUserBalance->id,
-                    'amount' => $this->unlockAmount,
-                    'release_token_date' => Carbon::now(),
-                ]);
+                //create unlock balance history data
+                $this->unlockBalanceHistoryService->createUnlockBalanceHistory($this->unlockUserBalance->id, $this->unlockAmount, Carbon::now());
             }
         } catch (Exception $e) {
             Log::error($e);

@@ -9,8 +9,8 @@ class AdminService
     /**
      * Get balances of a user follow token id
      *
-     * @param walletAddress
-     * @return user
+     * @param $id
+     * @return Admin
      */
     public function getAdminById($id)
     {

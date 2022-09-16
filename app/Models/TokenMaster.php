@@ -34,12 +34,22 @@ class TokenMaster extends Model
     public const BNB = 4;
 
     /**
+     * Display information of the token master.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public static function getTokenMasters()
+    {
+        return TokenMaster::select('id', 'name', 'code', 'description', 'status')->get();
+    }
+
+    /**
      * Display information of the token master by id.
      *
      * @return \Illuminate\Http\Response
      */
     public static function getTokenMasterById($id)
     {
-        return TokenMaster::find($id);
+        return TokenMaster::select('id', 'name', 'code', 'description', 'status')->find($id);
     }
 }
