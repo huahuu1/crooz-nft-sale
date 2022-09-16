@@ -9,18 +9,19 @@ class UserService
     /**
      * Get balances of a user follow token id
      *
-     * @param walletAddress
-     * @return user
+     * @param $walletAddress
+     * @return User
      */
     public function getUserByWalletAddress($walletAddress)
     {
-        return User::where('wallet_address', $walletAddress)->first();
+        return User::select('id', 'email', 'wallet_address', 'token_validate', 'status')->where('wallet_address', $walletAddress)->first();
     }
 
     /**
      * Checking user has email or not by wallet address.
      *
-     * @return \Illuminate\Http\Response
+     * @param $walletAddress
+     * @return User
      */
     public function hasVerifiedEmailByWalletAddress($walletAddress)
     {
@@ -32,7 +33,8 @@ class UserService
     /**
      * Checking user has email or not by user id.
      *
-     * @return \Illuminate\Http\Response
+     * @param $userId
+     * @return User
      */
     public function hasVerifiedEmailByUserId($userId)
     {

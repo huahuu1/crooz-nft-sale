@@ -79,7 +79,7 @@ class UnlockUserTokenCommand extends Command
 
                 if ($checkDate) {
                     //get info of token sale
-                    $tokenSaleInfo = $this->saleInfoService->getSaleInfo($unlockUserBalance->token_sale_id);
+                    $tokenSaleInfo = $this->saleInfoService->getSaleInfoAndUnlockRule($unlockUserBalance->token_sale_id);
                     //the order of unlock rule
                     $orderRun = $unlockUserBalance->current_order_unlock;
                     //calculate the amount to unlock

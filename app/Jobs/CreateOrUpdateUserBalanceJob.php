@@ -3,9 +3,8 @@
 namespace App\Jobs;
 
 use App\Models\TokenMaster;
-use App\Models\UnlockUserBalance;
-use App\Models\UserBalance;
 use App\Services\SaleInfoService;
+use App\Services\UnlockUserBalanceService;
 use App\Services\UserBalanceService;
 use App\Services\UserService;
 use App\Traits\CalculateNextRunDate;
@@ -29,6 +28,8 @@ class CreateOrUpdateUserBalanceJob implements ShouldQueue
 
     protected $saleInfoService;
 
+    protected $unlockUserBalanceService;
+
     /**
      * Create a new job instance.
      *
@@ -39,6 +40,7 @@ class CreateOrUpdateUserBalanceJob implements ShouldQueue
         $this->userService = new UserService();
         $this->userBalanceService = new UserBalanceService();
         $this->saleInfoService = new SaleInfoService();
+        $this->unlockUserBalanceService = new UnlockUserBalanceService();
         $this->transaction = $transaction;
     }
 
@@ -51,20 +53,13 @@ class CreateOrUpdateUserBalanceJob implements ShouldQueue
     {
         try {
             //get info of token sale
-            $tokenSaleInfo = $this->saleInfoService->getSaleInfo($this->transaction->token_sale_id);
+            $tokenSaleInfo = $this->saleInfoService->getSaleInfoAndUnlockRule($this->transaction->token_sale_id);
             //the next date to run unlock
             $nextRunDate = $this->calculateNextRunDate($tokenSaleInfo->token_unlock_rules[0]->unit, $tokenSaleInfo->token_unlock_rules[0]->period, $tokenSaleInfo->end_date);
             //exchange rate between tokens and GT
             $amountLock = $this->transaction->amount * $tokenSaleInfo->price;
 
-            UnlockUserBalance::create([
-                'token_id' => TokenMaster::GT,
-                'token_sale_id' => $this->transaction->token_sale_id,
-                'user_id' => $this->transaction->user_id,
-                'amount_lock' => $amountLock,
-                'amount_lock_remain' => $amountLock,
-                'next_run_date' => $nextRunDate,
-            ]);
+            $this->unlockUserBalanceService->createUnlockUserBalance(TokenMaster::GT, $this->transaction->token_sale_id, $this->transaction->user_id, $amountLock, $amountLock, $nextRunDate);
 
             //check the user has email or not
             $email = $this->userService->hasVerifiedEmailByUserId($this->transaction->user_id);
@@ -72,14 +67,9 @@ class CreateOrUpdateUserBalanceJob implements ShouldQueue
             if (! $email) {
                 $hasBalance = $this->userBalanceService->hasBalancesByUserId($this->transaction->user_id);
                 if (! $hasBalance) {
-                    $tokenList = TokenMaster::all();
+                    $tokenList = TokenMaster::getTokenMasters();
                     foreach ($tokenList as $token) {
-                        UserBalance::create([
-                            'user_id' => $this->transaction->user_id,
-                            'token_id' => $token->id,
-                            'amount_total' => 0,
-                            'amount_lock' => 0,
-                        ]);
+                        $this->userBalanceService->createUserBalance($this->transaction->user_id, $token->id, 0, 0);
                     }
                 }
             }

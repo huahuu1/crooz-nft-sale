@@ -5,9 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SwapTokenRequest;
 use App\Http\Requests\WithdrawRequest;
-use App\Models\NftAuctionHistory;
-use App\Models\TokenSaleHistory;
 use App\Models\UserWithdrawal;
+use App\Services\HistoryListService;
 use App\Services\UserBalanceService;
 use App\Services\UserNftService;
 use App\Services\UserService;
@@ -27,6 +26,8 @@ class MyPageController extends Controller
 
     protected $userNftService;
 
+    protected $historyListService;
+
     /**
      * MyPageController constructor.
      *
@@ -36,12 +37,14 @@ class MyPageController extends Controller
         UserBalanceService $userBalanceService,
         UserService $userService,
         UserWithdrawalService $userWithdrawalService,
-        UserNftService $userNftService
+        UserNftService $userNftService,
+        HistoryListService $historyListService
     ) {
         $this->userBalanceService = $userBalanceService;
         $this->userService = $userService;
         $this->userWithdrawalService = $userWithdrawalService;
         $this->userNftService = $userNftService;
+        $this->historyListService = $historyListService;
     }
 
     /**
@@ -61,23 +64,9 @@ class MyPageController extends Controller
             ], 404);
         }
 
-        $tokenSaleHistory = TokenSaleHistory::select(
-            'token_sale_histories.*',
-            'cash_flows.transaction_type as transaction_type'
-        )
-                                            ->with(['user', 'token_master'])
-                                            ->join('cash_flows', 'token_sale_histories.tx_hash', '=', 'cash_flows.tx_hash')
-                                            ->where('token_sale_histories.user_id', $user->id)
-                                            ->get();
+        $tokenSaleHistory = $this->historyListService->getTokenSaleHistories($user->id);
 
-        $nftAuctionHistory = NftAuctionHistory::select(
-            'nft_auction_histories.*',
-            'cash_flows.transaction_type as transaction_type'
-        )
-                                            ->with(['user', 'token_master'])
-                                            ->join('cash_flows', 'nft_auction_histories.tx_hash', '=', 'cash_flows.tx_hash')
-                                            ->where('nft_auction_histories.user_id', $user->id)
-                                            ->get();
+        $nftAuctionHistory = $this->historyListService->getNftAuctionHistories($user->id);
 
         $result = collect($tokenSaleHistory)->merge(collect($nftAuctionHistory))->sortByDesc('created_at')->paginate($maxPerPage);
 
@@ -152,17 +141,12 @@ class MyPageController extends Controller
                 ], 500);
             }
 
-            UserWithdrawal::create([
-                'user_id' => $user->id,
-                'token_id' => $request->token_id,
-                'amount' => $request->amount,
-                'request_time' => Carbon::now(),
-                'status' => UserWithdrawal::REQUESTING_STATUS,
-            ]);
+            //create user withdrawal data
+            $this->userWithdrawalService->createUserWithdrawal($user->id, $request->token_id, $request->amount, Carbon::now(), UserWithdrawal::REQUESTING_STATUS);
 
             //update amount total
             $userBalance->amount_total -= $request->amount;
-            $userBalance->save();
+            $userBalance->update();
 
             return response()->json([
                 'message' => 'Withdraw request successfully',
@@ -195,7 +179,7 @@ class MyPageController extends Controller
 
             //update withdrawl reques status
             $userWithdrawal->status = $request->status;
-            $userWithdrawal->save();
+            $userWithdrawal->update();
 
             //case reject withdrawl request: refund to user's balance
             //delete withdraw request after reject
@@ -203,7 +187,7 @@ class MyPageController extends Controller
                 $userBalance = $this->userBalanceService->getUserBalanceByTokenId($userWithdrawal->user_id, $userWithdrawal->token_id);
 
                 $userBalance->amount_total += $userWithdrawal->amount;
-                $userBalance->save();
+                $userBalance->update();
 
                 $userWithdrawal->where('id', $request->id)->delete();
             }
@@ -250,8 +234,8 @@ class MyPageController extends Controller
             $userBalanceTokenFrom->amount_total -= $request->amount;
             $userBalanceTokenTo->amount_total += $request->amount;
 
-            $userBalanceTokenFrom->save();
-            $userBalanceTokenTo->save();
+            $userBalanceTokenFrom->update();
+            $userBalanceTokenTo->update();
 
             return response()->json([
                 'message' => 'Swap token successfully',

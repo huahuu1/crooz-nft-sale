@@ -7,7 +7,6 @@ use App\Http\Requests\UserBalanceRequest;
 use App\Http\Requests\UserRequest;
 use App\Models\TokenMaster;
 use App\Models\User;
-use App\Models\UserBalance;
 use App\Services\UserBalanceService;
 use App\Services\UserService;
 use Exception;
@@ -40,7 +39,7 @@ class UserController extends Controller
     public function index()
     {
         return response()->json([
-            'data' => User::all(),
+            'data' => User::select('id', 'email', 'wallet_address', 'token_validate', 'status')->get(),
         ]);
     }
 
@@ -96,14 +95,9 @@ class UserController extends Controller
             $userBalance = $this->userBalanceService->hasBalancesByUserId($user->id);
 
             if (! $userBalance) {
-                $tokenList = TokenMaster::all();
+                $tokenList = TokenMaster::getTokenMasters();
                 foreach ($tokenList as $token) {
-                    UserBalance::create([
-                        'user_id' => $user->id,
-                        'token_id' => $token->id,
-                        'amount_total' => 0,
-                        'amount_lock' => 0,
-                    ]);
+                    $this->userBalanceService->createUserBalance($this->transaction->user_id, $token->id, 0, 0);
                 }
             }
 

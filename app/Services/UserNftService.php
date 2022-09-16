@@ -9,8 +9,8 @@ class UserNftService
     /**
      * Get nfts of a user
      *
-     * @param walletAddress
-     * @return nfts
+     * @param $userId
+     * @return Nft
      */
     public function getUserNfts($userId)
     {
