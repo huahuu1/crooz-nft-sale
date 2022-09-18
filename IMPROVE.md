@@ -24,3 +24,16 @@ Usage: Run the command below for checking errors
 ```
 composer run analyse
 ```
+
+## 4. Install squizlabs/php_codesniffer package
+Ref: https://github.com/nunomaduro/larastan \
+For: `Coding standard` \
+Usage: \
+Check coding standard
+```
+composer run sniffer
+```
+Correct coding standard
+```
+composer run sniffer:fix
+```

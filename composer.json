@@ -28,7 +28,8 @@
         "nunomaduro/collision": "^6.1",
         "nunomaduro/larastan": "^2.2",
         "phpunit/phpunit": "^9.5.10",
-        "spatie/laravel-ignition": "^1.0"
+        "spatie/laravel-ignition": "^1.0",
+        "squizlabs/php_codesniffer": "^3.7.1"
     },
     "autoload": {
         "psr-4": {
@@ -65,6 +66,12 @@
         ],
         "analyse": [
             "./vendor/bin/phpstan analyse --memory-limit=2G"
+        ],
+        "sniffer": [
+            "./vendor/bin/phpcs --standard=phpcs.xml"
+        ],
+        "sniffer:fix": [
+            "./vendor/bin/phpcbf --standard=phpcs.xml"
         ]
     },
     "extra": {
