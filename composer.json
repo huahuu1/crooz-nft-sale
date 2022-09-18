@@ -26,6 +26,7 @@
         "laravel/telescope": "^4.9",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^6.1",
+        "nunomaduro/larastan": "^2.2",
         "phpunit/phpunit": "^9.5.10",
         "spatie/laravel-ignition": "^1.0"
     },
@@ -61,6 +62,9 @@
         "ide-helper": [
             "@php artisan ide-helper:generate",
             "@php artisan ide-helper:models --nowrite"
+        ],
+        "analyse": [
+            "./vendor/bin/phpstan analyse --memory-limit=2G"
         ]
     },
     "extra": {
