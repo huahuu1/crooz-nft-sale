@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Jobs\UpdateStatusTokenSaleJob;
 use App\Models\TokenSaleHistory;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class CheckStatusTokenSaleCommand extends Command
 {
