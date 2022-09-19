@@ -49,6 +49,7 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
     public function handle()
     {
         try {
+            Log::info("UpdateStatusTokenSaleJob::" . $this->transaction);
             //get transaction information from bscscan
             $result = $this->checkWithApiScan($this->transaction->tx_hash);
             $response = $result['response'];
@@ -64,12 +65,12 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
             }
 
             //validate response
-            if (! empty($result['transaction_status']['result'])) {
+            if (!empty($result['transaction_status']['result'])) {
                 if ($response && array_key_exists('result', $response)) {
                     $result = $response['result'];
                     //Validate transaction destination with our account
                     if ((strtolower($result['to']) == strtolower($this->company_wallet)
-                        || strtolower($result['to']) == strtolower($this->contract_wallet))
+                            || strtolower($result['to']) == strtolower($this->contract_wallet))
                         && $blockNumberCount >= env('SUCCESS_TRANSACTION_BNB_BLOCK_COUNT')
                         && $transactionStatus
                     ) {
@@ -80,14 +81,14 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
                         CreateOrUpdateUserBalanceJob::dispatch($this->transaction)->delay(now()->addSeconds(($this->key + 1) * 3));
                     }
 
-                    if (! $transactionStatus) {
+                    if (!$transactionStatus) {
                         //Update Transaction As Fail
                         $this->transaction->status = TokenSaleHistory::FAILED_STATUS;
                         $this->transaction->update();
                     }
                 }
             }
-            Log::info('[SUCCESS] Check status token sale for: '.$this->transaction->id.' ('.substr($this->transaction->tx_hash, 0, 10).')');
+            Log::info('[SUCCESS] Check status token sale for: ' . $this->transaction->id . ' (' . substr($this->transaction->tx_hash, 0, 10) . ')');
         } catch (Exception $e) {
             Log::error($e);
         }
@@ -120,10 +121,10 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
                 $client = new ClientBsc($api_key, $apiConfBsc);
                 break;
         }
-        info("UpdateStatusTokenSaleJob checkWithApiScan - transaction hash::".$transaction_hash);
-        info("UpdateStatusTokenSaleJob checkWithApiScan - api key::".$api_key);
-        info("UpdateStatusTokenSaleJob checkWithApiScan - apiConfEthers::".$apiConfEthers);
-        info("UpdateStatusTokenSaleJob checkWithApiScan - apiConfBsc:: ".$apiConfBsc);
+        Log::info("UpdateStatusTokenSaleJob checkWithApiScan - transaction hash::" . $transaction_hash);
+        Log::info("UpdateStatusTokenSaleJob checkWithApiScan - api key::" . $api_key);
+        Log::info("UpdateStatusTokenSaleJob checkWithApiScan - apiConfEthers::" . $apiConfEthers);
+        Log::info("UpdateStatusTokenSaleJob checkWithApiScan - apiConfBsc:: " . $apiConfBsc);
 
         //get block of the transaction
         $transactionBlockNumber = $client->api('proxy')->getTransactionByHash($transaction_hash)['result']['blockNumber'];
