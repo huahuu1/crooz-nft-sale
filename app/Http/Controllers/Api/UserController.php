@@ -97,7 +97,7 @@ class UserController extends Controller
             if (! $userBalance) {
                 $tokenList = TokenMaster::getTokenMasters();
                 foreach ($tokenList as $token) {
-                    $this->userBalanceService->createUserBalance($this->transaction->user_id, $token->id, 0, 0);
+                    $this->userBalanceService->createUserBalance($user->id, $token->id, 0, 0);
                 }
             }
 
