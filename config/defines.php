@@ -20,5 +20,5 @@ return [
         'company_token_sale' => env('COMPANY_WALLET', '0x1B73dA81086D6BF763e0f3b7622740F335B04927'),
         'company_nft' => env('NFT_COMPANY_WALLET', '0x3e91A94484f04e7b8B5a0156e2373D4788F8Cc8d'),
     ],
-    'scan_api' => 'bsc'
+    'scan_api' => 'BSC'
 ];
