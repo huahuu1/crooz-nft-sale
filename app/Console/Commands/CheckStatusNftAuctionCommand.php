@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Jobs\UpdateStatusNftAuctionJob;
 use App\Models\NftAuctionHistory;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class CheckStatusNftAuctionCommand extends Command
 {
@@ -56,8 +57,9 @@ class CheckStatusNftAuctionCommand extends Command
         $contract_wallet = env('CONTRACT_WALLET_USDT');
         // run 15 row in 1 min
         $pendingTransactions = $this->transactions->pendingNftAuctionTransactions()->limit(15)->get();
-        if (! empty($pendingTransactions)) {
+        if (!empty($pendingTransactions)) {
             foreach ($pendingTransactions as $key => $transaction) {
+                Log::info("NFT transaction:" . $transaction);
                 UpdateStatusNftAuctionJob::dispatch($transaction, $company_wallet, $contract_wallet)->delay(now()->addSeconds(($key + 1) * 3));
             }
         }

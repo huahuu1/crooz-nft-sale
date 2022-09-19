@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Jobs\UpdateStatusTokenSaleJob;
 use App\Models\TokenSaleHistory;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class CheckStatusTokenSaleCommand extends Command
 {
@@ -58,6 +59,7 @@ class CheckStatusTokenSaleCommand extends Command
         $pendingTransactions = $this->transactions->pendingTokenSaleTransactions()->limit(15)->get();
         if (! empty($pendingTransactions)) {
             foreach ($pendingTransactions as $key => $transaction) {
+                Log::info("NFT transaction:".$transaction );
                 UpdateStatusTokenSaleJob::dispatch($transaction, $company_wallet, $contract_wallet, $key)->delay(now()->addSeconds(($key + 1) * 3));
             }
         }
