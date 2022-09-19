@@ -59,7 +59,6 @@ class CheckStatusNftAuctionCommand extends Command
         $pendingTransactions = $this->transactions->pendingNftAuctionTransactions()->limit(15)->get();
         if (!empty($pendingTransactions)) {
             foreach ($pendingTransactions as $key => $transaction) {
-                Log::info("NFT transaction:" . $transaction);
                 UpdateStatusNftAuctionJob::dispatch($transaction, $company_wallet, $contract_wallet)->delay(now()->addSeconds(($key + 1) * 3));
             }
         }
