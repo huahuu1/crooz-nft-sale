@@ -5,7 +5,7 @@ return [
         'bsc' => [
             'name' => 'BSC',
             'url' => env('BSCSCAN_API_URL', 'https://api-testnet.bscscan.com/api'),
-            'api_key' => env('BSCSCAN_API_KEY', 'SGWW3MHVBUIVHXAB26WCK65IA6ESXI68GU'),
+            'api_key' => env('BSCSCAN_API_KEY', 'G7HAM1MRFHGKUQV5QIH5VJJ28E52YZYNVM'),
             'block_count' => env('SUCCESS_TRANSACTION_BNB_BLOCK_COUNT', 25)
         ],
         'eth' => [
