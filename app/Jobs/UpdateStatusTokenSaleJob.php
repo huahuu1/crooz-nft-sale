@@ -121,12 +121,9 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
                 $client = new ClientBsc($api_key, $apiConfBsc);
                 break;
         }
-        Log::info("UpdateStatusTokenSaleJob checkWithApiScan - transaction hash::" . $transaction_hash);
-        Log::info("UpdateStatusTokenSaleJob checkWithApiScan - api key::" . $api_key);
-        Log::info("UpdateStatusTokenSaleJob checkWithApiScan - apiConfEthers::" . $apiConfEthers);
-        Log::info("UpdateStatusTokenSaleJob checkWithApiScan - apiConfBsc:: " . $apiConfBsc);
 
         //get block of the transaction
+        Log::info("getTransactionByHash::". $client->api('proxy')->getTransactionByHash($transaction_hash));
         $transactionBlockNumber = $client->api('proxy')->getTransactionByHash($transaction_hash)['result']['blockNumber'];
         //get current block
         $currentBlockNumber = $client->api('proxy')->blockNumber()['result'];
