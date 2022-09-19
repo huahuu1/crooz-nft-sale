@@ -104,6 +104,10 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
             $apiConfEthers = null;
             $apiConfBsc = null;
         }
+        info("checkWithApiScan - transaction hash::".$transaction_hash);
+        info("checkWithApiScan - api key::".$api_key);
+        info("checkWithApiScan - apiConfEthers::".$apiConfEthers);
+        info("checkWithApiScan - apiConfBsc:: ".$apiConfBsc);
 
         switch (env('BLOCKCHAIN_SCAN_API')) {
             case 'ETHERS':
@@ -115,6 +119,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                 $client = new ClientBsc($api_key, $apiConfBsc);
                 break;
         }
+
         //get block of the transaction
         $transactionBlockNumber = $client->api('proxy')->getTransactionByHash($transaction_hash)['result']['blockNumber'];
         //get current block
