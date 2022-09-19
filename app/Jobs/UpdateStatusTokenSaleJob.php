@@ -49,7 +49,7 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
     public function handle()
     {
         try {
-            Log::info("UpdateStatusTokenSaleJob::" . $this->transaction);
+            Log::info("UpdateStatusTokenSaleJob::" . $this->transaction->tx_hash);
             //get transaction information from bscscan
             $result = $this->checkWithApiScan($this->transaction->tx_hash);
             $response = $result['response'];
@@ -68,10 +68,11 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
             if (!empty($result['transaction_status']['result'])) {
                 if ($response && array_key_exists('result', $response)) {
                     $result = $response['result'];
+                    $blockCount = config('defines.api.bsc.block_count');
                     //Validate transaction destination with our account
                     if ((strtolower($result['to']) == strtolower($this->company_wallet)
                             || strtolower($result['to']) == strtolower($this->contract_wallet))
-                        && $blockNumberCount >= env('SUCCESS_TRANSACTION_BNB_BLOCK_COUNT')
+                        && $blockNumberCount >=$blockCount
                         && $transactionStatus
                     ) {
                         //Update Transaction As Success
@@ -102,7 +103,7 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
      */
     public function checkWithApiScan($transaction_hash)
     {
-        $api_key = config('defines.api.bsc.api_key') ;
+        $api_key = config('defines.api.bsc.api_key');
         $apiConfEthers = APIConfEthers::TESTNET_ROPSTEN;
         $apiConfBsc = APIConfBsc::TESTNET;
         // check production or testnet
@@ -121,10 +122,9 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
                 $client = new ClientBsc($api_key, $apiConfBsc);
                 break;
         }
-
         //get block of the transaction
-        Log::info("getTransactionByHash::". $client->api('proxy')->getTransactionByHash($transaction_hash));
         $transactionBlockNumber = $client->api('proxy')->getTransactionByHash($transaction_hash)['result']['blockNumber'];
+
         //get current block
         $currentBlockNumber = $client->api('proxy')->blockNumber()['result'];
 
