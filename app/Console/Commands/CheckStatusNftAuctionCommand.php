@@ -53,8 +53,8 @@ class CheckStatusNftAuctionCommand extends Command
      */
     public function validateTransactions()
     {
-        $company_wallet = env('NFT_COMPANY_WALLET');
-        $contract_wallet = env('CONTRACT_WALLET_USDT');
+        $company_wallet = config('defines.wallet.company_token_sale');
+        $contract_wallet = config('defines.wallet.usdt');
         // run 15 row in 1 min
         $pendingTransactions = $this->transactions->pendingNftAuctionTransactions()->limit(15)->get();
         if (!empty($pendingTransactions)) {

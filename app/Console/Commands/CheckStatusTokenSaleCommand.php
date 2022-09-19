@@ -53,11 +53,11 @@ class CheckStatusTokenSaleCommand extends Command
      */
     public function validateTransactions()
     {
-        $company_wallet = env('COMPANY_WALLET');
-        $contract_wallet = env('CONTRACT_WALLET_USDT');
+        $company_wallet = config('defines.wallet.company_nft');
+        $contract_wallet = config('defines.wallet.usdt');
         // run 15 row in 1 min
         $pendingTransactions = $this->transactions->pendingTokenSaleTransactions()->limit(15)->get();
-        if (! empty($pendingTransactions)) {
+        if (!empty($pendingTransactions)) {
             foreach ($pendingTransactions as $key => $transaction) {
                 UpdateStatusTokenSaleJob::dispatch($transaction, $company_wallet, $contract_wallet, $key)->delay(now()->addSeconds(($key + 1) * 3));
             }
