@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
@@ -19,7 +20,7 @@ class TokenSaleInfo extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'lock_id',
+        'rule_id',
         'start_date',
         'end_date',
         'total',
@@ -28,10 +29,18 @@ class TokenSaleInfo extends Model
     ];
 
     /**
-     * Get the lock info that owns the token sale.
+     * Get token unlock rule
+     *
+     * @return TokenUnlockRule
      */
-    public function lock_info()
+    public function tokenUnlockRules(): Attribute
     {
-        return $this->belongsTo(LockInfo::class, 'lock_id');
+        return new Attribute(
+            get: function ($value, $attributes) {
+                $tokenRule = TokenUnlockRule::select('rule_code')->where('id', '=', $attributes['rule_id'])->first();
+
+                return TokenUnlockRule::where('rule_code', '=', $tokenRule->rule_code)->get();
+            }
+        );
     }
 }

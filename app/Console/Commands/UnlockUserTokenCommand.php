@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\UpdateUnlockBalanceJob;
 use App\Models\UnlockUserBalance;
+use App\Services\SaleInfoService;
 use App\Services\UserBalanceService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -22,6 +23,8 @@ class UnlockUserTokenCommand extends Command
 
     protected $userBalanceService;
 
+    protected $saleInfoService;
+
     /**
      * The console command description.
      *
@@ -39,6 +42,7 @@ class UnlockUserTokenCommand extends Command
         parent::__construct();
         $this->unlockUserBalance = new UnlockUserBalance();
         $this->userBalanceService = new UserBalanceService();
+        $this->saleInfoService = new SaleInfoService();
     }
 
     /**
@@ -59,7 +63,6 @@ class UnlockUserTokenCommand extends Command
     public function tokenUnlockExecution()
     {
         $unlockUserBalanceList = $this->unlockUserBalance->getUnlockUserBalances();
-
         $unlockUserBalanceList->chunkById(100, function ($unlockUserBalances) {
             foreach ($unlockUserBalances as $key => $unlockUserBalance) {
                 $userBalance = $this->userBalanceService->getUserBalanceByTokenId($unlockUserBalance->user_id, $unlockUserBalance->token_id);
@@ -75,11 +78,17 @@ class UnlockUserTokenCommand extends Command
                 }
 
                 if ($checkDate) {
+                    //get info of token sale
+                    $tokenSaleInfo = $this->saleInfoService->getSaleInfoAndUnlockRule($unlockUserBalance->token_sale_id);
+                    //the order of unlock rule
+                    $orderRun = $unlockUserBalance->current_order_unlock;
                     //calculate the amount to unlock
-                    $unlockAmount = $unlockUserBalance->amount_lock * $unlockUserBalance->token_sale->lock_info->unlock_percentages / 100;
-
+                    if ($orderRun < $tokenSaleInfo->token_unlock_rules->count()) {
+                        $unlockAmount = $unlockUserBalance->amount_lock * $tokenSaleInfo->token_unlock_rules[$orderRun]->unlock_percentages / 100;
+                    }
+                    //unlock when status is not 0
                     if ($unlockUserBalance->status != 0) {
-                        UpdateUnlockBalanceJob::dispatch($unlockUserBalance, $userBalance, $unlockAmount)->delay(now()->addSeconds(($key + 1) * 3));
+                        UpdateUnlockBalanceJob::dispatch($unlockUserBalance, $userBalance, $unlockAmount ? $unlockAmount : 0)->delay(now()->addSeconds(($key + 1) * 3));
 
                         Log::info('[SUCCESS] Unlock token for user ID: '.$unlockUserBalance->user_id.' - sale token ID: '.$unlockUserBalance->token_sale_id);
                         $this->info('[SUCCESS] Unlock token for user ID: '.$unlockUserBalance->user_id.' - sale token ID: '.$unlockUserBalance->token_sale_id);

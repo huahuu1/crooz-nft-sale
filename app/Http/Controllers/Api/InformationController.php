@@ -3,11 +3,23 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\NftAuctionInfo;
-use App\Models\TokenSaleInfo;
+use App\Services\SaleInfoService;
 
 class InformationController extends Controller
 {
+    protected $saleInfoService;
+
+    /**
+     * InformationController constructor.
+     *
+     * @param use SaleInfoService $saleInfoService
+     */
+    public function __construct(
+        SaleInfoService $saleInfoService
+    ) {
+        $this->saleInfoService = $saleInfoService;
+    }
+
     /**
      * Display information of the latest token sale follow Id.
      *
@@ -16,7 +28,7 @@ class InformationController extends Controller
     public function getLatestInfoTokenSale()
     {
         return response()->json([
-            'data' => TokenSaleInfo::orderby('id', 'desc')->first(),
+            'data' => $this->saleInfoService->latestInfoTokenSale(),
         ]);
     }
 
@@ -28,19 +40,19 @@ class InformationController extends Controller
     public function getInfoTokenSaleById($id)
     {
         return response()->json([
-            'data' => TokenSaleInfo::find($id),
+            'data' => $this->saleInfoService->infoTokenSaleById($id),
         ]);
     }
 
     /**
-     * Display information of the latest NFT auction follow Id.
+     * Display information of the latest NFT auction.
      *
      * @return \Illuminate\Http\Response
      */
     public function getLatestInfoNftAuction()
     {
         return response()->json([
-            'data' => NftAuctionInfo::getLatestInfoNftAuction(),
+            'data' => $this->saleInfoService->latestInfoNftAuction(),
         ]);
     }
 
@@ -52,7 +64,7 @@ class InformationController extends Controller
     public function getInfoNftAuctionById($id)
     {
         return response()->json([
-            'data' => NftAuctionInfo::find($id),
+            'data' => $this->saleInfoService->infoNftAuctionById($id),
         ]);
     }
 }

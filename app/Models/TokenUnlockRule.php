@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
 
-class CashFlow extends Model
+class TokenUnlockRule extends Model
 {
     use HasApiTokens;
     use HasFactory;
 
-    protected $table = 'cash_flows';
+    protected $table = 'token_unlock_rules';
 
     /**
      * The attributes that are mass assignable.
@@ -19,17 +19,14 @@ class CashFlow extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id',
-        'token_id',
-        'amount',
-        'type',
-        'transaction_type',
-        'tx_hash',
+        'rule_code',
+        'period',
+        'unit',
+        'unlock_percentages',
     ];
 
-    public const TOKEN_WITHDRAWAL = 1;
-
-    public const TOKEN_DEPOSIT = 2;
-
-    public const NFT_DEPOSIT = 3;
+    public function rule_code()
+    {
+        return $this->hasMany(TokenUnlockRule::class, 'rule_code', 'rule_code');
+    }
 }

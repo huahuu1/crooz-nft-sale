@@ -10,7 +10,8 @@ use App\Models\NftAuctionHistory;
 use App\Models\NftAuctionInfo;
 use App\Models\TokenMaster;
 use App\Models\TokenSaleHistory;
-use App\Models\User;
+use App\Services\CashFlowService;
+use App\Services\HistoryListService;
 use App\Services\UserService;
 use Exception;
 use Illuminate\Http\Request;
@@ -23,6 +24,10 @@ class TransactionController extends Controller
 
     protected $unlockUserBalanceImport;
 
+    protected $historyListService;
+
+    protected $cashFlowService;
+
     /**
      * TransactionController constructor.
      *
@@ -31,9 +36,13 @@ class TransactionController extends Controller
     public function __construct(
         UserService $userService,
         UnlockUserBalanceImport $unlockUserBalanceImport,
+        HistoryListService $historyListService,
+        CashFlowService $cashFlowService
     ) {
         $this->userService = $userService;
         $this->unlockUserBalanceImport = $unlockUserBalanceImport;
+        $this->historyListService = $historyListService;
+        $this->cashFlowService = $cashFlowService;
     }
 
     /**
@@ -45,7 +54,7 @@ class TransactionController extends Controller
     public function createDepositTokenTransaction(TransactionRequest $request)
     {
         try {
-            $depositTransaction = TokenSaleHistory::where('tx_hash', $request->tx_hash)->first();
+            $depositTransaction = $this->historyListService->getTokenSaleHistoryByTxHash($request->tx_hash);
 
             //prevent duplicate transactions
             if ($depositTransaction) {
@@ -62,22 +71,9 @@ class TransactionController extends Controller
                 ], 500);
             }
 
-            TokenSaleHistory::create([
-                'user_id' => $user->id,
-                'token_id' => $request->token_id,
-                'token_sale_id' => 1,
-                'amount' => $request->amount,
-                'status' => TokenSaleHistory::PENDING_STATUS,
-                'tx_hash' => $request->tx_hash,
-            ]);
+            $this->historyListService->createTokenSaleHistory($user->id, $request->token_id, $request->token_sale_id, $request->amount, TokenSaleHistory::PENDING_STATUS, $request->tx_hash);
 
-            CashFlow::create([
-                'user_id' => $user->id,
-                'token_id' => $request->token_id,
-                'amount' => $request->amount,
-                'transaction_type' => 'TOKEN_DEPOSIT',
-                'tx_hash' => $request->tx_hash,
-            ]);
+            $this->cashFlowService->createCashFlow($user->id, $request->token_id, $request->amount, CashFlow::TOKEN_DEPOSIT, $request->tx_hash);
 
             return response()->json([
                 'message' => 'Deposit transaction successfully',
@@ -101,7 +97,7 @@ class TransactionController extends Controller
     public function createDepositNftTransaction(TransactionRequest $request)
     {
         try {
-            $depositTransaction = NftAuctionHistory::where('tx_hash', $request->tx_hash)->first();
+            $depositTransaction = $this->historyListService->getNftAuctionHistoryByTxHash($request->tx_hash);
             $minPrice = (int) NftAuctionInfo::getLatestInfoNftAuction()->min_price;
             $tokenName = TokenMaster::getTokenMasterById($request->token_id)->code;
 
@@ -127,22 +123,9 @@ class TransactionController extends Controller
                 ], 500);
             }
 
-            NftAuctionHistory::create([
-                'user_id' => $user->id,
-                'token_id' => $request->token_id,
-                'nft_auction_id' => 1,
-                'amount' => $request->amount,
-                'status' => NftAuctionHistory::PENDING_STATUS,
-                'tx_hash' => $request->tx_hash,
-            ]);
+            $this->historyListService->createNftAuctionHistory($user->id, $request->token_id, $request->nft_auction_id, $request->amount, NftAuctionHistory::PENDING_STATUS, $request->tx_hash);
 
-            CashFlow::create([
-                'user_id' => $user->id,
-                'token_id' => $request->token_id,
-                'amount' => $request->amount,
-                'transaction_type' => 'NFT_DEPOSIT',
-                'tx_hash' => $request->tx_hash,
-            ]);
+            $this->cashFlowService->createCashFlow($user->id, $request->token_id, $request->amount, CashFlow::NFT_DEPOSIT, $request->tx_hash);
 
             return response()->json([
                 'message' => 'Deposit transaction successfully',
@@ -174,12 +157,7 @@ class TransactionController extends Controller
             ], 404);
         }
 
-        $tokeSaleHistory = TokenSaleHistory::where('status', TokenSaleHistory::SUCCESS_STATUS)
-            ->where('user_id', $user->id)
-            ->orderby('amount', 'desc')
-            ->with(['user', 'token_master'])
-            ->get()
-            ->paginate($maxPerPage);
+        $tokeSaleHistory = $this->historyListService->getSuccessTokenSaleHistoryByUserIdHasPagination($user->id, $maxPerPage);
 
         return response()->json([
             'data' => $tokeSaleHistory->values()->all(),
@@ -196,11 +174,7 @@ class TransactionController extends Controller
     {
         $maxPerPage = $maxPerPage ?? env('MAX_PER_PAGE_AUCTION');
 
-        $nftAuctionHistory = NftAuctionHistory::where('status', NftAuctionHistory::SUCCESS_STATUS)
-            ->orderby('amount', 'desc')
-            ->with(['user', 'token_master'])
-            ->get()
-            ->paginate($maxPerPage);
+        $nftAuctionHistory = $this->historyListService->getSuccessNftAuctionHistoryByUserIdHasPagination($maxPerPage);
 
         return response()->json([
             'data' => $nftAuctionHistory->values()->all(),

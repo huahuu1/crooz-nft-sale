@@ -7,7 +7,6 @@ use App\Http\Requests\UserBalanceRequest;
 use App\Http\Requests\UserRequest;
 use App\Models\TokenMaster;
 use App\Models\User;
-use App\Models\UserBalance;
 use App\Services\UserBalanceService;
 use App\Services\UserService;
 use Exception;
@@ -40,7 +39,7 @@ class UserController extends Controller
     public function index()
     {
         return response()->json([
-            'data' => User::all(),
+            'data' => User::select('id', 'email', 'wallet_address', 'token_validate', 'status')->get(),
         ]);
     }
 
@@ -93,21 +92,13 @@ class UserController extends Controller
                 ], 404);
             }
 
-            $userBalance = $this->userBalanceService->getUserBalances($user->id);
-            if ($userBalance->count() > 0) {
-                return response()->json([
-                    'message' => 'The balance of this user already exists',
-                ], 500);
-            }
+            $userBalance = $this->userBalanceService->hasBalancesByUserId($user->id);
 
-            $tokenList = TokenMaster::all();
-            foreach ($tokenList as $token) {
-                UserBalance::create([
-                    'user_id' => $user->id,
-                    'token_id' => $token->id,
-                    'amount_total' => 0,
-                    'amount_lock' => 0,
-                ]);
+            if (! $userBalance) {
+                $tokenList = TokenMaster::getTokenMasters();
+                foreach ($tokenList as $token) {
+                    $this->userBalanceService->createUserBalance($this->transaction->user_id, $token->id, 0, 0);
+                }
             }
 
             return response()->json([
@@ -131,12 +122,10 @@ class UserController extends Controller
     public function checkEmailUserByWalletAddress($walletAddress)
     {
         try {
-            $user = User::select('email')->where('wallet_address', $walletAddress)
-                                         ->whereNotNull('email')
-                                         ->count();
+            $email = $this->userService->hasVerifiedEmailByWalletAddress($walletAddress);
 
             return response()->json([
-                'data' => $user ? true : false,
+                'data' => $email ? true : false,
             ], 200);
         } catch (Exception $e) {
             Log::error($e);

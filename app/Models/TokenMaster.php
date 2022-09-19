@@ -25,6 +25,24 @@ class TokenMaster extends Model
         'status',
     ];
 
+    public const USDT = 1;
+
+    public const ETH = 2;
+
+    public const GT = 3;
+
+    public const BNB = 4;
+
+    /**
+     * Display information of the token master.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public static function getTokenMasters()
+    {
+        return TokenMaster::select('id', 'name', 'code', 'description', 'status')->get();
+    }
+
     /**
      * Display information of the token master by id.
      *
@@ -32,6 +50,6 @@ class TokenMaster extends Model
      */
     public static function getTokenMasterById($id)
     {
-        return TokenMaster::find($id);
+        return TokenMaster::select('id', 'name', 'code', 'description', 'status')->find($id);
     }
 }
