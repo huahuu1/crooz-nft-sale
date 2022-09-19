@@ -102,7 +102,7 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
      */
     public function checkWithApiScan($transaction_hash)
     {
-        $api_key = env('BSCSCAN_API_KEY');
+        $api_key = config('defines.api.bsc.api_key') ;
         $apiConfEthers = APIConfEthers::TESTNET_ROPSTEN;
         $apiConfBsc = APIConfBsc::TESTNET;
         // check production or testnet
@@ -111,13 +111,13 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
             $apiConfBsc = null;
         }
 
-        switch (env('BLOCKCHAIN_SCAN_API')) {
+        switch (config('defines.scan_api')) {
             case 'ETHERS':
-                $baseUri = env('ETHERSSCAN_API_URL');
+                $baseUri = config('defines.api.eth.url');
                 $client = new ClientEthers($api_key, $apiConfEthers);
                 break;
             case 'BSC':
-                $baseUri = env('BSCSCAN_API_URL');
+                $baseUri = config('defines.api.bsc.url');
                 $client = new ClientBsc($api_key, $apiConfBsc);
                 break;
         }
