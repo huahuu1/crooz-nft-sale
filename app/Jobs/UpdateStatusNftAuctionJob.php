@@ -46,6 +46,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
     public function handle()
     {
         try {
+            Log::info("UpdateStatusTokenSaleJob::" . $this->transaction);
             //get transaction information from bscscan
             $result = $this->checkWithApiScan($this->transaction->tx_hash);
             $response = $result['response'];
@@ -104,10 +105,10 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
             $apiConfEthers = null;
             $apiConfBsc = null;
         }
-        info("checkWithApiScan - transaction hash::".$transaction_hash);
-        info("checkWithApiScan - api key::".$api_key);
-        info("checkWithApiScan - apiConfEthers::".$apiConfEthers);
-        info("checkWithApiScan - apiConfBsc:: ".$apiConfBsc);
+        Log::info("checkWithApiScan - transaction hash::".$transaction_hash);
+        Log::info("checkWithApiScan - api key::".$api_key);
+        Log::info("checkWithApiScan - apiConfEthers::".$apiConfEthers);
+        Log::info("checkWithApiScan - apiConfBsc:: ".$apiConfBsc);
 
         switch (env('BLOCKCHAIN_SCAN_API')) {
             case 'ETHERS':
