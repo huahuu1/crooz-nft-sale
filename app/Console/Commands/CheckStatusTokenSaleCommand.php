@@ -94,7 +94,7 @@ class CheckStatusTokenSaleCommand extends Command
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             $response = $e->getResponse();
             $responseBodyAsString = $response->getBody()->getContents();
-            Log::error("response" . $response);
+            Log::error("ClientException" . json_encode($e));
             Log::error("responseBodyAsString" . $responseBodyAsString);
         }
     }
