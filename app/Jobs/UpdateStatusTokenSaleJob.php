@@ -63,13 +63,14 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
             }
 
             //validate response
-            if (! empty($result['transaction_status']['result'])) {
+            if (!empty($result['transaction_status']['result'])) {
                 if ($response && array_key_exists('result', $response)) {
                     $result = $response['result'];
+                    $blockCount = config('defines.api.bsc.block_count');
                     //Validate transaction destination with our account
                     if ((strtolower($result['to']) == strtolower($this->company_wallet)
-                        || strtolower($result['to']) == strtolower($this->contract_wallet))
-                        && $blockNumberCount >= env('SUCCESS_TRANSACTION_BNB_BLOCK_COUNT')
+                            || strtolower($result['to']) == strtolower($this->contract_wallet))
+                        && $blockNumberCount >=$blockCount
                         && $transactionStatus
                     ) {
                         //Update Transaction As Success
@@ -79,14 +80,14 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
                         CreateOrUpdateUserBalanceJob::dispatch($this->transaction)->delay(now()->addSeconds(($this->key + 1) * 3));
                     }
 
-                    if (! $transactionStatus) {
+                    if (!$transactionStatus) {
                         //Update Transaction As Fail
                         $this->transaction->status = TokenSaleHistory::FAILED_STATUS;
                         $this->transaction->update();
                     }
                 }
             }
-            Log::info('[SUCCESS] Check status token sale for: '.$this->transaction->id.' ('.substr($this->transaction->tx_hash, 0, 10).')');
+            Log::info('[SUCCESS] Check status token sale for: ' . $this->transaction->id . ' (' . substr($this->transaction->tx_hash, 0, 10) . ')');
         } catch (Exception $e) {
             Log::error($e);
         }
@@ -102,7 +103,7 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
     {
         $api_key = env('BSCSCAN_API_KEY');
 
-        switch (env('BLOCKCHAIN_SCAN_API')) {
+        switch (config('defines.scan_api')) {
             case 'ETHERS':
                 $baseUri = env('ETHERSSCAN_API_URL');
                 break;
