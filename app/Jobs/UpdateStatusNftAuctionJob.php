@@ -4,10 +4,7 @@ namespace App\Jobs;
 
 use App\Models\NftAuctionHistory;
 use App\Traits\ApiScanTransaction;
-use Etherscan\APIConf;
-use Etherscan\Client;
 use Exception;
-use GuzzleHttp\Client as HttpClient;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -60,7 +57,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
             }
 
             //validate response
-            if (!empty($result['transaction_status']['result'])) {
+            if (! empty($result['transaction_status']['result'])) {
                 if ($response && array_key_exists('result', $response)) {
                     $result = $response['result'];
                     //Validate transaction destination with our account
@@ -74,13 +71,13 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                         $this->transaction->update();
                     }
 
-                    if (!$transactionStatus) {
+                    if (! $transactionStatus) {
                         //Update Transaction As Fail
                         $this->transaction->status = NftAuctionHistory::FAILED_STATUS;
                         $this->transaction->update();
                     }
                 }
-                Log::info('[SUCCESS] Check Status Nft Auction for: ' . $this->transaction->id . ' (' . substr($this->transaction->tx_hash, 0, 10) . ')');
+                Log::info('[SUCCESS] Check Status Nft Auction for: '.$this->transaction->id.' ('.substr($this->transaction->tx_hash, 0, 10).')');
             }
         } catch (Exception $e) {
             Log::error($e);
@@ -118,6 +115,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
         $transactionStatus = $this->getTransactionReceiptStatus($transaction_hash, $baseUri, $apiKey);
 
         $responseData = $this->getTransactionByHash($transaction_hash, $baseUri, $apiKey);
+
         return collect([
             'response' => $responseData,
             'block_count' => $blockCount,

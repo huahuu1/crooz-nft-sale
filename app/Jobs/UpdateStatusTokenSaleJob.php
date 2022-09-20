@@ -4,10 +4,7 @@ namespace App\Jobs;
 
 use App\Models\TokenSaleHistory;
 use App\Traits\ApiScanTransaction;
-use Etherscan\APIConf;
-use Etherscan\Client;
 use Exception;
-use GuzzleHttp\Client as HttpClient;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -63,7 +60,7 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
             }
 
             //validate response
-            if (!empty($result['transaction_status']['result'])) {
+            if (! empty($result['transaction_status']['result'])) {
                 if ($response && array_key_exists('result', $response)) {
                     $result = $response['result'];
                     //Validate transaction destination with our account
@@ -79,14 +76,14 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
                         CreateOrUpdateUserBalanceJob::dispatch($this->transaction)->delay(now()->addSeconds(($this->key + 1) * 3));
                     }
 
-                    if (!$transactionStatus) {
+                    if (! $transactionStatus) {
                         //Update Transaction As Fail
                         $this->transaction->status = TokenSaleHistory::FAILED_STATUS;
                         $this->transaction->update();
                     }
                 }
             }
-            Log::info('[SUCCESS] Check status token sale for: ' . $this->transaction->id . ' (' . substr($this->transaction->tx_hash, 0, 10) . ')');
+            Log::info('[SUCCESS] Check status token sale for: '.$this->transaction->id.' ('.substr($this->transaction->tx_hash, 0, 10).')');
         } catch (Exception $e) {
             Log::error($e);
         }
@@ -100,7 +97,6 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
      */
     public function checkWithApiScan($transaction_hash)
     {
-
         $apiKey = config('defines.api.bsc.api_key');
         $baseUri = config('defines.api.bsc.url');
 
@@ -125,6 +121,7 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
         $transactionStatus = $this->getTransactionReceiptStatus($transaction_hash, $baseUri, $apiKey);
 
         $responseData = $this->getTransactionByHash($transaction_hash, $baseUri, $apiKey);
+
         return collect([
             'response' => $responseData,
             'block_count' => $blockCount,
