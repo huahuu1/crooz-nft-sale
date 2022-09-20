@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\TokenSaleHistory;
+use App\Traits\ApiScanTransaction;
 use Etherscan\APIConf;
 use Etherscan\Client;
 use Exception;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\Log;
 
 class UpdateStatusTokenSaleJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ApiScanTransaction;
 
     protected $transaction;
 
@@ -101,57 +102,26 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
     public function checkWithApiScan($transaction_hash)
     {
         $api_key = env('BSCSCAN_API_KEY');
-        $apiConfEthers = APIConf::TESTNET_ROPSTEN;
-        $apiConfBsc = APIConf::TESTNET_BSC;
-        // check production or testnet
-        if (env('APP_ENV') == 'production') {
-            $apiConfEthers = null;
-            $apiConfBsc = APIConf::NET_BSC;
-        }
 
         switch (config('defines.scan_api')) {
             case 'ETHERS':
                 $baseUri = env('ETHERSSCAN_API_URL');
-                $client = new Client($api_key, $apiConfEthers);
                 break;
             case 'BSC':
                 $baseUri = env('BSCSCAN_API_URL');
-                $client = new Client($api_key, $apiConfBsc);
                 break;
         }
         //get block of the transaction
-        $transactionBlockNumber = $client->api('proxy')->getTransactionByHash($transaction_hash)['result']['blockNumber'];
-
+        $transactionBlockNumber = $this->getTransactionByHash($transaction_hash, $baseUri, $api_key)['result']['blockNumber'];
         //get current block
-        $currentBlockNumber = $client->api('proxy')->blockNumber()['result'];
+        $currentBlockNumber = $this->getBlockNumber($baseUri, $api_key)['result'];
 
         $blockCount = hexdec($currentBlockNumber) - hexdec($transactionBlockNumber);
 
         //get transaction status
-        $transactionStatus = $client->api('transaction')->getTransactionReceiptStatus($transaction_hash);
+        $transactionStatus = $this->getTransactionReceiptStatus($transaction_hash, $baseUri, $api_key);
 
-        $client = new HttpClient(
-            [
-                'base_uri' => $baseUri,
-                'headers' => [],
-            ]
-        );
-        $params = [
-            'query' => [
-                'module' => 'proxy',
-                'action' => 'eth_getTransactionByHash',
-                'txhash' => $transaction_hash,
-                'apikey' => $api_key,
-            ],
-        ];
-        $uri = '?';
-        $response = $client->request(
-            'GET',
-            $uri,
-            $params
-        );
-        $responseData = json_decode($response->getBody()->getContents(), true);
-
+        $responseData = $this->getTransactionByHash($transaction_hash, $baseUri, $api_key);
         return collect([
             'response' => $responseData,
             'block_count' => $blockCount,
