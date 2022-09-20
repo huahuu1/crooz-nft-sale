@@ -61,12 +61,12 @@ class CheckStatusTokenSaleCommand extends Command
         $contract_wallet = config('defines.wallet.usdt');
         $this->checkWithApiScan();
         // run 15 row in 1 min
-        $pendingTransactions = $this->transactions->pendingTokenSaleTransactions()->limit(15)->get();
-        if (!empty($pendingTransactions)) {
-            foreach ($pendingTransactions as $key => $transaction) {
-                UpdateStatusTokenSaleJob::dispatch($transaction, $company_wallet, $contract_wallet, $key)->delay(now()->addSeconds(($key + 1) * 3));
-            }
-        }
+        // $pendingTransactions = $this->transactions->pendingTokenSaleTransactions()->limit(15)->get();
+        // if (!empty($pendingTransactions)) {
+        //     foreach ($pendingTransactions as $key => $transaction) {
+        //         UpdateStatusTokenSaleJob::dispatch($transaction, $company_wallet, $contract_wallet, $key)->delay(now()->addSeconds(($key + 1) * 3));
+        //     }
+        // }
     }
 
     public function checkWithApiScan()
