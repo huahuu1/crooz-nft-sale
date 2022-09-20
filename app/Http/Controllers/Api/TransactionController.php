@@ -147,7 +147,7 @@ class TransactionController extends Controller
      */
     public function getPurchaseListOfTokenSaleByWalletAddress($walletAddress, $maxPerPage = null)
     {
-        $maxPerPage = $maxPerPage ?? env('MAX_PER_PAGE_TOKENSALE');
+        $maxPerPage = $maxPerPage ?? config('defines.pagination.token_sale');
 
         $user = $this->userService->getUserByWalletAddress($walletAddress);
 
@@ -172,7 +172,7 @@ class TransactionController extends Controller
      */
     public function getPurchaseListOfNftAuction($maxPerPage = null)
     {
-        $maxPerPage = $maxPerPage ?? env('MAX_PER_PAGE_AUCTION');
+        $maxPerPage = $maxPerPage ?? config('defines.pagination.nft_auction');
 
         $nftAuctionHistory = $this->historyListService->getSuccessNftAuctionHistoryByUserIdHasPagination($maxPerPage);
 
