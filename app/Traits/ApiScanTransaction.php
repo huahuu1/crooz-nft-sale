@@ -18,7 +18,11 @@ trait ApiScanTransaction
             $client = new HttpClient(
                 [
                     'base_uri' => $baseUri,
-                    'headers' => [],
+                    'headers' => [
+                        'User-Agent' => 'Mozilla/4.0 (compatible; Etherscan PHP API; ' . php_uname('a') . '; PHP/' . phpversion() . ')',
+                        'Accept' => 'application/json'
+                    ],
+                    'verify' => false
                 ]
             );
             $params = [
