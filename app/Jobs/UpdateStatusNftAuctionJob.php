@@ -66,7 +66,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                     //Validate transaction destination with our account
                     if ((strtolower($result['to']) == strtolower($this->company_wallet)
                             || strtolower($result['to']) == strtolower($this->contract_wallet))
-                        && $blockNumberCount >= env('SUCCESS_TRANSACTION_BNB_BLOCK_COUNT')
+                        && $blockNumberCount >= config('defines.api.bsc.block_count')
                         && $transactionStatus
                     ) {
                         //Update Transaction As Success
@@ -95,14 +95,15 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
      */
     public function checkWithApiScan($transaction_hash)
     {
-        $api_key = env('BSCSCAN_API_KEY');
+        $api_key = config('defines.api.bsc.api_key');
 
         switch (config('defines.scan_api')) {
             case 'ETHERS':
-                $baseUri = env('ETHERSSCAN_API_URL');
+                $baseUri = config('defines.api.eth.url');
+                $api_key = config('defines.api.eth.api_key');
                 break;
             case 'BSC':
-                $baseUri = env('BSCSCAN_API_URL');
+                $baseUri = config('defines.api.bsc.url');
                 break;
         }
 
