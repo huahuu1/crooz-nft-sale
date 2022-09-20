@@ -46,9 +46,14 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
             $result = $this->checkWithApiScan($this->transaction->tx_hash);
             $response = $result['response'];
             $blockNumberCount = $result['block_count'];
-            $transactionStatus = $result['transaction_status']['result']['status'];
 
-            if ($response['result']['blockHash'] == null) {
+            if (! empty($response['error'])) {
+                //Update Transaction As Fail
+                $this->transaction->status = NftAuctionHistory::FAILED_STATUS;
+                $this->transaction->update();
+            }
+
+            if (! empty($response['result']) && $response['result']['blockHash'] == null) {
                 //Update Transaction As Pending
                 $this->transaction->status = NftAuctionHistory::PENDING_STATUS;
                 $this->transaction->update();
@@ -58,6 +63,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
 
             //validate response
             if (! empty($result['transaction_status']['result'])) {
+                $transactionStatus = $result['transaction_status']['result']['status'];
                 if ($response && array_key_exists('result', $response)) {
                     $result = $response['result'];
                     //Validate transaction destination with our account
@@ -105,11 +111,13 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
         }
 
         //get block of the transaction
-        $transactionBlockNumber = $this->getTransactionByHash($transaction_hash, $baseUri, $apiKey)['result']['blockNumber'];
-        //get current block
-        $currentBlockNumber = $this->getBlockNumber($baseUri, $apiKey)['result'];
-
-        $blockCount = hexdec($currentBlockNumber) - hexdec($transactionBlockNumber);
+        $transactionBlockNumber = $this->getTransactionByHash($transaction_hash, $baseUri, $apiKey);
+        if (! empty($transactionBlockNumber['result'])) {
+            $transactionBlockNumber = $transactionBlockNumber['result']['blockNumber'];
+            //get current block
+            $currentBlockNumber = $this->getBlockNumber($baseUri, $apiKey)['result'];
+            $blockCount = hexdec($currentBlockNumber) - hexdec($transactionBlockNumber);
+        }
 
         //get transaction status
         $transactionStatus = $this->getTransactionReceiptStatus($transaction_hash, $baseUri, $apiKey);
@@ -118,7 +126,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
 
         return collect([
             'response' => $responseData,
-            'block_count' => $blockCount,
+            'block_count' => $blockCount ?? 0,
             'transaction_status' => $transactionStatus,
         ]);
     }
