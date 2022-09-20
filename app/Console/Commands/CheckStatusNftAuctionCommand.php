@@ -2,8 +2,12 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\UpdateStatusNftAuctionJob;
 use App\Models\NftAuctionHistory;
+use Etherscan\APIConf as APIConfEthers;
+use Etherscan\Client as ClientEthers;
+use Bscscan\APIConf as APIConfBsc;
+use Bscscan\Client as ClientBsc;
+use GuzzleHttp\Client as HttpClient;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -53,14 +57,116 @@ class CheckStatusNftAuctionCommand extends Command
      */
     public function validateTransactions()
     {
-        $company_wallet = config('defines.wallet.company_nft');
-        $contract_wallet = config('defines.wallet.usdt');
-        // run 15 row in 1 min
-        $pendingTransactions = $this->transactions->pendingNftAuctionTransactions()->limit(15)->get();
-        if (!empty($pendingTransactions)) {
-            foreach ($pendingTransactions as $key => $transaction) {
-                UpdateStatusNftAuctionJob::dispatch($transaction, $company_wallet, $contract_wallet)->delay(now()->addSeconds(($key + 1) * 3));
+        $company_wallet = env('NFT_COMPANY_WALLET');
+        $contract_wallet = env('CONTRACT_WALLET_USDT');
+
+        $pendingTransactions = $this->transactions->pendingNftAuctionTransactions();
+
+        $pendingTransactions->chunkById(100, function ($transactions) use ($company_wallet, $contract_wallet) {
+            foreach ($transactions as $transaction) {
+                //get transaction information from bscscan
+                $result = $this->checkWithApiScan($transaction->tx_hash);
+                $response = $result['response'];
+                $blockNumberCount = $result['block_count'];
+                $transactionStatus = $result['transaction_status']['result']['status'];
+
+                if ($response['result']['blockHash'] == null) {
+                    //Update Transaction As Pending
+                    $transaction->status = NftAuctionHistory::PENDING_STATUS;
+                    $transaction->update();
+
+                    return;
+                }
+
+                //validate response
+                if ($response && array_key_exists('result', $response)) {
+                    $result = $response['result'];
+                    //Validate transaction destination with our account
+                    if ((strtolower($result['to']) == strtolower($company_wallet)
+                        || strtolower($result['to']) == strtolower($contract_wallet))
+                        && $blockNumberCount >= env('SUCCESS_TRANSACTION_BNB_BLOCK_COUNT')
+                        && $transactionStatus
+                    ) {
+                        //Update Transaction As Success
+                        $transaction->status = NftAuctionHistory::SUCCESS_STATUS;
+                        $transaction->update();
+                    }
+
+                    if (! $transactionStatus) {
+                        //Update Transaction As Fail
+                        $transaction->status = NftAuctionHistory::FAILED_STATUS;
+                        $transaction->update();
+                    }
+                }
+                Log::info('[SUCCESS] Check Status Nft Auction for: '.$transaction->id.' ('.substr($transaction->tx_hash, 0, 10).')');
+                $this->info('[SUCCESS] Check Status Nft Auction for: '.$transaction->id.' ('.substr($transaction->tx_hash, 0, 10).')');
             }
+        }, 'id');
+    }
+
+    /**
+     * Check Transaction With Ether Scan
+     *
+     * @param  mixed  $transaction_hash
+     * @return mixed
+     */
+    public function checkWithApiScan($transaction_hash)
+    {
+        $api_key = env('BSCSCAN_API_KEY');
+        $apiConfEthers = APIConfEthers::TESTNET_ROPSTEN;
+        $apiConfBsc = APIConfBsc::TESTNET;
+        // check production or testnet
+        if (env('APP_ENV') == 'production') {
+            $apiConfEthers = null;
+            $apiConfBsc = null;
         }
+
+        switch (env('BLOCKCHAIN_SCAN_API')) {
+            case 'ETHERS':
+                $baseUri = env('ETHERSSCAN_API_URL');
+                $client = new ClientEthers($api_key, $apiConfEthers);
+                break;
+            case 'BSC':
+                $baseUri = env('BSCSCAN_API_URL');
+                $client = new ClientBsc($api_key, $apiConfBsc);
+                break;
+        }
+        //get block of the transaction
+        $transactionBlockNumber = $client->api('proxy')->getTransactionByHash($transaction_hash)['result']['blockNumber'];
+        //get current block
+        $currentBlockNumber = $client->api('proxy')->blockNumber()['result'];
+
+        $blockCount = hexdec($currentBlockNumber) - hexdec($transactionBlockNumber);
+
+        //get transaction status
+        $transactionStatus = $client->api('transaction')->getTransactionReceiptStatus($transaction_hash);
+
+        $client = new HttpClient(
+            [
+                'base_uri' => $baseUri,
+                'headers' => [],
+            ]
+        );
+        $params = [
+            'query' => [
+                'module' => 'proxy',
+                'action' => 'eth_getTransactionByHash',
+                'txhash' => $transaction_hash,
+                'apikey' => $api_key,
+            ],
+        ];
+        $uri = '?';
+        $response = $client->request(
+            'GET',
+            $uri,
+            $params
+        );
+        $responseData = json_decode($response->getBody()->getContents(), true);
+
+        return collect([
+            'response' => $responseData,
+            'block_count' => $blockCount,
+            'transaction_status' => $transactionStatus,
+        ]);
     }
 }
