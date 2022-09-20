@@ -3,10 +3,8 @@
 namespace App\Jobs;
 
 use App\Models\NftAuctionHistory;
-use Bscscan\APIConf as APIConfBsc;
-use Bscscan\Client as ClientBsc;
-use Etherscan\APIConf as APIConfEthers;
-use Etherscan\Client as ClientEthers;
+use Etherscan\APIConf;
+use Etherscan\Client;
 use Exception;
 use GuzzleHttp\Client as HttpClient;
 use Illuminate\Bus\Queueable;
@@ -97,22 +95,22 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
     public function checkWithApiScan($transaction_hash)
     {
         $api_key = env('BSCSCAN_API_KEY');
-        $apiConfEthers = APIConfEthers::TESTNET_ROPSTEN;
-        $apiConfBsc = APIConfBsc::TESTNET;
+        $apiConfEthers = APIConf::TESTNET_ROPSTEN;
+        $apiConfBsc = APIConf::TESTNET_BSC;
         // check production or testnet
         if (env('APP_ENV') == 'production') {
             $apiConfEthers = null;
-            $apiConfBsc = null;
+            $apiConfBsc = APIConf::NET_BSC;
         }
 
         switch (env('BLOCKCHAIN_SCAN_API')) {
             case 'ETHERS':
                 $baseUri = env('ETHERSSCAN_API_URL');
-                $client = new ClientEthers($api_key, $apiConfEthers);
+                $client = new Client($api_key, $apiConfEthers);
                 break;
             case 'BSC':
                 $baseUri = env('BSCSCAN_API_URL');
-                $client = new ClientBsc($api_key, $apiConfBsc);
+                $client = new Client($api_key, $apiConfBsc);
                 break;
         }
         //get block of the transaction

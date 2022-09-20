@@ -24,6 +24,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('check:token-sale')->everyMinute();
         $schedule->command('check:nft-auction')->everyMinute();
         $schedule->command('unlock:user-balance')->daily();
+        $schedule->command('telescope:prune')->daily();
     }
 
     /**
