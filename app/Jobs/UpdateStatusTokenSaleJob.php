@@ -62,13 +62,14 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
             }
 
             //validate response
-            if (! empty($result['transaction_status']['result'])) {
+            if (!empty($result['transaction_status']['result'])) {
                 if ($response && array_key_exists('result', $response)) {
                     $result = $response['result'];
+                    $blockCount = config('defines.api.bsc.block_count');
                     //Validate transaction destination with our account
                     if ((strtolower($result['to']) == strtolower($this->company_wallet)
-                        || strtolower($result['to']) == strtolower($this->contract_wallet))
-                        && $blockNumberCount >= env('SUCCESS_TRANSACTION_BNB_BLOCK_COUNT')
+                            || strtolower($result['to']) == strtolower($this->contract_wallet))
+                        && $blockNumberCount >=$blockCount
                         && $transactionStatus
                     ) {
                         //Update Transaction As Success
@@ -78,14 +79,14 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
                         CreateOrUpdateUserBalanceJob::dispatch($this->transaction)->delay(now()->addSeconds(($this->key + 1) * 3));
                     }
 
-                    if (! $transactionStatus) {
+                    if (!$transactionStatus) {
                         //Update Transaction As Fail
                         $this->transaction->status = TokenSaleHistory::FAILED_STATUS;
                         $this->transaction->update();
                     }
                 }
             }
-            Log::info('[SUCCESS] Check status token sale for: '.$this->transaction->id.' ('.substr($this->transaction->tx_hash, 0, 10).')');
+            Log::info('[SUCCESS] Check status token sale for: ' . $this->transaction->id . ' (' . substr($this->transaction->tx_hash, 0, 10) . ')');
         } catch (Exception $e) {
             Log::error($e);
         }
@@ -108,7 +109,7 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
             $apiConfBsc = APIConf::NET_BSC;
         }
 
-        switch (env('BLOCKCHAIN_SCAN_API')) {
+        switch (config('defines.scan_api')) {
             case 'ETHERS':
                 $baseUri = env('ETHERSSCAN_API_URL');
                 $client = new Client($api_key, $apiConfEthers);
@@ -120,6 +121,7 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
         }
         //get block of the transaction
         $transactionBlockNumber = $client->api('proxy')->getTransactionByHash($transaction_hash)['result']['blockNumber'];
+
         //get current block
         $currentBlockNumber = $client->api('proxy')->blockNumber()['result'];
 

@@ -59,12 +59,12 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
             }
 
             //validate response
-            if (! empty($result['transaction_status']['result'])) {
+            if (!empty($result['transaction_status']['result'])) {
                 if ($response && array_key_exists('result', $response)) {
                     $result = $response['result'];
                     //Validate transaction destination with our account
                     if ((strtolower($result['to']) == strtolower($this->company_wallet)
-                        || strtolower($result['to']) == strtolower($this->contract_wallet))
+                            || strtolower($result['to']) == strtolower($this->contract_wallet))
                         && $blockNumberCount >= env('SUCCESS_TRANSACTION_BNB_BLOCK_COUNT')
                         && $transactionStatus
                     ) {
@@ -73,13 +73,13 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                         $this->transaction->update();
                     }
 
-                    if (! $transactionStatus) {
+                    if (!$transactionStatus) {
                         //Update Transaction As Fail
                         $this->transaction->status = NftAuctionHistory::FAILED_STATUS;
                         $this->transaction->update();
                     }
                 }
-                Log::info('[SUCCESS] Check Status Nft Auction for: '.$this->transaction->id.' ('.substr($this->transaction->tx_hash, 0, 10).')');
+                Log::info('[SUCCESS] Check Status Nft Auction for: ' . $this->transaction->id . ' (' . substr($this->transaction->tx_hash, 0, 10) . ')');
             }
         } catch (Exception $e) {
             Log::error($e);
@@ -103,7 +103,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
             $apiConfBsc = APIConf::NET_BSC;
         }
 
-        switch (env('BLOCKCHAIN_SCAN_API')) {
+        switch (config('defines.scan_api')) {
             case 'ETHERS':
                 $baseUri = env('ETHERSSCAN_API_URL');
                 $client = new Client($api_key, $apiConfEthers);
@@ -113,6 +113,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                 $client = new Client($api_key, $apiConfBsc);
                 break;
         }
+
         //get block of the transaction
         $transactionBlockNumber = $client->api('proxy')->getTransactionByHash($transaction_hash)['result']['blockNumber'];
         //get current block
