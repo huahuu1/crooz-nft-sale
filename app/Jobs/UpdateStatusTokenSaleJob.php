@@ -49,7 +49,6 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
     public function handle()
     {
         try {
-            Log::info("UpdateStatusTokenSaleJob::" . $this->transaction->tx_hash);
             //get transaction information from bscscan
             $result = $this->checkWithApiScan($this->transaction->tx_hash);
             $response = $result['response'];
