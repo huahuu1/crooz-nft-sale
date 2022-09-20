@@ -21,8 +21,7 @@ trait ApiScanTransaction
                     'headers' => [
                         'User-Agent' => 'Mozilla/4.0 (compatible; Etherscan PHP API; ' . php_uname('a') . '; PHP/' . phpversion() . ')',
                         'Accept' => 'application/json'
-                    ],
-                    'verify' => false
+                    ]
                 ]
             );
             $params = [
