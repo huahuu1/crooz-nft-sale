@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Jobs\UpdateStatusTokenSaleJob;
 use App\Models\TokenSaleHistory;
 use Illuminate\Console\Command;
+
 class CheckStatusTokenSaleCommand extends Command
 {
     /**
@@ -61,6 +62,4 @@ class CheckStatusTokenSaleCommand extends Command
             }
         }
     }
-
-
 }
