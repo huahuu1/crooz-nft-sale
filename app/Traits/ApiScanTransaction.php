@@ -4,8 +4,6 @@ namespace App\Traits;
 
 use DOMDocument;
 use DOMXPath;
-use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Facades\Log;
 
 trait ApiScanTransaction
@@ -24,15 +22,12 @@ trait ApiScanTransaction
                 'apikey' => $apiKey,
             ];
 
-            $url = $baseUri.'?'.http_build_query( $params, '&');
+            $url = $baseUri.'?'.http_build_query($params, '&');
             $response = $this->cloudFlareBypass($url);
 
             return json_decode($response, true);
-        } catch (ClientException $e) {
-            $response = $e->getResponse();
-            $responseBodyAsString = $response->getBody()->getContents();
-            Log::info($response);
-            Log::info($responseBodyAsString);
+        } catch (\Exception $e) {
+            Log::error('getBlockNumber::'.json_encode($e));
         }
     }
 
@@ -49,15 +44,12 @@ trait ApiScanTransaction
                 'apikey' => $apiKey,
             ];
 
-            $url = $baseUri.'?'.http_build_query($params,'&');
+            $url = $baseUri.'?'.http_build_query($params, '&');
             $response = $this->cloudFlareBypass($url);
 
             return json_decode($response, true);
-        } catch (ClientException $e) {
-            $response = $e->getResponse();
-            $responseBodyAsString = $response->getBody()->getContents();
-            Log::info($response);
-            Log::info($responseBodyAsString);
+        } catch (\Exception $e) {
+            Log::error('getBlockNumber::'.json_encode($e));
         }
     }
 
@@ -68,12 +60,6 @@ trait ApiScanTransaction
     public function getTransactionReceiptStatus($txHash, $baseUri, $apiKey)
     {
         try {
-            $client = new HttpClient(
-                [
-                    'base_uri' => $baseUri,
-                    'headers' => [],
-                ]
-            );
             $params = [
                 'module' => 'transaction',
                 'action' => 'gettxreceiptstatus',
@@ -85,11 +71,8 @@ trait ApiScanTransaction
             $response = $this->cloudFlareBypass($url);
 
             return json_decode($response, true);
-        } catch (ClientException $e) {
-            $response = $e->getResponse();
-            $responseBodyAsString = $response->getBody()->getContents();
-            Log::info($response);
-            Log::info($responseBodyAsString);
+        } catch (\Exception $e) {
+            Log::error('getTransactionReceiptStatus::'.json_encode($e));
         }
     }
 
