@@ -95,12 +95,12 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
      */
     public function checkWithApiScan($transaction_hash)
     {
-        $api_key = config('defines.api.bsc.api_key');
-
+        $apiKey = config('defines.api.bsc.api_key');
+        $baseUri = config('defines.api.bsc.url');
         switch (config('defines.scan_api')) {
             case 'ETHERS':
                 $baseUri = config('defines.api.eth.url');
-                $api_key = config('defines.api.eth.api_key');
+                $apiKey = config('defines.api.eth.api_key');
                 break;
             case 'BSC':
                 $baseUri = config('defines.api.bsc.url');
@@ -108,16 +108,16 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
         }
 
         //get block of the transaction
-        $transactionBlockNumber = $this->getTransactionByHash($transaction_hash, $baseUri, $api_key)['result']['blockNumber'];
+        $transactionBlockNumber = $this->getTransactionByHash($transaction_hash, $baseUri, $apiKey)['result']['blockNumber'];
         //get current block
-        $currentBlockNumber = $this->getBlockNumber($baseUri, $api_key)['result'];
+        $currentBlockNumber = $this->getBlockNumber($baseUri, $apiKey)['result'];
 
         $blockCount = hexdec($currentBlockNumber) - hexdec($transactionBlockNumber);
 
         //get transaction status
-        $transactionStatus = $this->getTransactionReceiptStatus($transaction_hash, $baseUri, $api_key);
+        $transactionStatus = $this->getTransactionReceiptStatus($transaction_hash, $baseUri, $apiKey);
 
-        $responseData = $this->getTransactionByHash($transaction_hash, $baseUri, $api_key);
+        $responseData = $this->getTransactionByHash($transaction_hash, $baseUri, $apiKey);
         return collect([
             'response' => $responseData,
             'block_count' => $blockCount,
