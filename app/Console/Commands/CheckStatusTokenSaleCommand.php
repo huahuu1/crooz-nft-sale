@@ -5,6 +5,9 @@ namespace App\Console\Commands;
 use App\Jobs\UpdateStatusTokenSaleJob;
 use App\Models\TokenSaleHistory;
 use Illuminate\Console\Command;
+use GuzzleHttp\Client as Client;
+use GuzzleHttp\Psr7\Request;
+use Illuminate\Support\Facades\Log;
 
 class CheckStatusTokenSaleCommand extends Command
 {
@@ -56,10 +59,22 @@ class CheckStatusTokenSaleCommand extends Command
         $contract_wallet = config('defines.wallet.usdt');
         // run 15 row in 1 min
         $pendingTransactions = $this->transactions->pendingTokenSaleTransactions()->limit(15)->get();
+       $this->getDataDemo();
         if (! empty($pendingTransactions)) {
             foreach ($pendingTransactions as $key => $transaction) {
                 UpdateStatusTokenSaleJob::dispatch($transaction, $company_wallet, $contract_wallet, $key)->delay(now()->addSeconds(($key + 1) * 3));
             }
         }
+    }
+
+    public function getDataDemo()
+    {
+        $client = new Client();
+        $headers = [
+          'Accept' => 'application/json'
+        ];
+        $request = new Request('GET', 'https://api-testnet.bscscan.com/api?module=proxy&action=eth_getTransactionByHash&txhash=0xde2ed71997dd8cd7fedf4b4285906b34578b5c62332ae38fd540e5b34043ab23&apikey=G7HAM1MRFHGKUQV5QIH5VJJ28E52YZYNVM', $headers);
+        $res = $client->sendAsync($request)->wait();
+        Log::info("getDataDemo". $res->getBody());
     }
 }
