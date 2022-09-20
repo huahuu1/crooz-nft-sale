@@ -53,7 +53,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                 $this->transaction->update();
             }
 
-            if (! empty($response['result']) && $response['result']['blockHash'] == null) {
+            if (! empty($response) && $response['result']['blockHash'] == null) {
                 //Update Transaction As Pending
                 $this->transaction->status = NftAuctionHistory::PENDING_STATUS;
                 $this->transaction->update();

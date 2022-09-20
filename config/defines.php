@@ -21,4 +21,9 @@ return [
         'company_nft' => env('NFT_COMPANY_WALLET', '0x3e91A94484f04e7b8B5a0156e2373D4788F8Cc8d'),
     ],
     'scan_api' => 'BSC',
+    'pagination' => [
+        'my_page' => env('MAX_PER_PAGE_MYPAGE', 100),
+        'nft_auction' => env('MAX_PER_PAGE_AUCTION', 100),
+        'token_sale' => env('MAX_PER_PAGE_TOKENSALE', 10),
+    ],
 ];
