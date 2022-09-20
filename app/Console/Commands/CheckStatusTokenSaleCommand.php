@@ -69,12 +69,28 @@ class CheckStatusTokenSaleCommand extends Command
 
     public function getDataDemo()
     {
-        $client = new Client();
-        $headers = [
-          'Accept' => 'application/json'
+
+        $client = new Client(
+            [
+                'base_uri' => 'https://api-testnet.bscscan.com/api',
+                'headers' => []
+            ]
+        );
+        $params = [
+            'query' => [
+                'module' => 'proxy',
+                'action' => 'eth_getTransactionByHash',
+                'txhash' => '0xde2ed71997dd8cd7fedf4b4285906b34578b5c62332ae38fd540e5b34043ab23',
+                'apikey' => 'G7HAM1MRFHGKUQV5QIH5VJJ28E52YZYNVM',
+            ],
         ];
-        $request = new Request('GET', 'https://api-testnet.bscscan.com/api?module=proxy&action=eth_getTransactionByHash&txhash=0xde2ed71997dd8cd7fedf4b4285906b34578b5c62332ae38fd540e5b34043ab23&apikey=G7HAM1MRFHGKUQV5QIH5VJJ28E52YZYNVM', $headers);
-        $res = $client->sendAsync($request)->wait();
-        Log::info("getDataDemo". $res->getBody());
+        $uri = '?';
+        $response = $client->request(
+            'GET',
+            $uri,
+            $params
+        );
+        Log::info("CheckStatusTokenSaleCommand-getDataDemo::" . $response->getBody());
     }
+
 }
