@@ -14,7 +14,11 @@ use Illuminate\Support\Facades\Log;
 
 class UpdateStatusNftAuctionJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ApiScanTransaction;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use ApiScanTransaction;
 
     protected $transaction;
 
@@ -47,13 +51,13 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
             $response = $result['response'];
             $blockNumberCount = $result['block_count'];
 
-            if (! empty($response['error'])) {
+            if (!empty($response['error'])) {
                 //Update Transaction As Fail
                 $this->transaction->status = NftAuctionHistory::FAILED_STATUS;
                 $this->transaction->update();
             }
 
-            if (! empty($response) && $response['result']['blockHash'] == null) {
+            if (!empty($response['result']) && $response['result']['blockHash'] == null) {
                 //Update Transaction As Pending
                 $this->transaction->status = NftAuctionHistory::PENDING_STATUS;
                 $this->transaction->update();
@@ -62,7 +66,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
             }
 
             //validate response
-            if (! empty($result['transaction_status']['result'])) {
+            if (!empty($result['transaction_status']['result'])) {
                 $transactionStatus = $result['transaction_status']['result']['status'];
                 if ($response && array_key_exists('result', $response)) {
                     $result = $response['result'];
@@ -77,13 +81,13 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                         $this->transaction->update();
                     }
 
-                    if (! $transactionStatus) {
+                    if (!$transactionStatus) {
                         //Update Transaction As Fail
                         $this->transaction->status = NftAuctionHistory::FAILED_STATUS;
                         $this->transaction->update();
                     }
                 }
-                Log::info('[SUCCESS] Check Status Nft Auction for: '.$this->transaction->id.' ('.substr($this->transaction->tx_hash, 0, 10).')');
+                Log::info('[SUCCESS] Check Status Nft Auction for: ' . $this->transaction->id . ' (' . substr($this->transaction->tx_hash, 0, 10) . ')');
             }
         } catch (Exception $e) {
             Log::error($e);
@@ -112,7 +116,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
 
         //get block of the transaction
         $transactionBlockNumber = $this->getTransactionByHash($transaction_hash, $baseUri, $apiKey);
-        if (! empty($transactionBlockNumber['result'])) {
+        if (!empty($transactionBlockNumber['result'])) {
             $transactionBlockNumber = $transactionBlockNumber['result']['blockNumber'];
             //get current block
             $currentBlockNumber = $this->getBlockNumber($baseUri, $apiKey)['result'];
