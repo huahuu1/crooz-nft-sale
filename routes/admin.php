@@ -14,9 +14,12 @@ Route::prefix('admin')->group(function () {
         // import nft
         Route::post('import-nft', [NftController::class, 'importNft']);
         Route::get('export-nft', [NftController::class, 'exportNft']);
-
-        //import unlock user balance excel
-        Route::post('import-unlock-balance', [TransactionController::class, 'importUnlockUserBalance']);
+        Route::group([
+            'prefix' => 'import',
+        ], function () {
+            //import private user unlock balance excel
+            Route::post('private-user/unlock-balance', [TransactionController::class, 'importPrivateUserUnlockBalance']);
+        });
 
         // logout
         Route::get('logout', [AuthAdminController::class, 'logout']);

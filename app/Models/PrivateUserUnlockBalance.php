@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
 
-class UnlockUserBalance extends Model
+class PrivateUserUnlockBalance extends Model
 {
     use HasApiTokens;
     use HasFactory;
 
-    protected $table = 'user_unlock_balances';
+    protected $table = 'private_user_unlock_balances';
 
     /**
      * The attributes that are mass assignable.
@@ -21,7 +21,7 @@ class UnlockUserBalance extends Model
     protected $fillable = [
         'token_id',
         'token_sale_id',
-        'user_id',
+        'wallet_address',
         'amount_lock',
         'amount_lock_remain',
         'next_run_date',
@@ -30,17 +30,17 @@ class UnlockUserBalance extends Model
     ];
 
     /**
-     * Get ALl unlock user balance
+     * Get ALl private user unlock balance
      *
      * @return mixed
      */
-    public function getUnlockUserBalances()
+    public function getPrivateUserUnlockBalances()
     {
-        return UnlockUserBalance::where('status', 1)->with(['token_master', 'token_sale']);
+        return PrivateUserUnlockBalance::where('status', 1)->with(['token_master', 'token_sale']);
     }
 
     /**
-     * Get the token master that owns the unlock user balance.
+     * Get the token master that owns the private user unlock balance.
      */
     public function token_master()
     {
@@ -48,7 +48,7 @@ class UnlockUserBalance extends Model
     }
 
     /**
-     * Get the token sale id that owns the unlock user balance.
+     * Get the token sale id that owns the private user unlock balance.
      */
     public function token_sale()
     {

@@ -3,8 +3,9 @@
 namespace App\Imports;
 
 use App\Models\TokenSaleInfo;
-use App\Models\UnlockUserBalance;
+use App\Models\PrivateUserUnlockBalance;
 use App\Models\UserBalance;
+use App\Services\UserService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -14,15 +15,16 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
 
-class UnlockUserBalanceImport implements ToModel, WithHeadingRow
+class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow
 {
     use RemembersRowNumber;
 
-    protected $unlockUserBalance;
+    protected $privateUserUnlockBalance;
 
-    public function __construct(UnlockUserBalance $unlockUserBalance)
+    public function __construct(PrivateUserUnlockBalance $privateUserUnlockBalance)
     {
-        $this->unlockUserBalance = $unlockUserBalance;
+        $this->privateUserUnlockBalance = $privateUserUnlockBalance;
+        $this->userService = new UserService();
     }
 
     public function headingRow(): int
@@ -43,6 +45,18 @@ class UnlockUserBalanceImport implements ToModel, WithHeadingRow
     {
         $currentRowNumber = $this->getRowNumber();
         Log::info('[SUCCESS] Insert excel row: '.$currentRowNumber);
+        //check co user chua
+        $user = $this->userService->getUserByWalletAddress($row['wallet_address'])->count();
+        //neu co user roi thi update
+        if (!$user) {
+            # code...
+        }
+        //co user balance chua, co roi thi update chua co thi create
+
+        //neu chua co user thi create
+
+        //create user balance
+
 
         UserBalance::where('user_id', $row['user_id'])
                    ->where('token_id', $row['token_id'])
@@ -56,20 +70,20 @@ class UnlockUserBalanceImport implements ToModel, WithHeadingRow
         $endDate = new Carbon($tokenSaleInfo->end_date);
         $nextRunDate = $endDate->addDays($tokenSaleInfo->lock_info->lock_day);
 
-        return new UnlockUserBalance([
+        return new PrivateUserUnlockBalance([
             'token_id' => $row['token_id'],
             'token_sale_id' => $row['token_sale_id'],
-            'user_id' => $row['user_id'],
+            'wallet_address' => $row['wallet_address'],
             'amount_lock' => $row['amount_lock'],
             'amount_lock_remain' => $row['amount_lock_remain'],
             'next_run_date' => $nextRunDate,
         ]);
     }
 
-    public function importUnlockUserBalance()
+    public function importPrivateUserUnlockBalance()
     {
         try {
-            Excel::import(new UnlockUserBalanceImport($this->unlockUserBalance), request()->file('file'));
+            Excel::import(new PrivateUserUnlockBalanceImport($this->privateUserUnlockBalance), request()->file('file'));
         } catch (ValidationException $e) {
             Log::info($e);
         }

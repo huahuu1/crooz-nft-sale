@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TransactionRequest;
-use App\Imports\UnlockUserBalanceImport;
+use App\Imports\PrivateUserUnlockBalanceImport;
 use App\Models\CashFlow;
 use App\Models\NftAuctionHistory;
 use App\Models\NftAuctionInfo;
@@ -22,7 +22,7 @@ class TransactionController extends Controller
 {
     protected $userService;
 
-    protected $unlockUserBalanceImport;
+    protected $privateUserUnlockBalanceImport;
 
     protected $historyListService;
 
@@ -35,12 +35,12 @@ class TransactionController extends Controller
      */
     public function __construct(
         UserService $userService,
-        UnlockUserBalanceImport $unlockUserBalanceImport,
+        PrivateUserUnlockBalanceImport $privateUserUnlockBalanceImport,
         HistoryListService $historyListService,
         CashFlowService $cashFlowService
     ) {
         $this->userService = $userService;
-        $this->unlockUserBalanceImport = $unlockUserBalanceImport;
+        $this->privateUserUnlockBalanceImport = $privateUserUnlockBalanceImport;
         $this->historyListService = $historyListService;
         $this->cashFlowService = $cashFlowService;
     }
@@ -187,7 +187,7 @@ class TransactionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function importUnlockUserBalance(Request $request)
+    public function importPrivateUserUnlockBalance(Request $request)
     {
         $validator = Validator::make(
             [
@@ -201,16 +201,16 @@ class TransactionController extends Controller
         );
         if (! $validator->fails()) {
             try {
-                $this->unlockUserBalanceImport->importUnlockUserBalance();
+                $this->privateUserUnlockBalanceImport->importPrivateUserUnlockBalance();
 
                 return response()->json([
-                    'message' => 'Import unlock user balance successfully!!',
+                    'message' => 'Import private user unlock balance successfully!!',
                 ], 200);
             } catch (Exception $e) {
                 Log::error($e);
 
                 return response()->json([
-                    'message' => 'Import unlock user balance failed!!',
+                    'message' => 'Import private user unlock balance failed!!',
                     'error' => $e,
                 ], 500);
             }
