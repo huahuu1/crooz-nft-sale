@@ -53,9 +53,11 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
             $response = $result['response'];
             $blockNumberCount = $result['block_count'];
 
-            Log::info("UpdateStatusNftAuctionJob-result::". $result);
-            Log::info("UpdateStatusNftAuctionJob-response::". $response);
-            Log::info("UpdateStatusNftAuctionJob-blockNumberCount::". $blockNumberCount);
+
+            Log::info("UpdateStatusNftAuctionJob-result::" , ['result' => $result]);
+            Log::info("UpdateStatusNftAuctionJob-response::" , ['response' => $response]);
+            Log::info("UpdateStatusNftAuctionJob-blockNumberCount::", ['blockNumberCount' => $blockNumberCount]);
+
 
             if (! empty($response['error'])) {
                 //Update Transaction As Fail
