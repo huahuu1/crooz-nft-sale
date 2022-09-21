@@ -18,7 +18,11 @@ use Illuminate\Support\Facades\Log;
 
 class CreateOrUpdateUserBalanceJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, CalculateNextRunDate;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use CalculateNextRunDate;
 
     protected $userService;
 
