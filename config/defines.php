@@ -10,17 +10,17 @@ return [
         ],
         'eth' => [
             'name' => 'ETH',
-            'url' => env('ETHERSSCAN_API_URL', 'https://api-ropsten.etherscan.io/api'),
+            'url' => env('ETHERSSCAN_API_URL', 'https://api-goerli.etherscan.io/api'),
             'api_key' => env('ETHERSCAN_API_KEY', 'ENBK5HBW1JFGY2INMUN28UDA88VM1Y6GJS'),
             'block_count' => env('SUCCESS_TRANSACTION_BNB_BLOCK_COUNT', 24),
         ],
     ],
     'wallet' => [
-        'usdt' => env('CONTRACT_WALLET_USDT', '0x110a13fc3efe6a245b50102d2d79b3e76125ae83'),
+        'usdt' => env('CONTRACT_WALLET_USDT', '0xC2C527C0CACF457746Bd31B2a698Fe89de2b6d49'),
         'company_token_sale' => env('COMPANY_WALLET', '0x1B73dA81086D6BF763e0f3b7622740F335B04927'),
         'company_nft' => env('NFT_COMPANY_WALLET', '0x3e91A94484f04e7b8B5a0156e2373D4788F8Cc8d'),
     ],
-    'scan_api' => 'BSC',
+    'scan_api' => env('BLOCKCHAIN_SCAN_API', 'ETHERS'),
     'pagination' => [
         'my_page' => env('MAX_PER_PAGE_MYPAGE', 100),
         'nft_auction' => env('MAX_PER_PAGE_AUCTION', 100),
