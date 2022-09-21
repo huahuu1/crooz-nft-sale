@@ -15,7 +15,12 @@ use Illuminate\Support\Facades\Log;
 
 class UpdateStatusTokenSaleJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ApiScanTransaction, CheckTransactionWithApiScan;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use ApiScanTransaction;
+    use CheckTransactionWithApiScan;
 
     protected $transaction;
 
@@ -50,12 +55,12 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
             $result = $this->checkWithApiScan($this->transaction->tx_hash);
             $response = $result['response'];
             $blockNumberCount = $result['block_count'];
-            if (! empty($response['error'])) {
+            if (!empty($response['error'])) {
                 //Update Transaction As Fail
                 $this->transaction->status = TokenSaleHistory::FAILED_STATUS;
                 $this->transaction->update();
             }
-            if (! empty($response) && $response['result']['blockHash'] == null) {
+            if (!empty($response['result']) && $response['result']['blockHash'] == null) {
                 //Update Transaction As Pending
                 $this->transaction->status = TokenSaleHistory::PENDING_STATUS;
                 $this->transaction->update();
@@ -63,7 +68,7 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
                 return;
             }
             //validate response
-            if (! empty($result['transaction_status']['result'])) {
+            if (!empty($result['transaction_status']['result'])) {
                 $transactionStatus = $result['transaction_status']['result']['status'];
                 $successBlockCount = $this->configSuccessBlockCount(config('defines.network'));
                 if ($response && array_key_exists('result', $response)) {
@@ -81,14 +86,14 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
                         CreateOrUpdateUserBalanceJob::dispatch($this->transaction)->delay(now()->addSeconds(($this->key + 1) * 3));
                     }
 
-                    if (! $transactionStatus) {
+                    if (!$transactionStatus) {
                         //Update Transaction As Fail
                         $this->transaction->status = TokenSaleHistory::FAILED_STATUS;
                         $this->transaction->update();
                     }
                 }
             }
-            Log::info('[SUCCESS] Check status token sale for: '.$this->transaction->id.' ('.substr($this->transaction->tx_hash, 0, 10).')');
+            Log::info('[SUCCESS] Check status token sale for: ' . $this->transaction->id . ' (' . substr($this->transaction->tx_hash, 0, 10) . ')');
         } catch (Exception $e) {
             Log::error($e);
         }

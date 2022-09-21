@@ -16,7 +16,11 @@ use Illuminate\Support\Facades\Log;
 
 class UpdateUnlockBalanceJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, CalculateNextRunDate;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use CalculateNextRunDate;
 
     protected $unlockUserBalance;
 
