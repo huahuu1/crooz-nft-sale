@@ -58,7 +58,7 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
                 $this->transaction->status = TokenSaleHistory::FAILED_STATUS;
                 $this->transaction->update();
             }
-            if (!empty($response) && $response['result']['blockHash'] == null) {
+            if (!empty($response['result']) && $response['result']['blockHash'] == null) {
                 //Update Transaction As Pending
                 $this->transaction->status = TokenSaleHistory::PENDING_STATUS;
                 $this->transaction->update();
