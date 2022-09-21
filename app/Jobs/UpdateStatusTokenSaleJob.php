@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\TokenSaleHistory;
 use App\Traits\ApiScanTransaction;
+use App\Traits\CheckTransactionWithApiScan;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,7 +15,12 @@ use Illuminate\Support\Facades\Log;
 
 class UpdateStatusTokenSaleJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ApiScanTransaction;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use ApiScanTransaction;
+    use CheckTransactionWithApiScan;
 
     protected $transaction;
 
@@ -49,7 +55,7 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
             $result = $this->checkWithApiScan($this->transaction->tx_hash);
             $response = $result['response'];
             $blockNumberCount = $result['block_count'];
-
+            
             Log::info("UpdateStatusTokenSaleJob-result::". $result);
             Log::info("UpdateStatusTokenSaleJob-response::". $response);
             Log::info("UpdateStatusTokenSaleJob-blockNumberCount::". $blockNumberCount);
@@ -59,7 +65,7 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
                 $this->transaction->status = TokenSaleHistory::FAILED_STATUS;
                 $this->transaction->update();
             }
-            if (! empty($response) && $response['result']['blockHash'] == null) {
+            if (!empty($response['result']) && $response['result']['blockHash'] == null) {
                 //Update Transaction As Pending
                 $this->transaction->status = TokenSaleHistory::PENDING_STATUS;
                 $this->transaction->update();
@@ -67,14 +73,15 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
                 return;
             }
             //validate response
-            if (! empty($result['transaction_status']['result'])) {
+            if (!empty($result['transaction_status']['result'])) {
                 $transactionStatus = $result['transaction_status']['result']['status'];
+                $successBlockCount = $this->configSuccessBlockCount(config('defines.network'));
                 if ($response && array_key_exists('result', $response)) {
                     $result = $response['result'];
                     //Validate transaction destination with our account
                     if ((strtolower($result['to']) == strtolower($this->company_wallet)
                             || strtolower($result['to']) == strtolower($this->contract_wallet))
-                        && $blockNumberCount >= config('defines.api.bsc.block_count')
+                        && $blockNumberCount >= $successBlockCount
                         && $transactionStatus
                     ) {
                         //Update Transaction As Success
@@ -84,58 +91,16 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
                         CreateOrUpdateUserBalanceJob::dispatch($this->transaction)->delay(now()->addSeconds(($this->key + 1) * 3));
                     }
 
-                    if (! $transactionStatus) {
+                    if (!$transactionStatus) {
                         //Update Transaction As Fail
                         $this->transaction->status = TokenSaleHistory::FAILED_STATUS;
                         $this->transaction->update();
                     }
                 }
             }
-            Log::info('[SUCCESS] Check status token sale for: '.$this->transaction->id.' ('.substr($this->transaction->tx_hash, 0, 10).')');
+            Log::info('[SUCCESS] Check status token sale for: ' . $this->transaction->id . ' (' . substr($this->transaction->tx_hash, 0, 10) . ')');
         } catch (Exception $e) {
             Log::error($e);
         }
-    }
-
-    /**
-     * Check Transaction With Ether Scan
-     *
-     * @param  mixed  $transaction_hash
-     * @return mixed
-     */
-    public function checkWithApiScan($transaction_hash)
-    {
-        $apiKey = config('defines.api.bsc.api_key');
-        $baseUri = config('defines.api.bsc.url');
-
-        switch (config('defines.scan_api')) {
-            case 'ETHERS':
-                $baseUri = config('defines.api.eth.url');
-                $apiKey = config('defines.api.eth.api_key');
-                break;
-            case 'BSC':
-                $baseUri = config('defines.api.bsc.url');
-                break;
-        }
-
-        //get block of the transaction
-        $transactionBlockNumber = $this->getTransactionByHash($transaction_hash, $baseUri, $apiKey);
-        if (! empty($transactionBlockNumber['result'])) {
-            $transactionBlockNumber = $transactionBlockNumber['result']['blockNumber'];
-            //get current block
-            $currentBlockNumber = $this->getBlockNumber($baseUri, $apiKey)['result'];
-            $blockCount = hexdec($currentBlockNumber) - hexdec($transactionBlockNumber);
-        }
-
-        //get transaction status
-        $transactionStatus = $this->getTransactionReceiptStatus($transaction_hash, $baseUri, $apiKey);
-
-        $responseData = $this->getTransactionByHash($transaction_hash, $baseUri, $apiKey);
-
-        return collect([
-            'response' => $responseData,
-            'block_count' => $blockCount ?? 0,
-            'transaction_status' => $transactionStatus,
-        ]);
     }
 }

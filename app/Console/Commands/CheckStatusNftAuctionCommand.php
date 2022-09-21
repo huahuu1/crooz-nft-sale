@@ -4,10 +4,12 @@ namespace App\Console\Commands;
 
 use App\Jobs\UpdateStatusNftAuctionJob;
 use App\Models\NftAuctionHistory;
+use App\Traits\CheckTransactionWithApiScan;
 use Illuminate\Console\Command;
 
 class CheckStatusNftAuctionCommand extends Command
 {
+    use CheckTransactionWithApiScan;
     /**
      * The name and signature of the console command.
      *
@@ -53,7 +55,7 @@ class CheckStatusNftAuctionCommand extends Command
     public function validateTransactions()
     {
         $company_wallet = config('defines.wallet.company_nft');
-        $contract_wallet = config('defines.wallet.usdt');
+        $contract_wallet = $this->configContractWallet(config('defines.network'));
         // run 15 row in 1 min
         $pendingTransactions = $this->transactions->pendingNftAuctionTransactions()->limit(15)->get();
         if (! empty($pendingTransactions)) {
