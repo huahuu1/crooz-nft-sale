@@ -55,12 +55,12 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
             $result = $this->checkWithApiScan($this->transaction->tx_hash);
             $response = $result['response'];
             $blockNumberCount = $result['block_count'];
-            
-            Log::info("UpdateStatusTokenSaleJob-result::". $result);
-            Log::info("UpdateStatusTokenSaleJob-response::". $response);
-            Log::info("UpdateStatusTokenSaleJob-blockNumberCount::". $blockNumberCount);
 
-            if (! empty($response['error'])) {
+            Log::info("UpdateStatusTokenSaleJob-result::" , ['result' => $result]);
+            Log::info("UpdateStatusTokenSaleJob-response::" , ['response' => $response]);
+            Log::info("UpdateStatusTokenSaleJob-blockNumberCount::", ['blockNumberCount' => $blockNumberCount]);
+
+            if (!empty($response['error'])) {
                 //Update Transaction As Fail
                 $this->transaction->status = TokenSaleHistory::FAILED_STATUS;
                 $this->transaction->update();
