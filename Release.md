@@ -82,13 +82,22 @@ You need use Amazon Cloud and use Aurora MYSQL to database, S3 to upload file an
     > `ETHERSCAN_API_KEY= YOU_ETHERSCAN_API_KEY`
 5. Change Contact wallet USDT
  
-    Environment on develop you can get contact wallet in [here](https://ropsten.etherscan.io/token/0x110a13fc3efe6a245b50102d2d79b3e76125ae83)
-    > `CONTRACT_WALLET_USDT=0x110a13fc3efe6a245b50102d2d79b3e76125ae83`
+    Environment on develop you can get contact wallet in [here](https://goerli.etherscan.io/token/0xc2c527c0cacf457746bd31b2a698fe89de2b6d49)
+    > `CONTRACT_WALLET_USDT=0xC2C527C0CACF457746Bd31B2a698Fe89de2b6d49`
     
     Environment on production you can get contact wallet in [here](https://etherscan.io/token/0xdac17f958d2ee523a2206206994597c13d831ec7)
     > `CONTRACT_WALLET_USDT=0xdAC17F958D2ee523a2206206994597C13D831ec7`
 6. Change BSCScan API. You can a get key by click [here](https://docs.bscscan.com/getting-started/viewing-api-usage-statistics)
     > `BSCSCAN_API_KEY=YOU_BSCSCAN_API_KEY`
+7. Change Blockchain scan api
+
+    Use etherscan of use bscscan
+    Use etherscan
+    > `BLOCKCHAIN_SCAN_API=ETHERS`
+
+    Use bscscan
+    > `BLOCKCHAIN_SCAN_API=BSC`
+
 
 ### 7. Save env file
 Then update env file you can save file by press ESC in keyboard
