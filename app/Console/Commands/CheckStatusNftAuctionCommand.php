@@ -57,10 +57,10 @@ class CheckStatusNftAuctionCommand extends Command
         $company_wallet = config('defines.wallet.company_nft');
         $contract_wallet = $this->configContractWallet(config('defines.network'));
         // run 15 row in 1 min
-        $pendingTransactions = $this->transactions->pendingNftAuctionTransactions()->limit(15)->get();
+        $pendingTransactions = $this->transactions->pendingNftAuctionTransactions()->limit(10)->get();
         if (! empty($pendingTransactions)) {
             foreach ($pendingTransactions as $key => $transaction) {
-                UpdateStatusNftAuctionJob::dispatch($transaction, $company_wallet, $contract_wallet)->delay(now()->addSeconds(($key + 1) * 3));
+                UpdateStatusNftAuctionJob::dispatch($transaction, $company_wallet, $contract_wallet)->delay(now()->addSeconds(($key + 1) * 10));
             }
         }
     }

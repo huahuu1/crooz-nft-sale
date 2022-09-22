@@ -57,10 +57,10 @@ class CheckStatusTokenSaleCommand extends Command
         $company_wallet = config('defines.wallet.company_token_sale');
         $contract_wallet = $this->configContractWallet(config('defines.network'));
         // run 15 row in 1 min
-        $pendingTransactions = $this->transactions->pendingTokenSaleTransactions()->limit(15)->get();
+        $pendingTransactions = $this->transactions->pendingTokenSaleTransactions()->limit(10)->get();
         if (! empty($pendingTransactions)) {
             foreach ($pendingTransactions as $key => $transaction) {
-                UpdateStatusTokenSaleJob::dispatch($transaction, $company_wallet, $contract_wallet, $key)->delay(now()->addSeconds(($key + 1) * 3));
+                UpdateStatusTokenSaleJob::dispatch($transaction, $company_wallet, $contract_wallet, $key)->delay(now()->addSeconds(($key + 1) * 10));
             }
         }
     }
