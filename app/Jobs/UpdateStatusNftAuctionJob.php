@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\NftAuctionHistory;
 use App\Traits\ApiScanTransaction;
 use App\Traits\CheckTransactionWithApiScan;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -52,32 +53,19 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
             $result = $this->checkWithApiScan($this->transaction->tx_hash);
             $response = $result['response'];
             $blockNumberCount = $result['block_count'];
+            //checking time of pending transaction
+            $timeCheckingStatus = Carbon::now()->diffInHours(NftAuctionHistory::select('created_at')->where('tx_hash', $this->transaction->tx_hash)->first()->created_at);
 
-
-            Log::info("UpdateStatusNftAuctionJob-result::" , ['result' => $result]);
-            Log::info("UpdateStatusNftAuctionJob-response::" , ['response' => $response]);
-            Log::info("UpdateStatusNftAuctionJob-blockNumberCount::", ['blockNumberCount' => $blockNumberCount]);
-
-
-            if (! empty($response['error'])) {
+            if (! empty($response['error']) || $timeCheckingStatus >= 6) {
                 //Update Transaction As Fail
                 $this->transaction->status = NftAuctionHistory::FAILED_STATUS;
                 $this->transaction->update();
             }
-
-            if (!empty($response['result']) && $response['result']['blockHash'] == null) {
-                //Update Transaction As Pending
-                $this->transaction->status = NftAuctionHistory::PENDING_STATUS;
-                $this->transaction->update();
-
-                return;
-            }
-
             //validate response
             if (!empty($result['transaction_status']['result'])) {
-                $transactionStatus = $result['transaction_status']['result']['status'];
+                $transactionStatus = $result['transaction_status']['result']['status'] ?? null;
                 $successBlockCount = $this->configSuccessBlockCount(config('defines.network'));
-                if ($response && array_key_exists('result', $response)) {
+                if ($response && array_key_exists('result', $response) && !empty($response['result'])) {
                     $result = $response['result'];
                     //Validate transaction destination with our account
                     if ((strtolower($result['to']) == strtolower($this->company_wallet)

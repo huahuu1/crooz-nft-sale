@@ -21,8 +21,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('check:token-sale')->everyMinute();
-        $schedule->command('check:nft-auction')->everyMinute();
+        $schedule->command('check:token-sale')->everyTwoMinutes();
+        $schedule->command('check:nft-auction')->everyThreeMinutes();
         $schedule->command('unlock:user-balance')->daily();
         $schedule->command('telescope:prune')->daily();
     }
