@@ -5,7 +5,7 @@ return [
         'bsc' => [
             'name' => 'BSC',
             'url' => env('BSCSCAN_API_URL', 'https://api-testnet.bscscan.com/api'),
-            'contract_wallet_usdt' => env('CONTRACT_WALLET_USDT', '0x337610d27c682E347C9cD60BD4b3b107C9d34dDd'),
+            'contract_wallet_usdt' => env('CONTRACT_WALLET_BUSD', '0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee'),
             'api_key' => env('BSCSCAN_API_KEY', 'G7HAM1MRFHGKUQV5QIH5VJJ28E52YZYNVM'),
             'block_count' => env('SUCCESS_TRANSACTION_BNB_BLOCK_COUNT', 25),
         ],
