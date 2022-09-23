@@ -53,9 +53,6 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
             $result = $this->checkWithApiScan($this->transaction->tx_hash);
             $response = $result['response'];
             $blockNumberCount = $result['block_count'];
-            Log::info("UpdateStatusNftAuctionJob-result", [$result]);
-            Log::info("UpdateStatusNftAuctionJob-response", [$response]);
-            Log::info("UpdateStatusNftAuctionJob-blockNumberCount", [$blockNumberCount]);
             //checking time of pending transaction
             $timeCheckingStatus = Carbon::now()->diffInHours(NftAuctionHistory::select('created_at')->where('tx_hash', $this->transaction->tx_hash)->first()->created_at);
 
