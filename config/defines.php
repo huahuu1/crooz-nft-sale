@@ -27,4 +27,8 @@ return [
         'nft_auction' => env('MAX_PER_PAGE_AUCTION', 100),
         'token_sale' => env('MAX_PER_PAGE_TOKENSALE', 10),
     ],
+    'queue' => [
+        'geneal' => 'geneal',
+        'check_status' => 'checkStatus',
+    ]
 ];
