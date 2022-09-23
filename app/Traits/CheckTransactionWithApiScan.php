@@ -76,8 +76,10 @@ trait CheckTransactionWithApiScan
         if (! empty($responseData['result'])) {
             $transactionBlockNumber = $responseData['result']['blockNumber'];
             //get current block
-            $currentBlockNumber = $this->getBlockNumber($configNetwork['base_uri'], $configNetwork['api_key'])['result'];
-            $blockCount = hexdec($currentBlockNumber) - hexdec($transactionBlockNumber);
+            $getCurrentBlockNumber = $this->getBlockNumber($configNetwork['base_uri'], $configNetwork['api_key']);
+            if(!empty($getCurrentBlockNumber['result'])){
+                $blockCount = hexdec($getCurrentBlockNumber['result']) - hexdec($transactionBlockNumber);
+            }
         }
         //get transaction status
         $transactionStatus = $this->getTransactionReceiptStatus($transaction_hash, $configNetwork['base_uri'], $configNetwork['api_key']);
