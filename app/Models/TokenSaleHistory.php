@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
@@ -40,7 +41,7 @@ class TokenSaleHistory extends Model
      */
     public function pendingTokenSaleTransactions()
     {
-        return $this->where('status', $this::PENDING_STATUS);
+        return $this->where('status', $this::PENDING_STATUS)->where('created_at', '<', Carbon::now()->subMinutes(1)->toDateTimeString());
     }
 
     /**
