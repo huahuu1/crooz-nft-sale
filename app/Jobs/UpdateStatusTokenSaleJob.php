@@ -83,7 +83,7 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
                         $this->transaction->status = TokenSaleHistory::SUCCESS_STATUS;
                         $this->transaction->update();
                         //update lock amount balance of user
-                        CreateOrUpdateUserBalanceJob::dispatch($this->transaction)->delay(now()->addSeconds(($this->key + 1) * 3));
+                        CreateOrUpdateUserBalanceJob::dispatch($this->transaction)->onQueue(config('defines.queue.check_status'))->delay(now()->addSeconds(($this->key + 1) * 3));
                     }
 
                     if (!$transactionStatus) {
