@@ -42,13 +42,13 @@ class UnlockUserBalanceImport implements ToModel, WithHeadingRow
     public function model(array $row)
     {
         $currentRowNumber = $this->getRowNumber();
-        Log::info('[SUCCESS] Insert excel row: '.$currentRowNumber);
+        Log::info('[SUCCESS] Insert excel row: ' . $currentRowNumber);
 
         UserBalance::where('user_id', $row['user_id'])
                    ->where('token_id', $row['token_id'])
                    ->update([
-                       'amount_total' => DB::raw('amount_total + '.$row['amount_lock']),
-                       'amount_lock' => DB::raw('amount_lock + '.$row['amount_lock']),
+                       'amount_total' => DB::raw('amount_total + ' . $row['amount_lock']),
+                       'amount_lock' => DB::raw('amount_lock + ' . $row['amount_lock']),
                    ]);
 
         //create next_run_date column data

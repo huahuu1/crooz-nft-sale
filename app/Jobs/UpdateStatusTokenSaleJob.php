@@ -14,7 +14,11 @@ use Illuminate\Support\Facades\Log;
 
 class UpdateStatusTokenSaleJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ApiScanTransaction;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use ApiScanTransaction;
 
     protected $transaction;
 
@@ -67,7 +71,8 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
                 if ($response && array_key_exists('result', $response)) {
                     $result = $response['result'];
                     //Validate transaction destination with our account
-                    if ((strtolower($result['to']) == strtolower($this->company_wallet)
+                    if (
+                        (strtolower($result['to']) == strtolower($this->company_wallet)
                             || strtolower($result['to']) == strtolower($this->contract_wallet))
                         && $blockNumberCount >= config('defines.api.bsc.block_count')
                         && $transactionStatus
@@ -86,7 +91,7 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
                     }
                 }
             }
-            Log::info('[SUCCESS] Check status token sale for: '.$this->transaction->id.' ('.substr($this->transaction->tx_hash, 0, 10).')');
+            Log::info('[SUCCESS] Check status token sale for: ' . $this->transaction->id . ' (' . substr($this->transaction->tx_hash, 0, 10) . ')');
         } catch (Exception $e) {
             Log::error($e);
         }

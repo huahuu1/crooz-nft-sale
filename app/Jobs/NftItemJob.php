@@ -44,12 +44,12 @@ class NftItemJob implements ShouldQueue
             try {
                 // get file info
                 $extension = pathinfo($this->nftItems['image_url']);
-                $fileName = time().'_'.$extension['basename'];
+                $fileName = time() . '_' . $extension['basename'];
                 // save file with url
                 $image = InterventionImage::make($this->nftItems['image_url']);
                 $image->encode($extension['extension']);
                 // upload to s3
-                if (Storage::disk('s3')->put('/'.$fileName, $image->__toString(), 'public')) {
+                if (Storage::disk('s3')->put('/' . $fileName, $image->__toString(), 'public')) {
                     // get file path
                     $fullPath = Storage::disk('s3')->url($fileName);
                     // update nft with serial

@@ -37,8 +37,8 @@ class CheckStatusNftAuctionCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
+     * @see validateTransactions
+     * @return bool call validateTransactions
      */
     public function handle()
     {
@@ -47,8 +47,6 @@ class CheckStatusNftAuctionCommand extends Command
 
     /**
      * Validate Metamask Transaction
-     *
-     * @return void
      */
     public function validateTransactions()
     {

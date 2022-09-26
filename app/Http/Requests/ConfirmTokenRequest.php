@@ -15,7 +15,7 @@ class ConfirmTokenRequest extends FormRequest
     {
         return [
             'token_validate' => 'required|numeric|digits:6',
-            'wallet_address' => 'required|regex:'.config('regex.wallet_address'),
+            'wallet_address' => 'required|regex:' . config('regex.wallet_address'),
         ];
     }
 }
