@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use App\Models\NftAuctionHistory;
 use App\Traits\ApiScanTransaction;
+use App\Traits\CheckTransactionWithApiScan;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -19,6 +21,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
     use ApiScanTransaction;
+    use CheckTransactionWithApiScan;
 
     protected $transaction;
 
@@ -50,31 +53,25 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
             $result = $this->checkWithApiScan($this->transaction->tx_hash);
             $response = $result['response'];
             $blockNumberCount = $result['block_count'];
+            //checking time of pending transaction
+            $timeCheckingStatus = Carbon::now()->diffInHours(NftAuctionHistory::select('created_at')->where('tx_hash', $this->transaction->tx_hash)->first()->created_at);
 
-            if (! empty($response['error'])) {
+            if (! empty($response['error']) || $timeCheckingStatus >= 6) {
                 //Update Transaction As Fail
                 $this->transaction->status = NftAuctionHistory::FAILED_STATUS;
                 $this->transaction->update();
             }
-
-            if (! empty($response) && $response['result']['blockHash'] == null) {
-                //Update Transaction As Pending
-                $this->transaction->status = NftAuctionHistory::PENDING_STATUS;
-                $this->transaction->update();
-
-                return;
-            }
-
             //validate response
-            if (! empty($result['transaction_status']['result'])) {
-                $transactionStatus = $result['transaction_status']['result']['status'];
-                if ($response && array_key_exists('result', $response)) {
+            if (!empty($result['transaction_status']['result'])) {
+                $transactionStatus = $result['transaction_status']['result']['status'] ?? null;
+                $successBlockCount = $this->configSuccessBlockCount(config('defines.network'));
+                if ($response && array_key_exists('result', $response) && !empty($response['result'])) {
                     $result = $response['result'];
                     //Validate transaction destination with our account
                     if (
                         (strtolower($result['to']) == strtolower($this->company_wallet)
                             || strtolower($result['to']) == strtolower($this->contract_wallet))
-                        && $blockNumberCount >= config('defines.api.bsc.block_count')
+                        && $blockNumberCount >= $successBlockCount
                         && $transactionStatus
                     ) {
                         //Update Transaction As Success
@@ -82,7 +79,8 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                         $this->transaction->update();
                     }
 
-                    if (! $transactionStatus) {
+                    if (!$transactionStatus) {
+                        Log::info("UpdateStatusNftAuctionJob - FAILED", ['result' => $result, 'transactionStatus' => $transactionStatus]);
                         //Update Transaction As Fail
                         $this->transaction->status = NftAuctionHistory::FAILED_STATUS;
                         $this->transaction->update();
@@ -93,46 +91,5 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
         } catch (Exception $e) {
             Log::error($e);
         }
-    }
-
-    /**
-     * Check Transaction With Ether Scan
-     *
-     * @param  mixed  $transaction_hash
-     * @return mixed
-     */
-    public function checkWithApiScan($transaction_hash)
-    {
-        $apiKey = config('defines.api.bsc.api_key');
-        $baseUri = config('defines.api.bsc.url');
-        switch (config('defines.scan_api')) {
-            case 'ETHERS':
-                $baseUri = config('defines.api.eth.url');
-                $apiKey = config('defines.api.eth.api_key');
-                break;
-            case 'BSC':
-                $baseUri = config('defines.api.bsc.url');
-                break;
-        }
-
-        //get block of the transaction
-        $transactionBlockNumber = $this->getTransactionByHash($transaction_hash, $baseUri, $apiKey);
-        if (! empty($transactionBlockNumber['result'])) {
-            $transactionBlockNumber = $transactionBlockNumber['result']['blockNumber'];
-            //get current block
-            $currentBlockNumber = $this->getBlockNumber($baseUri, $apiKey)['result'];
-            $blockCount = hexdec($currentBlockNumber) - hexdec($transactionBlockNumber);
-        }
-
-        //get transaction status
-        $transactionStatus = $this->getTransactionReceiptStatus($transaction_hash, $baseUri, $apiKey);
-
-        $responseData = $this->getTransactionByHash($transaction_hash, $baseUri, $apiKey);
-
-        return collect([
-            'response' => $responseData,
-            'block_count' => $blockCount ?? 0,
-            'transaction_status' => $transactionStatus,
-        ]);
     }
 }

@@ -88,7 +88,7 @@ class UnlockUserTokenCommand extends Command
                     }
                     //unlock when status is not 0
                     if ($unlockUserBalance->status != 0) {
-                        UpdateUnlockBalanceJob::dispatch($unlockUserBalance, $userBalance, $unlockAmount ? $unlockAmount : 0)->delay(now()->addSeconds(($key + 1) * 3));
+                        UpdateUnlockBalanceJob::dispatch($unlockUserBalance, $userBalance, $unlockAmount ? $unlockAmount : 0)->onQueue(config('defines.queue.geneal'))->delay(now()->addSeconds(($key + 1) * 3));
 
                         Log::info('[SUCCESS] Unlock token for user ID: ' . $unlockUserBalance->user_id . ' - sale token ID: ' . $unlockUserBalance->token_sale_id);
                         $this->info('[SUCCESS] Unlock token for user ID: ' . $unlockUserBalance->user_id . ' - sale token ID: ' . $unlockUserBalance->token_sale_id);
