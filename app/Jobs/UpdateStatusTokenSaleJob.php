@@ -84,6 +84,7 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
                     }
 
                     if (!$transactionStatus) {
+                        Log::info("UpdateStatusTokenSaleJob - FAILED", ['result' => $result, 'transactionStatus' => $transactionStatus]);
                         //Update Transaction As Fail
                         $this->transaction->status = TokenSaleHistory::FAILED_STATUS;
                         $this->transaction->update();

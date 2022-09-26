@@ -79,6 +79,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                     }
 
                     if (!$transactionStatus) {
+                        Log::info("UpdateStatusNftAuctionJob - FAILED", ['result' => $result, 'transactionStatus' => $transactionStatus]);
                         //Update Transaction As Fail
                         $this->transaction->status = NftAuctionHistory::FAILED_STATUS;
                         $this->transaction->update();
