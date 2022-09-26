@@ -31,7 +31,9 @@ class MyPageController extends Controller
     /**
      * MyPageController constructor.
      *
-     * @param use UserBalanceService $userBalanceService, UserService $userService, UserWithdrawalService $userWithdrawalService
+     * @param UserBalanceService $userBalanceService
+     * @param UserService $userService
+     * @param UserWithdrawalService $userWithdrawalService
      */
     public function __construct(
         UserBalanceService $userBalanceService,
@@ -50,7 +52,7 @@ class MyPageController extends Controller
     /**
      * Get history list
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getHistoryListByWalletAddress($walletAddress, $maxPerPage = null)
     {
@@ -79,7 +81,7 @@ class MyPageController extends Controller
     /**
      * Get balances of a user by wallet address
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getBalanceByWalletAddress($walletAddress)
     {
@@ -99,7 +101,7 @@ class MyPageController extends Controller
     /**
      * Get nfts of a user by wallet address
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getNftByWalletAddress($walletAddress)
     {
@@ -119,7 +121,7 @@ class MyPageController extends Controller
     /**
      * User requests to withdrawl token
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function requestToWithdrawToken(WithdrawRequest $request)
     {
@@ -164,7 +166,7 @@ class MyPageController extends Controller
     /**
      * Update status of user_withdrawals
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function updateStatusWithdrawRequest(Request $request)
     {
@@ -208,7 +210,7 @@ class MyPageController extends Controller
     /**
      * Swap token in user balance
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function requestToSwapToken(SwapTokenRequest $request)
     {

@@ -79,7 +79,7 @@ trait ApiScanTransaction
     /**
      * cloudFlareBypass function
      *
-     * @param [string] $url
+     * @param $url
      */
     public function cloudFlareBypass($url)
     {

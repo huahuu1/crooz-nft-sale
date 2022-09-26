@@ -36,7 +36,6 @@ class UnlockUserBalance extends Model
      */
     public function getUnlockUserBalances()
     {
-        // return UnlockUserBalance::where('status', 1)->with(['token_master', 'token_sale', 'token_sale.token_unlock_rule']);
         return UnlockUserBalance::where('status', 1)->with(['token_master', 'token_sale']);
     }
 

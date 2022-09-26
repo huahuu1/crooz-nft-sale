@@ -21,7 +21,7 @@ class UserService
      * Checking user has email or not by wallet address.
      *
      * @param $walletAddress
-     * @return User
+     * @return int
      */
     public function hasVerifiedEmailByWalletAddress($walletAddress)
     {
@@ -34,7 +34,7 @@ class UserService
      * Checking user has email or not by user id.
      *
      * @param $userId
-     * @return User
+     * @return int
      */
     public function hasVerifiedEmailByUserId($userId)
     {

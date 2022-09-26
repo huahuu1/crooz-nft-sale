@@ -44,7 +44,7 @@ class UserBalance extends Model
     /**
      * Calculate user's available amount.
      *
-     * @return amount
+     * @return string
      */
     protected function getAmountAvailableAttribute()
     {

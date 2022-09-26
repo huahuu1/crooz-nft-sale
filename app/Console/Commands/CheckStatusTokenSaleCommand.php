@@ -10,6 +10,7 @@ use Illuminate\Console\Command;
 class CheckStatusTokenSaleCommand extends Command
 {
     use CheckTransactionWithApiScan;
+
     /**
      * The name and signature of the console command.
      *
@@ -40,17 +41,15 @@ class CheckStatusTokenSaleCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return int
      */
     public function handle()
     {
-        return $this->validateTransactions();
+        $this->validateTransactions();
     }
 
     /**
      * Validate Metamask Transaction
      *
-     * @return void
      */
     public function validateTransactions()
     {

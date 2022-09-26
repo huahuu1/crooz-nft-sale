@@ -16,7 +16,7 @@ class Admin extends Authenticatable
     /**
      * The attributes that aren't mass assignable.
      *
-     * @var array
+     * @var array<string>|bool
      */
     protected $guarded = ['admin'];
 

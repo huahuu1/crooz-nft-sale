@@ -48,17 +48,15 @@ class UnlockUserTokenCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return int
      */
     public function handle()
     {
-        return $this->tokenUnlockExecution();
+        $this->tokenUnlockExecution();
     }
 
     /**
      * Validate Metamask Transaction
      *
-     * @return void
      */
     public function tokenUnlockExecution()
     {
@@ -88,7 +86,7 @@ class UnlockUserTokenCommand extends Command
                     }
                     //unlock when status is not 0
                     if ($unlockUserBalance->status != 0) {
-                        UpdateUnlockBalanceJob::dispatch($unlockUserBalance, $userBalance, $unlockAmount ? $unlockAmount : 0)->onQueue(config('defines.queue.geneal'))->delay(now()->addSeconds(($key + 1) * 3));
+                        UpdateUnlockBalanceJob::dispatch($unlockUserBalance, $userBalance, $unlockAmount ? $unlockAmount : 0)->onQueue(config('defines.queue.general'))->delay(now()->addSeconds(($key + 1) * 3));
 
                         Log::info('[SUCCESS] Unlock token for user ID: ' . $unlockUserBalance->user_id . ' - sale token ID: ' . $unlockUserBalance->token_sale_id);
                         $this->info('[SUCCESS] Unlock token for user ID: ' . $unlockUserBalance->user_id . ' - sale token ID: ' . $unlockUserBalance->token_sale_id);
@@ -101,7 +99,7 @@ class UnlockUserTokenCommand extends Command
     /**
      * Check token release date
      *
-     * @param  mixed  $endDate, $lockDay
+     * @param  mixed  $nextRunDate, $updatedAt
      * @return bool
      */
     public function checkReleaseDate($nextRunDate, $updatedAt)

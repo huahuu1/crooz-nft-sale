@@ -5,6 +5,8 @@ namespace App\Imports;
 use App\Models\TokenSaleInfo;
 use App\Models\UnlockUserBalance;
 use App\Models\UserBalance;
+use App\Services\SaleInfoService;
+use App\Traits\CalculateNextRunDate;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -17,12 +19,16 @@ use Maatwebsite\Excel\Validators\ValidationException;
 class UnlockUserBalanceImport implements ToModel, WithHeadingRow
 {
     use RemembersRowNumber;
+    use CalculateNextRunDate;
 
     protected $unlockUserBalance;
+
+    protected $saleInfoService;
 
     public function __construct(UnlockUserBalance $unlockUserBalance)
     {
         $this->unlockUserBalance = $unlockUserBalance;
+        $this->saleInfoService = new SaleInfoService();
     }
 
     public function headingRow(): int
@@ -51,10 +57,10 @@ class UnlockUserBalanceImport implements ToModel, WithHeadingRow
                        'amount_lock' => DB::raw('amount_lock + ' . $row['amount_lock']),
                    ]);
 
-        //create next_run_date column data
-        $tokenSaleInfo = TokenSaleInfo::where('id', $row['token_sale_id'])->with('lock_info')->first();
-        $endDate = new Carbon($tokenSaleInfo->end_date);
-        $nextRunDate = $endDate->addDays($tokenSaleInfo->lock_info->lock_day);
+        //get info of token sale
+        $tokenSaleInfo = $this->saleInfoService->getSaleInfoAndUnlockRule($row['token_sale_id']);
+        //the next date to run unlock
+        $nextRunDate = $this->calculateNextRunDate($tokenSaleInfo->token_unlock_rules[0]->unit, $tokenSaleInfo->token_unlock_rules[0]->period, $tokenSaleInfo->end_date);
 
         return new UnlockUserBalance([
             'token_id' => $row['token_id'],

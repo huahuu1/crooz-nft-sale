@@ -14,7 +14,7 @@ class HistoryListService
      * Get history list of token sale by user id
      *
      * @param $userId
-     * @return TokenSaleHistory
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getTokenSaleHistories($userId)
     {
@@ -32,7 +32,7 @@ class HistoryListService
      * Get history list of token sale by user id
      *
      * @param $userId
-     * @return NftAuctionHistory
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getNftAuctionHistories($userId)
     {

@@ -28,7 +28,7 @@ class NftAuctionInfo extends Model
     /**
      * Display information of the latest nft auction follow Id.
      *
-     * @return \Illuminate\Http\Response
+     * @return \App\Models\NftAuctionInfo
      */
     public static function getLatestInfoNftAuction()
     {

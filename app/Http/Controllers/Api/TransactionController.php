@@ -31,7 +31,10 @@ class TransactionController extends Controller
     /**
      * TransactionController constructor.
      *
-     * @param use userService $userService
+     * @param UserService $userService
+     * @param UnlockUserBalanceImport $unlockUserBalanceImport
+     * @param HistoryListService $historyListService
+     * @param CashFlowService $cashFlowService
      */
     public function __construct(
         UserService $userService,
@@ -48,8 +51,8 @@ class TransactionController extends Controller
     /**
      * Create transaction when a user deposit crypto.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\TransactionRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function createDepositTokenTransaction(TransactionRequest $request)
     {
@@ -91,8 +94,8 @@ class TransactionController extends Controller
     /**
      * Create transaction when a user deposit crypto.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\TransactionRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function createDepositNftTransaction(TransactionRequest $request)
     {
@@ -143,7 +146,7 @@ class TransactionController extends Controller
     /**
      * Get purchase list of token sale
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getPurchaseListOfTokenSaleByWalletAddress($walletAddress, $maxPerPage = null)
     {
@@ -168,7 +171,7 @@ class TransactionController extends Controller
     /**
      * Get purchase list of nft auction
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getPurchaseListOfNftAuction($maxPerPage = null)
     {
@@ -185,7 +188,7 @@ class TransactionController extends Controller
     /**
      * Import unlock user balance by excel
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function importUnlockUserBalance(Request $request)
     {
