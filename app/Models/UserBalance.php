@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Sanctum\HasApiTokens;
 
 class UserBalance extends Model
@@ -36,7 +37,7 @@ class UserBalance extends Model
     /**
      * Get the token relates to user balanace.
      */
-    public function token_master()
+    public function tokenMaster(): BelongsTo
     {
         return $this->belongsTo(TokenMaster::class, 'token_id');
     }

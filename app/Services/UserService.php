@@ -14,7 +14,13 @@ class UserService
      */
     public function getUserByWalletAddress($walletAddress)
     {
-        return User::select('id', 'email', 'wallet_address', 'token_validate', 'status')->where('wallet_address', $walletAddress)->first();
+        return User::select(
+            'id',
+            'email',
+            'wallet_address',
+            'token_validate',
+            'status'
+        )->where('wallet_address', $walletAddress)->first();
     }
 
     /**
@@ -25,9 +31,10 @@ class UserService
      */
     public function hasVerifiedEmailByWalletAddress($walletAddress)
     {
-        return User::select('email')->where('wallet_address', $walletAddress)
-                                    ->whereNotNull('email')
-                                    ->count();
+        return User::select('email')
+            ->where('wallet_address', $walletAddress)
+            ->whereNotNull('email')
+            ->count();
     }
 
     /**
@@ -39,7 +46,7 @@ class UserService
     public function hasVerifiedEmailByUserId($userId)
     {
         return User::select('email')->where('id', $userId)
-                                    ->whereNotNull('email')
-                                    ->count();
+            ->whereNotNull('email')
+            ->count();
     }
 }

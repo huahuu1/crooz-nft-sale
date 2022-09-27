@@ -41,7 +41,10 @@ class TokenSaleHistory extends Model
      */
     public function pendingTokenSaleTransactions()
     {
-        return $this->where('status', $this::PENDING_STATUS)->where('created_at', '<', Carbon::now()->subMinutes(1)->toDateTimeString());
+        return $this->where('status', $this::PENDING_STATUS)
+            ->where('created_at', '<', Carbon::now()
+                ->subMinutes(1)
+                ->toDateTimeString());
     }
 
     /**
