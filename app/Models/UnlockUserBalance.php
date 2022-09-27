@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Sanctum\HasApiTokens;
 
 class UnlockUserBalance extends Model
@@ -36,21 +37,23 @@ class UnlockUserBalance extends Model
      */
     public function getUnlockUserBalances()
     {
-        return UnlockUserBalance::where('status', 1)->with(['token_master', 'token_sale']);
+        return UnlockUserBalance::where('status', 1)->with(['tokenMaster', 'tokenSale']);
     }
 
     /**
      * Get the token master that owns the unlock user balance.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function token_master()
+    public function tokenMaster(): BelongsTo
     {
         return $this->belongsTo(TokenMaster::class, 'token_id');
     }
 
     /**
      * Get the token sale id that owns the unlock user balance.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function token_sale()
+    public function tokenSale(): BelongsTo
     {
         return $this->belongsTo(TokenSaleInfo::class, 'token_sale_id');
     }

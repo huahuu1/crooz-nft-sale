@@ -53,7 +53,10 @@ class NftItemJob implements ShouldQueue
                     // get file path
                     $fullPath = Storage::disk('s3')->url($fileName);
                     // update nft with serial
-                    Nft::where(['serial_no' => $this->nftItems['serial_no'], 'image_url' => $this->nftItems['image_url']])
+                    Nft::where(
+                        ['serial_no' => $this->nftItems['serial_no'],
+                        'image_url' => $this->nftItems['image_url']]
+                    )
                         ->update(['image_url' => $fullPath]);
                 }
             } catch (\Exception $e) {

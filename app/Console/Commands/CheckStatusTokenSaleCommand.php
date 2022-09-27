@@ -59,7 +59,14 @@ class CheckStatusTokenSaleCommand extends Command
         $pendingTransactions = $this->transactions->pendingTokenSaleTransactions()->limit(10)->get();
         if (! empty($pendingTransactions)) {
             foreach ($pendingTransactions as $key => $transaction) {
-                UpdateStatusTokenSaleJob::dispatch($transaction, $company_wallet, $contract_wallet, $key)->onQueue(config('defines.queue.check_status'))->delay(now()->addSeconds(($key + 1) * 5));
+                UpdateStatusTokenSaleJob::dispatch(
+                    $transaction,
+                    $company_wallet,
+                    $contract_wallet,
+                    $key
+                )
+                    ->onQueue(config('defines.queue.check_status'))
+                    ->delay(now()->addSeconds(($key + 1) * 5));
             }
         }
     }

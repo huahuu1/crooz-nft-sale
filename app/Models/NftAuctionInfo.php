@@ -32,6 +32,8 @@ class NftAuctionInfo extends Model
      */
     public static function getLatestInfoNftAuction()
     {
-        return NftAuctionInfo::select('id', 'start_date', 'end_date', 'min_price', 'status')->orderby('id', 'desc')->first();
+        return NftAuctionInfo::select('id', 'start_date', 'end_date', 'min_price', 'status')
+                             ->orderby('id', 'desc')
+                             ->first();
     }
 }

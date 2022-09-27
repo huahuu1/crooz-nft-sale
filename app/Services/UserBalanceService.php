@@ -33,7 +33,7 @@ class UserBalanceService
     {
         return UserBalance::select('id', 'user_id', 'token_id', 'amount_total', 'amount_lock')
                           ->where('user_id', $userId)->where('token_id', UserBalance::GT)
-                          ->with('token_master:id,name,code,description,status')
+                          ->with('tokenMaster:id,name,code,description,status')
                           ->get();
     }
 

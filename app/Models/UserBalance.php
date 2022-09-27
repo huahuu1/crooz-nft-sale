@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,6 +37,7 @@ class UserBalance extends Model
 
     /**
      * Get the token relates to user balanace.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function tokenMaster(): BelongsTo
     {
@@ -45,10 +47,12 @@ class UserBalance extends Model
     /**
      * Calculate user's available amount.
      *
-     * @return string
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
-    protected function getAmountAvailableAttribute()
+    protected function amountAvailable(): Attribute
     {
-        return (string) ($this->amount_total - $this->amount_lock);
+        return new Attribute(
+            get: fn () => (string) ($this->amount_total - $this->amount_lock),
+        );
     }
 }

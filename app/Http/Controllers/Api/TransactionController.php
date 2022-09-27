@@ -74,9 +74,22 @@ class TransactionController extends Controller
                 ], 500);
             }
 
-            $this->historyListService->createTokenSaleHistory($user->id, $request->token_id, $request->token_sale_id, $request->amount, TokenSaleHistory::PENDING_STATUS, $request->tx_hash);
+            $this->historyListService->createTokenSaleHistory(
+                $user->id,
+                $request->token_id,
+                $request->token_sale_id,
+                $request->amount,
+                TokenSaleHistory::PENDING_STATUS,
+                $request->tx_hash
+            );
 
-            $this->cashFlowService->createCashFlow($user->id, $request->token_id, $request->amount, CashFlow::TOKEN_DEPOSIT, $request->tx_hash);
+            $this->cashFlowService->createCashFlow(
+                $user->id,
+                $request->token_id,
+                $request->amount,
+                CashFlow::TOKEN_DEPOSIT,
+                $request->tx_hash
+            );
 
             return response()->json([
                 'message' => 'Deposit transaction successfully',
@@ -126,9 +139,22 @@ class TransactionController extends Controller
                 ], 500);
             }
 
-            $this->historyListService->createNftAuctionHistory($user->id, $request->token_id, $request->nft_auction_id, $request->amount, NftAuctionHistory::PENDING_STATUS, $request->tx_hash);
+            $this->historyListService->createNftAuctionHistory(
+                $user->id,
+                $request->token_id,
+                $request->nft_auction_id,
+                $request->amount,
+                NftAuctionHistory::PENDING_STATUS,
+                $request->tx_hash
+            );
 
-            $this->cashFlowService->createCashFlow($user->id, $request->token_id, $request->amount, CashFlow::NFT_DEPOSIT, $request->tx_hash);
+            $this->cashFlowService->createCashFlow(
+                $user->id,
+                $request->token_id,
+                $request->amount,
+                CashFlow::NFT_DEPOSIT,
+                $request->tx_hash
+            );
 
             return response()->json([
                 'message' => 'Deposit transaction successfully',
@@ -160,7 +186,10 @@ class TransactionController extends Controller
             ], 404);
         }
 
-        $tokeSaleHistory = $this->historyListService->getSuccessTokenSaleHistoryByUserIdHasPagination($user->id, $maxPerPage);
+        $tokeSaleHistory = $this->historyListService->getSuccessTokenSaleHistoryByUserIdHasPagination(
+            $user->id,
+            $maxPerPage
+        );
 
         return response()->json([
             'data' => $tokeSaleHistory->values()->all(),

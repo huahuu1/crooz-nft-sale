@@ -57,7 +57,12 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
             $response = $result['response'];
             $blockNumberCount = $result['block_count'];
             //checking time of pending transaction
-            $timeCheckingStatus = Carbon::now()->diffInHours(TokenSaleHistory::select('created_at')->where('tx_hash', $this->transaction->tx_hash)->first()->created_at);
+            $timeCheckingStatus = Carbon::now()->diffInHours(
+                TokenSaleHistory::select('created_at')->where(
+                    'tx_hash',
+                    $this->transaction->tx_hash
+                )->first()->created_at
+            );
 
             if (!empty($response['error']) || $timeCheckingStatus >= 6) {
                 //Update Transaction As Fail
@@ -81,18 +86,30 @@ class UpdateStatusTokenSaleJob implements ShouldQueue
                         $this->transaction->status = TokenSaleHistory::SUCCESS_STATUS;
                         $this->transaction->update();
                         //update lock amount balance of user
-                        CreateOrUpdateUserBalanceJob::dispatch($this->transaction)->onQueue(config('defines.queue.check_status'))->delay(now()->addSeconds(($this->key + 1) * 3));
+                        CreateOrUpdateUserBalanceJob::dispatch($this->transaction)
+                                                    ->onQueue(config('defines.queue.check_status'))
+                                                    ->delay(now()
+                                                    ->addSeconds(($this->key + 1) * 3));
                     }
 
                     if (!$transactionStatus) {
-                        Log::info("UpdateStatusTokenSaleJob - FAILED", ['result' => $result, 'transactionStatus' => $transactionStatus]);
+                        Log::info(
+                            "UpdateStatusTokenSaleJob - FAILED",
+                            ['result' => $result,
+                            'transactionStatus' => $transactionStatus]
+                        );
                         //Update Transaction As Fail
                         $this->transaction->status = TokenSaleHistory::FAILED_STATUS;
                         $this->transaction->update();
                     }
                 }
             }
-            Log::info('[SUCCESS] Check status token sale for: ' . $this->transaction->id . ' (' . substr($this->transaction->tx_hash, 0, 10) . ')');
+            Log::info(
+                '[SUCCESS] Check status token sale for: '
+                . $this->transaction->id
+                . ' (' . substr($this->transaction->tx_hash, 0, 10)
+                . ')'
+            );
         } catch (Exception $e) {
             Log::error($e);
         }

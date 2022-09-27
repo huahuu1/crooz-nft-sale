@@ -58,7 +58,11 @@ class UnlockUserBalanceImport implements ToModel, WithHeadingRow
         //get info of token sale
         $tokenSaleInfo = $this->saleInfoService->getSaleInfoAndUnlockRule($row['token_sale_id']);
         //the next date to run unlock
-        $nextRunDate = $this->calculateNextRunDate($tokenSaleInfo->token_unlock_rules[0]->unit, $tokenSaleInfo->token_unlock_rules[0]->period, $tokenSaleInfo->end_date);
+        $nextRunDate = $this->calculateNextRunDate(
+            $tokenSaleInfo->token_unlock_rules[0]->unit,
+            $tokenSaleInfo->token_unlock_rules[0]->period,
+            $tokenSaleInfo->end_date
+        );
 
         return new UnlockUserBalance([
             'token_id' => $row['token_id'],

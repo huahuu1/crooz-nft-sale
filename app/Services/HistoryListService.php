@@ -22,7 +22,7 @@ class HistoryListService
             'token_sale_histories.*',
             'cash_flows.transaction_type as transaction_type'
         ])
-            ->with(['user', 'token_master'])
+            ->with(['user', 'tokenMaster'])
             ->join('cash_flows', 'token_sale_histories.tx_hash', '=', 'cash_flows.tx_hash')
             ->where('token_sale_histories.user_id', $userId)
             ->get();
@@ -40,7 +40,7 @@ class HistoryListService
             'nft_auction_histories.*',
             'cash_flows.transaction_type as transaction_type'
         )
-            ->with(['user', 'token_master'])
+            ->with(['user', 'tokenMaster'])
             ->join('cash_flows', 'nft_auction_histories.tx_hash', '=', 'cash_flows.tx_hash')
             ->where('nft_auction_histories.user_id', $userId)
             ->get();
@@ -83,7 +83,7 @@ class HistoryListService
             ->orderby('amount', 'desc')
             ->with([
                 'user:id,email,wallet_address,token_validate,status',
-                'token_master:id,name,code,description,status'
+                'tokenMaster:id,name,code,description,status'
             ])
             ->get()
             ->paginate($maxPerPage);
@@ -101,7 +101,7 @@ class HistoryListService
             ->orderby('amount', 'desc')
             ->with([
                 'user:id,email,wallet_address,token_validate,status',
-                'token_master:id,name,code,description,status'
+                'tokenMaster:id,name,code,description,status'
             ])
             ->get()
             ->paginate($maxPerPage);
