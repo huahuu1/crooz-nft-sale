@@ -31,7 +31,7 @@ class TokenSaleInfo extends Model
     /**
      * Get token unlock rule
      *
-     * @return TokenUnlockRule
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
     public function tokenUnlockRules(): Attribute
     {

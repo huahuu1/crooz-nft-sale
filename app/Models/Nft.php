@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Sanctum\HasApiTokens;
 
 class Nft extends Model
@@ -30,8 +31,9 @@ class Nft extends Model
 
     /**
      * Get the nft type relates to the nft.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function nft_type()
+    public function nftType(): BelongsTo
     {
         return $this->belongsTo(NftType::class, 'type_id');
     }

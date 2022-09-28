@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Sanctum\HasApiTokens;
 
 class TokenSaleHistory extends Model
@@ -41,21 +42,26 @@ class TokenSaleHistory extends Model
      */
     public function pendingTokenSaleTransactions()
     {
-        return $this->where('status', $this::PENDING_STATUS)->where('created_at', '<', Carbon::now()->subMinutes(1)->toDateTimeString());
+        return $this->where('status', $this::PENDING_STATUS)
+                    ->where('created_at', '<', Carbon::now()
+                    ->subMinutes(1)
+                    ->toDateTimeString());
     }
 
     /**
      * Get the user that owns the transaction.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
      * Get the token master that owns the transaction.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function token_master()
+    public function tokenMaster(): BelongsTo
     {
         return $this->belongsTo(TokenMaster::class, 'token_id');
     }

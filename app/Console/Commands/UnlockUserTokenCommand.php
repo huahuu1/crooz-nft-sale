@@ -48,26 +48,30 @@ class UnlockUserTokenCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return int
      */
     public function handle()
     {
-        return $this->tokenUnlockExecution();
+        $this->tokenUnlockExecution();
     }
 
     /**
      * Validate Metamask Transaction
      *
-     * @return void
      */
     public function tokenUnlockExecution()
     {
         $unlockUserBalanceList = $this->unlockUserBalance->getUnlockUserBalances();
         $unlockUserBalanceList->chunkById(100, function ($unlockUserBalances) {
             foreach ($unlockUserBalances as $key => $unlockUserBalance) {
-                $userBalance = $this->userBalanceService->getUserBalanceByTokenId($unlockUserBalance->user_id, $unlockUserBalance->token_id);
+                $userBalance = $this->userBalanceService->getUserBalanceByTokenId(
+                    $unlockUserBalance->user_id,
+                    $unlockUserBalance->token_id
+                );
 
-                $checkDate = $this->checkReleaseDate($unlockUserBalance->next_run_date, $unlockUserBalance->updated_at);
+                $checkDate = $this->checkReleaseDate(
+                    $unlockUserBalance->next_run_date,
+                    $unlockUserBalance->updated_at
+                );
 
                 // update status = 0 with case amount_lock_remain < unlockAmount or amount_lock_remain = 0
                 // this will update after a day the last run
@@ -79,19 +83,40 @@ class UnlockUserTokenCommand extends Command
 
                 if ($checkDate) {
                     //get info of token sale
-                    $tokenSaleInfo = $this->saleInfoService->getSaleInfoAndUnlockRule($unlockUserBalance->token_sale_id);
+                    $tokenSaleInfo = $this->saleInfoService->getSaleInfoAndUnlockRule(
+                        $unlockUserBalance->token_sale_id
+                    );
                     //the order of unlock rule
                     $orderRun = $unlockUserBalance->current_order_unlock;
                     //calculate the amount to unlock
                     if ($orderRun < $tokenSaleInfo->token_unlock_rules->count()) {
-                        $unlockAmount = $unlockUserBalance->amount_lock * $tokenSaleInfo->token_unlock_rules[$orderRun]->unlock_percentages / 100;
+                        $unlockAmount =
+                        $unlockUserBalance->amount_lock *
+                        $tokenSaleInfo->token_unlock_rules[$orderRun]->unlock_percentages
+                        / 100;
                     }
                     //unlock when status is not 0
                     if ($unlockUserBalance->status != 0) {
-                        UpdateUnlockBalanceJob::dispatch($unlockUserBalance, $userBalance, $unlockAmount ? $unlockAmount : 0)->onQueue(config('defines.queue.geneal'))->delay(now()->addSeconds(($key + 1) * 3));
+                        UpdateUnlockBalanceJob::dispatch(
+                            $unlockUserBalance,
+                            $userBalance,
+                            $unlockAmount ? $unlockAmount : 0
+                        )
+                            ->onQueue(config('defines.queue.general'))
+                            ->delay(now()->addSeconds(($key + 1) * 3));
 
-                        Log::info('[SUCCESS] Unlock token for user ID: ' . $unlockUserBalance->user_id . ' - sale token ID: ' . $unlockUserBalance->token_sale_id);
-                        $this->info('[SUCCESS] Unlock token for user ID: ' . $unlockUserBalance->user_id . ' - sale token ID: ' . $unlockUserBalance->token_sale_id);
+                        Log::info(
+                            '[SUCCESS] Unlock token for user ID: '
+                            . $unlockUserBalance->user_id
+                            . ' - sale token ID: '
+                            . $unlockUserBalance->token_sale_id
+                        );
+                        $this->info(
+                            '[SUCCESS] Unlock token for user ID: '
+                            . $unlockUserBalance->user_id
+                            . ' - sale token ID: '
+                            . $unlockUserBalance->token_sale_id
+                        );
                     }
                 }
             }
@@ -101,7 +126,7 @@ class UnlockUserTokenCommand extends Command
     /**
      * Check token release date
      *
-     * @param  mixed  $endDate, $lockDay
+     * @param  mixed  $nextRunDate, $updatedAt
      * @return bool
      */
     public function checkReleaseDate($nextRunDate, $updatedAt)

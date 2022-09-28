@@ -13,7 +13,7 @@ class UserBalanceService
      * Get balances of a user follow token id
      *
      * @param $userId, $tokenId
-     * @return UserBalance
+     * @return \App\Models\UserBalance
      */
     public function getUserBalanceByTokenId($userId, $tokenId)
     {
@@ -27,13 +27,13 @@ class UserBalanceService
      * Get balances of a user
      *
      * @param $userId
-     * @return UserBalance
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getUserBalances($userId)
     {
         return UserBalance::select('id', 'user_id', 'token_id', 'amount_total', 'amount_lock')
                           ->where('user_id', $userId)->where('token_id', UserBalance::GT)
-                          ->with('token_master:id,name,code,description,status')
+                          ->with('tokenMaster:id,name,code,description,status')
                           ->get();
     }
 
@@ -41,7 +41,7 @@ class UserBalanceService
      * Checking user has balance or not by user id.
      *
      * @param $userId
-     * @return UserBalance
+     * @return int
      */
     public function hasBalancesByUserId($userId)
     {

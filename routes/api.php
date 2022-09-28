@@ -88,9 +88,13 @@ Route::group([
     'prefix' => 'purchase-list',
 ], function () {
     //purchase list of token sale
-    Route::get('token-sale/{wallet_address}/{max_per_page?}', [TransactionController::class, 'getPurchaseListOfTokenSaleByWalletAddress']);
+    Route::get('token-sale/{wallet_address}/{max_per_page?}', [
+        TransactionController::class, 'getPurchaseListOfTokenSaleByWalletAddress'
+    ]);
     //purchase list of nft auction
-    Route::get('nft-auction/{max_per_page?}', [TransactionController::class, 'getPurchaseListOfNftAuction']);
+    Route::get('nft-auction/{max_per_page?}', [
+        TransactionController::class, 'getPurchaseListOfNftAuction'
+    ]);
 });
 // health check
 Route::get('health_check', static function() {
@@ -98,4 +102,4 @@ Route::get('health_check', static function() {
     return compact('status');
 });
 
-require __DIR__.'/admin.php';
+require __DIR__ . '/admin.php';

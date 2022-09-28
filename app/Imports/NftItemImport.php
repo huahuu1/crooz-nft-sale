@@ -41,13 +41,13 @@ class NftItemImport implements ToModel, WithHeadingRow, WithChunkReading, Should
     public function model(array $row)
     {
         $currentRowNumber = $this->getRowNumber();
-        Log::info('[SUCCESS] Insert excel row: '.$currentRowNumber);
+        Log::info('[SUCCESS] Insert excel row: ' . $currentRowNumber);
 
         // nft to run job upload image to s3
         NftItemJob::dispatch([
             'image_url' => $row['image_url'],
             'serial_no' => $row['serial_no'],
-        ])->onQueue(config('defines.queue.geneal'))->delay(now()->addSeconds($currentRowNumber * 5));
+        ])->onQueue(config('defines.queue.general'))->delay(now()->addSeconds($currentRowNumber * 5));
 
         return new Nft([
             'serial_no' => $row['serial_no'],

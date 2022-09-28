@@ -40,7 +40,7 @@ class EmailAuthenticationNotification extends Notification
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return \App\Mail\EmailAuthenticationMail
      */
     public function toMail($notifiable)
     {

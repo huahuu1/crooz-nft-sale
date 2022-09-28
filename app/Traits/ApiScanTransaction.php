@@ -22,12 +22,12 @@ trait ApiScanTransaction
                 'apikey' => $apiKey,
             ];
 
-            $url = $baseUri.'?'.http_build_query($params, '&');
+            $url = $baseUri . '?' . http_build_query($params, '&');
             $response = $this->cloudFlareBypass($url);
 
             return json_decode($response, true);
         } catch (\Exception $e) {
-            Log::error('getBlockNumber::'.json_encode($e));
+            Log::error('getBlockNumber::' . json_encode($e));
         }
     }
 
@@ -44,12 +44,12 @@ trait ApiScanTransaction
                 'apikey' => $apiKey,
             ];
 
-            $url = $baseUri.'?'.http_build_query($params, '&');
+            $url = $baseUri . '?' . http_build_query($params, '&');
             $response = $this->cloudFlareBypass($url);
 
             return json_decode($response, true);
         } catch (\Exception $e) {
-            Log::error('getBlockNumber::'.json_encode($e));
+            Log::error('getBlockNumber::' . json_encode($e));
         }
     }
 
@@ -67,19 +67,19 @@ trait ApiScanTransaction
                 'apikey' => $apiKey,
             ];
 
-            $url = $baseUri.'?'.http_build_query($params, '&');
+            $url = $baseUri . '?' . http_build_query($params, '&');
             $response = $this->cloudFlareBypass($url);
 
             return json_decode($response, true);
         } catch (\Exception $e) {
-            Log::error('getTransactionReceiptStatus::'.json_encode($e));
+            Log::error('getTransactionReceiptStatus::' . json_encode($e));
         }
     }
 
     /**
      * cloudFlareBypass function
      *
-     * @param [string] $url
+     * @param $url
      */
     public function cloudFlareBypass($url)
     {
@@ -108,7 +108,7 @@ trait ApiScanTransaction
             // Auth or Already auth
             if (isset($xpath->query("//input[@name='r']/@value")->item(0)->textContent)) {
                 // dom action
-                $action = $url.$xpath->query('//form/@action')->item(0)->textContent;
+                $action = $url . $xpath->query('//form/@action')->item(0)->textContent;
                 $r = $xpath->query("//input[@name='r']/@value")->item(0)->textContent;
                 $jsChlVc = $xpath->query("//input[@name='jschl_vc']/@value")->item(0)->textContent;
                 $pass = $xpath->query("//input[@name='pass']/@value")->item(0)->textContent;
@@ -127,8 +127,8 @@ trait ApiScanTransaction
                     CURLOPT_HTTPHEADER => [
                         'Accept: application/json, text/javascript, */*; q=0.01',
                         'Accept-Language: ro-RO,ro;q=0.8,en-US;q=0.6,en-GB;q=0.4,en;q=0.2',
-                        'Referer: '.$url,
-                        'Origin: '.$url,
+                        'Referer: ' . $url,
+                        'Origin: ' . $url,
                         'Content-Type: application/x-www-form-urlencoded; charset=UTF-8',
                         'X-Requested-With: XMLHttpRequest',
                     ],
@@ -152,7 +152,7 @@ trait ApiScanTransaction
                 return $html;
             }
         } catch (\Exception $error) {
-            Log::error('Error CloudFlare Bypass::'.json_encode($error));
+            Log::error('Error CloudFlare Bypass::' . json_encode($error));
         }
     }
 }

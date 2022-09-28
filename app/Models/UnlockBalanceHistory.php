@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Sanctum\HasApiTokens;
 
 class UnlockBalanceHistory extends Model
@@ -26,8 +27,9 @@ class UnlockBalanceHistory extends Model
 
     /**
      * Get the unlock user balance that owns the unlock balance histories.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function unlock_user_balance()
+    public function unlockUserBalance(): BelongsTo
     {
         return $this->belongsTo(UnlockUserBalance::class, 'unlock_id');
     }
