@@ -96,5 +96,10 @@ Route::group([
         TransactionController::class, 'getPurchaseListOfNftAuction'
     ]);
 });
+// health check
+Route::get('health_check', static function() {
+    $status = ['status' => 200, 'message' => 'success'];
+    return compact('status');
+});
 
 require __DIR__ . '/admin.php';
