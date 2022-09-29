@@ -19,7 +19,8 @@ You need to use Amazon Cloud and Aurora MYSQL to the database, S3 to upload file
 
 ### 1. Create env file
 
-> `cd ./kz-crooz-backend/` > `cp .env.example .env`
+> `cd ./kz-crooz-backend/` </br>
+> `cp .env.example .env`
 
 ### 2. Update env file
 
@@ -39,10 +40,10 @@ You need to use Amazon Cloud and Aurora MYSQL to the database, S3 to upload file
 6. Change mail information
     > `MAIL_DRIVER=YOUR_MAIL_DRIVER`<br/> `MAIL_HOST=YOUR_MAIL_HOST` <br/> `MAIL_PORT=YOUR_MAIL_PORT` <br/> `MAIL_USERNAME=YOUR_MAIL_USERNAME` <br/> `MAIL_PASSWORD=YOUR_MAIL_PASSWORD` <br/> `MAIL_ENCRYPTION=YOUR_MAIL_ENCRYPTION`
 7. Change AWS information
-    > `AWS_ACCESS_KEY_ID=YOUR_KEY_ID` <br/> `AWS_SECRET_ACCESS_KEY=YOUR_ACCESS_KEY` `AWS_DEFAULT_REGION=YOUR_DEFAULT_REGION`<br/> `AWS_BUCKET=YOUR_AWS_BUCKET` <br/> `AWS_URL=YOUR_AWS_URL`
+    > `AWS_ACCESS_KEY_ID=YOUR_KEY_ID` <br/> `AWS_SECRET_ACCESS_KEY=YOUR_ACCESS_KEY`<br/>`AWS_DEFAULT_REGION=YOUR_DEFAULT_REGION`<br/> `AWS_BUCKET=YOUR_AWS_BUCKET` <br/> `AWS_URL=YOUR_AWS_URL`
 8. Change custom variable
 
-    - Mail send token validate in mail verify
+    - Email sent confirmation code
         > `MAIL_SEND_TOKEN_VALIDATE=YOUR_EMAIL`
     - Company wallet a receive Token Sale
         > `COMPANY_WALLET= YOUR_COMPANY_WALLET`
@@ -50,27 +51,27 @@ You need to use Amazon Cloud and Aurora MYSQL to the database, S3 to upload file
         > `NFT_COMPANY_WALLET=YOUR_NFT_COMPANY_WALLET`
     - Change etherscan API Key.
 
-        You can a get key by click [here](https://docs.etherscan.io/getting-started/viewing-api-usage-statistics)
+        You can get the key by click [here](https://docs.etherscan.io/getting-started/viewing-api-usage-statistics)
 
         > `ETHERSCAN_API_KEY= YOUR_ETHERSCAN_API_KEY`
 
-    - Change bscscan API Key
+    - Change BscScan API Key
 
-        You can a get key by click [here](https://docs.bscscan.com/getting-started/viewing-api-usage-statistics)
+        You can get the key by click [here](https://docs.bscscan.com/getting-started/viewing-api-usage-statistics)
 
         > `BSCSCAN_API_KEY=YOUR_BSCSCAN_API_KEY`
 
-    - Change contact wallet USDT
+    - Change contract wallet USDT
 
-        You may get the wallet address click [here](https://ropsten.etherscan.io/token/0x110a13fc3efe6a245b50102d2d79b3e76125ae83) for the development environment.
+        You may get the wallet address click [here](https://goerli.etherscan.io/token/0xC2C527C0CACF457746Bd31B2a698Fe89de2b6d49) for the development environment.
 
-        > `CONTRACT_WALLET_USDT=0x110a13fc3efe6a245b50102d2d79b3e76125ae83`
+        > `CONTRACT_WALLET_USDT=0xC2C527C0CACF457746Bd31B2a698Fe89de2b6d49`
 
         You may get the wallet address click [here](https://etherscan.io/token/0xdac17f958d2ee523a2206206994597c13d831ec7) for the production environment.
 
         > `CONTRACT_WALLET_USDT=0xdAC17F958D2ee523a2206206994597C13D831ec7`
 
-    - Change contact wallet BUSD
+    - Change contract wallet BUSD
 
         You may get the wallet address click [here](https://testnet.bscscan.com/token/0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee) for the development environment.
 
@@ -82,11 +83,11 @@ You need to use Amazon Cloud and Aurora MYSQL to the database, S3 to upload file
 
     - Change Network Blockchain use.
 
-        You can configure etherscan if you use it.
+        Use Etherscan.
 
         > `NETWORK_BLOCKCHAIN=ETHERS`
 
-        You can configure bscscan if you use it.
+        Use BscScan.
 
         > `NETWORK_BLOCKCHAIN=BSC`
 
@@ -151,7 +152,7 @@ You need to use Amazon Cloud and Aurora MYSQL to the database, S3 to upload file
             `redirect_stderr=true`<br/>
             `stdout_logfile=/var/www/crooz/kz-crooz-backend/storage/logs/worker.log`
 
-    2. Worker geneal
+    2. Worker general
 
         - Create file
 
