@@ -92,13 +92,13 @@ class TransactionController extends Controller
             );
 
             return response()->json([
-                'message' => 'Deposit transaction successfully',
+                'message' => 'Deposit transaction successfully  - 入金成功しました。',
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Deposit transaction failed',
+                'message' => 'Deposit failed - 入金失敗しました。',
                 'error' => $e,
             ], 500);
         }
@@ -157,13 +157,13 @@ class TransactionController extends Controller
             );
 
             return response()->json([
-                'message' => 'Deposit transaction successfully',
+                'message' => 'Deposit transaction successfully  - 入金成功しました。',
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Deposit transaction failed',
+                'message' => 'Deposit failed - 入金失敗しました。',
                 'error' => $e,
             ], 500);
         }
