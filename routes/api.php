@@ -87,10 +87,10 @@ Route::get('nft-auction/{id}', [InformationController::class, 'getInfoNftAuction
 Route::group([
     'prefix' => 'purchase-list',
 ], function () {
-    //purchase list of token sale
+    //purchase list of token sale by wallet address
     Route::get('token-sale/{wallet_address}/{max_per_page?}', [TransactionController::class, 'getPurchaseListOfTokenSaleByWalletAddress']);
-    //purchase list of nft auction
-    Route::get('nft-auction/{max_per_page?}', [TransactionController::class, 'getPurchaseListOfNftAuction']);
+    //purchase list of nft auction by wallet address
+    Route::get('nft-auction/{wallet_address}/{max_per_page?}', [TransactionController::class, 'getPurchaseListOfNftAuctionByWalletAddress']);
 });
 // health check
 Route::get('health_check', static function() {

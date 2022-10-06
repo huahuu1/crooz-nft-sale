@@ -170,11 +170,37 @@ class TransactionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function getPurchaseListOfNftAuctionByWalletAddress($walletAddress, $maxPerPage = null)
+    {
+        $maxPerPage = $maxPerPage ?? config('defines.pagination.nft_auction');
+        info($maxPerPage);
+        $user = $this->userService->getUserByWalletAddress($walletAddress);
+
+        if (! $user) {
+            return response()->json([
+                'message' => 'User not found',
+            ], 404);
+        }
+
+        $nftAuctionHistory = $this->historyListService->getSuccessNftAuctionHistoryByUserIdHasPagination($user->id, $maxPerPage);
+
+        return response()->json([
+            'data' => $nftAuctionHistory->values()->all(),
+            'total_pages' => $nftAuctionHistory->lastPage(),
+        ]);
+    }
+
+    /**
+     * Get purchase list of nft auction
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function getPurchaseListOfNftAuction($maxPerPage = null)
     {
         $maxPerPage = $maxPerPage ?? config('defines.pagination.nft_auction');
-
-        $nftAuctionHistory = $this->historyListService->getSuccessNftAuctionHistoryByUserIdHasPagination($maxPerPage);
+        info('test');
+        info($maxPerPage);
+        $nftAuctionHistory = $this->historyListService->getSuccessNftAuctionHistoryHasPagination($maxPerPage);
 
         return response()->json([
             'data' => $nftAuctionHistory->values()->all(),

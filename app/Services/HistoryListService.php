@@ -92,7 +92,23 @@ class HistoryListService
      * @param $maxPerPage
      * @return NftAuctionHistory
      */
-    public function getSuccessNftAuctionHistoryByUserIdHasPagination($maxPerPage)
+    public function getSuccessNftAuctionHistoryByUserIdHasPagination($userId, $maxPerPage)
+    {
+        return NftAuctionHistory::where('status', NftAuctionHistory::SUCCESS_STATUS)
+                                ->where('user_id', $userId)
+                                ->orderby('created_at', 'desc')
+                                ->with(['user:id,email,wallet_address,token_validate,status', 'token_master:id,name,code,description,status'])
+                                ->get()
+                                ->paginate($maxPerPage);
+    }
+
+    /**
+     * Get success history list of nft auction
+     *
+     * @param $maxPerPage
+     * @return NftAuctionHistory
+     */
+    public function getSuccessNftAuctionHistoryHasPagination($maxPerPage)
     {
         return NftAuctionHistory::where('status', NftAuctionHistory::SUCCESS_STATUS)
                                 ->orderby('amount', 'desc')
