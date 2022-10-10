@@ -185,7 +185,6 @@ class TransactionController extends Controller
     {
         try {
             $password = env('PASSWORD_DECRYPTE');
-            info(CryptoJsAes::encrypt($request->all(), $password));
             $request = $request->all();
             $transactions = CryptoJsAes::decrypt($request['data'] ?? '', $password);
             $results = collect([]);
