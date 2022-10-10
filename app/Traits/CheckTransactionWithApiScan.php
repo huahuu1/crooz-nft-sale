@@ -95,4 +95,23 @@ trait CheckTransactionWithApiScan
             'transaction_status' => $transactionStatus,
         ]);
     }
+
+    /**
+     * Check Transaction With API Scan
+     *
+     * @param $txHash
+     * @return \Illuminate\Support\Collection
+     */
+    public function isTransactionExisted($txHash)
+    {
+        //get config network
+        $configNetwork = $this->configNetWork(config('defines.network'));
+        //get block of the transaction
+        $responseData = $this->getTransactionByHash(
+            $txHash,
+            $configNetwork['base_uri'],
+            $configNetwork['api_key']
+        );
+        return !empty($responseData['result']) ? true : false;
+    }
 }
