@@ -28,7 +28,15 @@ class SaleInfoService
      */
     public function latestInfoNftAuction()
     {
-        return NftAuctionInfo::select('id', 'start_date', 'end_date', 'min_price', 'status')->orderby('id', 'desc')->first();
+        return NftAuctionInfo::select(
+            'id',
+            'start_date',
+            'end_date',
+            'min_price',
+            'status'
+        )
+            ->orderby('id', 'desc')
+            ->first();
     }
 
     /**
@@ -38,7 +46,17 @@ class SaleInfoService
      */
     public function latestInfoTokenSale()
     {
-        return TokenSaleInfo::select('id', 'start_date', 'end_date', 'total', 'total_supply', 'price', 'status')->orderby('id', 'desc')->first();
+        return TokenSaleInfo::select(
+            'id',
+            'start_date',
+            'end_date',
+            'total',
+            'total_supply',
+            'price',
+            'status'
+        )
+            ->orderby('id', 'desc')
+            ->first();
     }
 
     /**
@@ -49,7 +67,16 @@ class SaleInfoService
      */
     public function infoTokenSaleById($id)
     {
-        return TokenSaleInfo::select('id', 'start_date', 'end_date', 'total', 'total_supply', 'price', 'status')->find($id);
+        return TokenSaleInfo::select(
+            'id',
+            'start_date',
+            'end_date',
+            'total',
+            'total_supply',
+            'price',
+            'status'
+        )
+            ->find($id);
     }
 
     /**

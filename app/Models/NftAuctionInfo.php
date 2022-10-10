@@ -28,10 +28,12 @@ class NftAuctionInfo extends Model
     /**
      * Display information of the latest nft auction follow Id.
      *
-     * @return \Illuminate\Http\Response
+     * @return \App\Models\NftAuctionInfo
      */
     public static function getLatestInfoNftAuction()
     {
-        return NftAuctionInfo::select('id', 'start_date', 'end_date', 'min_price', 'status')->orderby('id', 'desc')->first();
+        return NftAuctionInfo::select('id', 'start_date', 'end_date', 'min_price', 'status')
+                             ->orderby('id', 'desc')
+                             ->first();
     }
 }

@@ -10,6 +10,7 @@ use Illuminate\Console\Command;
 class CheckStatusNftAuctionCommand extends Command
 {
     use CheckTransactionWithApiScan;
+
     /**
      * The name and signature of the console command.
      *
@@ -39,8 +40,8 @@ class CheckStatusNftAuctionCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
+     * @see validateTransactions
+     * @return bool call validateTransactions
      */
     public function handle()
     {
@@ -49,8 +50,6 @@ class CheckStatusNftAuctionCommand extends Command
 
     /**
      * Validate Metamask Transaction
-     *
-     * @return void
      */
     public function validateTransactions()
     {
@@ -60,7 +59,13 @@ class CheckStatusNftAuctionCommand extends Command
         $pendingTransactions = $this->transactions->pendingNftAuctionTransactions()->limit(10)->get();
         if (! empty($pendingTransactions)) {
             foreach ($pendingTransactions as $key => $transaction) {
-                UpdateStatusNftAuctionJob::dispatch($transaction, $company_wallet, $contract_wallet)->onQueue(config('defines.queue.check_status'))->delay(now()->addSeconds(($key + 1) * 5));
+                UpdateStatusNftAuctionJob::dispatch(
+                    $transaction,
+                    $company_wallet,
+                    $contract_wallet
+                )
+                    ->onQueue(config('defines.queue.check_status'))
+                    ->delay(now()->addSeconds(($key + 1) * 5));
             }
         }
     }

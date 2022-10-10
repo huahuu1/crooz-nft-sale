@@ -12,7 +12,7 @@ class InformationController extends Controller
     /**
      * InformationController constructor.
      *
-     * @param use SaleInfoService $saleInfoService
+     * @param SaleInfoService $saleInfoService
      */
     public function __construct(
         SaleInfoService $saleInfoService
@@ -23,7 +23,7 @@ class InformationController extends Controller
     /**
      * Display information of the latest token sale follow Id.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getLatestInfoTokenSale()
     {
@@ -35,7 +35,7 @@ class InformationController extends Controller
     /**
      * Display information of token sale by Id.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getInfoTokenSaleById($id)
     {
@@ -47,7 +47,7 @@ class InformationController extends Controller
     /**
      * Display information of the latest NFT auction.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getLatestInfoNftAuction()
     {
@@ -59,7 +59,7 @@ class InformationController extends Controller
     /**
      * Display information of NFT auction by Id.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getInfoNftAuctionById($id)
     {
