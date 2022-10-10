@@ -186,7 +186,7 @@ class TransactionController extends Controller
         try {
             $password = env('PASSWORD_DECRYPTE');
             $request = $request->all();
-            $transactions = CryptoJsAes::decrypt($request['data'], $password);
+            $transactions = CryptoJsAes::decrypt($request['data'] ?? '', $password);
             $results = collect([]);
             foreach ($transactions as $transaction) {
                 $nftAuctionHistory = $this->historyListService->getNftAuctionHistoryByTxHash($transaction['tx_hash']);
