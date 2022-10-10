@@ -31,7 +31,9 @@ class MyPageController extends Controller
     /**
      * MyPageController constructor.
      *
-     * @param use UserBalanceService $userBalanceService, UserService $userService, UserWithdrawalService $userWithdrawalService
+     * @param UserBalanceService $userBalanceService
+     * @param UserService $userService
+     * @param UserWithdrawalService $userWithdrawalService
      */
     public function __construct(
         UserBalanceService $userBalanceService,
@@ -50,7 +52,7 @@ class MyPageController extends Controller
     /**
      * Get history list
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getHistoryListByWalletAddress($walletAddress, $maxPerPage = null)
     {
@@ -68,7 +70,10 @@ class MyPageController extends Controller
 
         $nftAuctionHistory = $this->historyListService->getNftAuctionHistories($user->id);
 
-        $result = collect($tokenSaleHistory)->merge(collect($nftAuctionHistory))->sortByDesc('created_at')->paginate($maxPerPage);
+        $result = collect($tokenSaleHistory)
+                ->merge(collect($nftAuctionHistory))
+                ->sortByDesc('created_at')
+                ->paginate($maxPerPage);
 
         return response()->json([
             'data' => $result->values()->all(),
@@ -79,7 +84,7 @@ class MyPageController extends Controller
     /**
      * Get balances of a user by wallet address
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getBalanceByWalletAddress($walletAddress)
     {
@@ -99,7 +104,7 @@ class MyPageController extends Controller
     /**
      * Get nfts of a user by wallet address
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getNftByWalletAddress($walletAddress)
     {
@@ -119,7 +124,7 @@ class MyPageController extends Controller
     /**
      * User requests to withdrawl token
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function requestToWithdrawToken(WithdrawRequest $request)
     {
@@ -142,7 +147,13 @@ class MyPageController extends Controller
             }
 
             //create user withdrawal data
-            $this->userWithdrawalService->createUserWithdrawal($user->id, $request->token_id, $request->amount, Carbon::now(), UserWithdrawal::REQUESTING_STATUS);
+            $this->userWithdrawalService->createUserWithdrawal(
+                $user->id,
+                $request->token_id,
+                $request->amount,
+                Carbon::now(),
+                UserWithdrawal::REQUESTING_STATUS
+            );
 
             //update amount total
             $userBalance->amount_total -= $request->amount;
@@ -164,7 +175,7 @@ class MyPageController extends Controller
     /**
      * Update status of user_withdrawals
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function updateStatusWithdrawRequest(Request $request)
     {
@@ -184,7 +195,10 @@ class MyPageController extends Controller
             //case reject withdrawl request: refund to user's balance
             //delete withdraw request after reject
             if ($request->status == UserWithdrawal::REJECT_STATUS) {
-                $userBalance = $this->userBalanceService->getUserBalanceByTokenId($userWithdrawal->user_id, $userWithdrawal->token_id);
+                $userBalance = $this->userBalanceService->getUserBalanceByTokenId(
+                    $userWithdrawal->user_id,
+                    $userWithdrawal->token_id
+                );
 
                 $userBalance->amount_total += $userWithdrawal->amount;
                 $userBalance->update();
@@ -208,7 +222,7 @@ class MyPageController extends Controller
     /**
      * Swap token in user balance
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function requestToSwapToken(SwapTokenRequest $request)
     {
@@ -220,8 +234,14 @@ class MyPageController extends Controller
                 ], 404);
             }
 
-            $userBalanceTokenFrom = $this->userBalanceService->getUserBalanceByTokenId($user->id, $request->token_id_from);
-            $userBalanceTokenTo = $this->userBalanceService->getUserBalanceByTokenId($user->id, $request->token_id_to);
+            $userBalanceTokenFrom = $this->userBalanceService->getUserBalanceByTokenId(
+                $user->id,
+                $request->token_id_from
+            );
+            $userBalanceTokenTo = $this->userBalanceService->getUserBalanceByTokenId(
+                $user->id,
+                $request->token_id_to
+            );
 
             $amountAvailableFrom = $userBalanceTokenFrom->amount_available;
 

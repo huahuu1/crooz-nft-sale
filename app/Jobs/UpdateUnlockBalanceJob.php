@@ -16,7 +16,11 @@ use Illuminate\Support\Facades\Log;
 
 class UpdateUnlockBalanceJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, CalculateNextRunDate;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use CalculateNextRunDate;
 
     protected $unlockUserBalance;
 
@@ -60,19 +64,28 @@ class UpdateUnlockBalanceJob implements ShouldQueue
                 $this->userBalance->amount_lock -= $this->userBalance->amount_lock;
                 $this->userBalance->update();
                 //create unlock balance history data
-                $this->unlockBalanceHistoryService->createUnlockBalanceHistory($this->unlockUserBalance->id, $this->unlockAmount, Carbon::now());
+                $this->unlockBalanceHistoryService->createUnlockBalanceHistory(
+                    $this->unlockUserBalance->id,
+                    $this->unlockAmount,
+                    Carbon::now()
+                );
             } else {
                 //get info of token sale
-                $tokenSaleInfo = $this->saleInfoService->getSaleInfoAndUnlockRule($this->unlockUserBalance->token_sale_id);
+                $tokenSaleInfo = $this->saleInfoService->getSaleInfoAndUnlockRule(
+                    $this->unlockUserBalance->token_sale_id
+                );
                 //the order of unlock rule
                 $orderRun = $this->unlockUserBalance->current_order_unlock;
                 //the next date to run unlock
                 if ($this->unlockUserBalance->current_order_unlock < $tokenSaleInfo->token_unlock_rules->count()) {
-                    $nextRunDate = $this->calculateNextRunDate($tokenSaleInfo->token_unlock_rules[$orderRun]->unit, $tokenSaleInfo->token_unlock_rules[$orderRun]->period, $this->unlockUserBalance->next_run_date);
+                    $this->unlockUserBalance->next_run_date = $this->calculateNextRunDate(
+                        $tokenSaleInfo->token_unlock_rules[$orderRun]->unit,
+                        $tokenSaleInfo->token_unlock_rules[$orderRun]->period,
+                        $this->unlockUserBalance->next_run_date
+                    );
                 }
                 //update unlock user balance then update the next run date
                 $this->unlockUserBalance->amount_lock_remain -= $this->unlockAmount;
-                $this->unlockUserBalance->next_run_date = $nextRunDate;
                 //case unlock 100%: update next_run_date = null after run
                 if ((int) $this->unlockUserBalance->amount_lock == $this->unlockAmount) {
                     $this->unlockUserBalance->next_run_date = null;
@@ -84,7 +97,11 @@ class UpdateUnlockBalanceJob implements ShouldQueue
                 $this->userBalance->amount_lock -= $this->unlockAmount;
                 $this->userBalance->update();
                 //create unlock balance history data
-                $this->unlockBalanceHistoryService->createUnlockBalanceHistory($this->unlockUserBalance->id, $this->unlockAmount, Carbon::now());
+                $this->unlockBalanceHistoryService->createUnlockBalanceHistory(
+                    $this->unlockUserBalance->id,
+                    $this->unlockAmount,
+                    Carbon::now()
+                );
             }
         } catch (Exception $e) {
             Log::error($e);

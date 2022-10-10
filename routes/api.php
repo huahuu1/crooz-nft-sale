@@ -53,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
         //send transaction
         Route::post('buy-token-transaction', 'createDepositTokenTransaction');
         Route::post('buy-nft-transaction', 'createDepositNftTransaction');
+        Route::post('insert-missed-transaction', 'insertMissedTransaction');
     });
 
     //my page routes
@@ -88,9 +89,18 @@ Route::group([
     'prefix' => 'purchase-list',
 ], function () {
     //purchase list of token sale
-    Route::get('token-sale/{wallet_address}/{max_per_page?}', [TransactionController::class, 'getPurchaseListOfTokenSaleByWalletAddress']);
+    Route::get('token-sale/{wallet_address}/{max_per_page?}', [
+        TransactionController::class, 'getPurchaseListOfTokenSaleByWalletAddress'
+    ]);
     //purchase list of nft auction
-    Route::get('nft-auction/{max_per_page?}', [TransactionController::class, 'getPurchaseListOfNftAuction']);
+    Route::get('nft-auction/{max_per_page?}', [
+        TransactionController::class, 'getPurchaseListOfNftAuction'
+    ]);
+});
+// health check
+Route::get('health_check', static function() {
+    $status = ['status' => 200, 'message' => 'success'];
+    return compact('status');
 });
 
-require __DIR__.'/admin.php';
+require __DIR__ . '/admin.php';

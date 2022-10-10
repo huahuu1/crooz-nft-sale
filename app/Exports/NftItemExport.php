@@ -16,7 +16,7 @@ class NftItemExport implements FromQuery, ShouldQueue
     use Exportable;
 
     /**
-     * @return \Illuminate\Support\Query
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function query()
     {
@@ -26,7 +26,6 @@ class NftItemExport implements FromQuery, ShouldQueue
     public function exportNft()
     {
         try {
-            // Excel::download(new NftItemExport, 'nfts.xlsx');
             Excel::store(new NftItemExport(), 'nfts.xlsx');
         } catch (ValidationException $e) {
             Log::info($e);

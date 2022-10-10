@@ -4,9 +4,12 @@ namespace App\Imports;
 
 use App\Models\TokenSaleInfo;
 use App\Models\PrivateUserUnlockBalance;
-use App\Models\UserBalance;
 use App\Services\UserService;
 use Carbon\Carbon;
+use App\Models\UnlockUserBalance;
+use App\Models\UserBalance;
+use App\Services\SaleInfoService;
+use App\Traits\CalculateNextRunDate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\RemembersRowNumber;
@@ -18,13 +21,23 @@ use Maatwebsite\Excel\Validators\ValidationException;
 class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow
 {
     use RemembersRowNumber;
+    use CalculateNextRunDate;
 
     protected $privateUserUnlockBalance;
 
+<<<<<<< HEAD:app/Imports/PrivateUserUnlockBalanceImport.php
     public function __construct(PrivateUserUnlockBalance $privateUserUnlockBalance)
     {
         $this->privateUserUnlockBalance = $privateUserUnlockBalance;
         $this->userService = new UserService();
+=======
+    protected $saleInfoService;
+
+    public function __construct(UnlockUserBalance $unlockUserBalance)
+    {
+        $this->unlockUserBalance = $unlockUserBalance;
+        $this->saleInfoService = new SaleInfoService();
+>>>>>>> develop.dev:app/Imports/UnlockUserBalanceImport.php
     }
 
     public function headingRow(): int
@@ -44,6 +57,7 @@ class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow
     public function model(array $row)
     {
         $currentRowNumber = $this->getRowNumber();
+<<<<<<< HEAD:app/Imports/PrivateUserUnlockBalanceImport.php
         Log::info('[SUCCESS] Insert excel row: '.$currentRowNumber);
         //check co user chua
         $user = $this->userService->getUserByWalletAddress($row['wallet_address'])->count();
@@ -57,18 +71,25 @@ class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow
 
         //create user balance
 
+=======
+        Log::info('[SUCCESS] Insert excel row: ' . $currentRowNumber);
+>>>>>>> develop.dev:app/Imports/UnlockUserBalanceImport.php
 
         UserBalance::where('user_id', $row['user_id'])
                    ->where('token_id', $row['token_id'])
                    ->update([
-                       'amount_total' => DB::raw('amount_total + '.$row['amount_lock']),
-                       'amount_lock' => DB::raw('amount_lock + '.$row['amount_lock']),
+                       'amount_total' => DB::raw('amount_total + ' . $row['amount_lock']),
+                       'amount_lock' => DB::raw('amount_lock + ' . $row['amount_lock']),
                    ]);
 
-        //create next_run_date column data
-        $tokenSaleInfo = TokenSaleInfo::where('id', $row['token_sale_id'])->with('lock_info')->first();
-        $endDate = new Carbon($tokenSaleInfo->end_date);
-        $nextRunDate = $endDate->addDays($tokenSaleInfo->lock_info->lock_day);
+        //get info of token sale
+        $tokenSaleInfo = $this->saleInfoService->getSaleInfoAndUnlockRule($row['token_sale_id']);
+        //the next date to run unlock
+        $nextRunDate = $this->calculateNextRunDate(
+            $tokenSaleInfo->token_unlock_rules[0]->unit,
+            $tokenSaleInfo->token_unlock_rules[0]->period,
+            $tokenSaleInfo->end_date
+        );
 
         return new PrivateUserUnlockBalance([
             'token_id' => $row['token_id'],
