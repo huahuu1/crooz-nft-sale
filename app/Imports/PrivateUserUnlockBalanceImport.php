@@ -25,19 +25,18 @@ class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow
 
     protected $privateUserUnlockBalance;
 
-<<<<<<< HEAD:app/Imports/PrivateUserUnlockBalanceImport.php
-    public function __construct(PrivateUserUnlockBalance $privateUserUnlockBalance)
-    {
-        $this->privateUserUnlockBalance = $privateUserUnlockBalance;
-        $this->userService = new UserService();
-=======
     protected $saleInfoService;
 
-    public function __construct(UnlockUserBalance $unlockUserBalance)
+    protected $unlockUserBalance;
+
+    protected $userService;
+
+    public function __construct(UnlockUserBalance $unlockUserBalance, PrivateUserUnlockBalance $privateUserUnlockBalance)
     {
         $this->unlockUserBalance = $unlockUserBalance;
+        $this->privateUserUnlockBalance = $privateUserUnlockBalance;
         $this->saleInfoService = new SaleInfoService();
->>>>>>> develop.dev:app/Imports/UnlockUserBalanceImport.php
+        $this->userService = new UserService();
     }
 
     public function headingRow(): int
@@ -57,7 +56,6 @@ class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow
     public function model(array $row)
     {
         $currentRowNumber = $this->getRowNumber();
-<<<<<<< HEAD:app/Imports/PrivateUserUnlockBalanceImport.php
         Log::info('[SUCCESS] Insert excel row: '.$currentRowNumber);
         //check co user chua
         $user = $this->userService->getUserByWalletAddress($row['wallet_address'])->count();
@@ -71,9 +69,6 @@ class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow
 
         //create user balance
 
-=======
-        Log::info('[SUCCESS] Insert excel row: ' . $currentRowNumber);
->>>>>>> develop.dev:app/Imports/UnlockUserBalanceImport.php
 
         UserBalance::where('user_id', $row['user_id'])
                    ->where('token_id', $row['token_id'])
