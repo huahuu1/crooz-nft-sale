@@ -199,6 +199,7 @@ class TransactionController extends Controller
                     $results->push([
                         'tx_hash' => $transaction['tx_hash'],
                         'insert' => false,
+                        'count' => $transaction['count'] + 1
                     ]);
                 }
                 //case transaction is not existed in history table but existed on blockchain
