@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "brainfoolong/cryptojs-aes-php": "^2.1",
         "doctrine/dbal": "^3.4",
         "guzzlehttp/guzzle": "^7.4",
         "intervention/image": "^2.7",

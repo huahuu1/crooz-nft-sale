@@ -53,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
         //send transaction
         Route::post('buy-token-transaction', 'createDepositTokenTransaction');
         Route::post('buy-nft-transaction', 'createDepositNftTransaction');
+        Route::post('insert-missed-transaction', 'insertMissedTransaction');
     });
 
     //my page routes
