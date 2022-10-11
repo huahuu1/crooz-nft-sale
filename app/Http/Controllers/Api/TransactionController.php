@@ -156,7 +156,7 @@ class TransactionController extends Controller
     public function insertMissedTransaction(Request $request)
     {
         try {
-            $password = env('PASSWORD_DECRYPTE');
+            $password = config('defines.password_decrypte');
             $request = $request->all();
             $transactions = CryptoJsAes::decrypt($request['data'] ?? '', $password);
             $results = collect([]);

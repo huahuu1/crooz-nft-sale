@@ -30,5 +30,6 @@ return [
     'queue' => [
         'geneal' => 'geneal',
         'check_status' => 'checkStatus',
-    ]
+    ],
+    'password_decrypte' => 'KOZOCOM'
 ];
