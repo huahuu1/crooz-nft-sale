@@ -31,5 +31,5 @@ return [
         'geneal' => 'geneal',
         'check_status' => 'checkStatus',
     ],
-    'password_decrypte' => 'KOZOCOM'
+    'password_decrypte' => env('PASSWORD_DECRYPTE', 'KOZOCOM')
 ];
