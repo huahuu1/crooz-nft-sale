@@ -184,14 +184,12 @@ class TransactionController extends Controller
     public function insertMissedTransaction(Request $request)
     {
         try {
-            $password = env('PASSWORD_DECRYPTE');
+            $password = config('defines.password_decrypte');
             $request = $request->all();
             $transactions = CryptoJsAes::decrypt($request['data'] ?? '', $password);
             $results = collect([]);
             foreach ($transactions as $transaction) {
                 $nftAuctionHistory = $this->historyListService->getNftAuctionHistoryByTxHash($transaction['tx_hash']);
-                $minPrice = (int) NftAuctionInfo::getLatestInfoNftAuction()->min_price;
-                $tokenName = TokenMaster::getTokenMasterById($transaction['token_id'])->code;
                 $isTransactionExistedOnBlockChain = $this->isTransactionExisted($transaction['tx_hash']);
                 //case transaction is existed in history table and on blockchain
                 //and case not existed on blockchain
@@ -208,13 +206,6 @@ class TransactionController extends Controller
                         'tx_hash' => $transaction['tx_hash'],
                         'insert' => true,
                     ]);
-
-                    //prevent amount smaller than min price
-                    if ($transaction['amount'] < $minPrice) {
-                        return response()->json([
-                            'message' => "The amount of {$tokenName} must be larger or equal to {$minPrice}",
-                        ], 500);
-                    }
 
                     $user = $this->userService->getUserByWalletAddress($transaction['wallet_address']);
 
