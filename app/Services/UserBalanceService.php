@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\TokenMaster;
 use App\Models\UserBalance;
 use Carbon\Carbon;
 use Exception;
@@ -65,6 +66,33 @@ class UserBalanceService
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    /**
+     * Create user balance default data
+     *
+     * @param $userId
+     */
+    public function createDefaultUserBalance($userId)
+    {
+        DB::beginTransaction();
+        try {
+            $tokenList = TokenMaster::getTokenMasters();
+            foreach ($tokenList as $token) {
+                DB::table('user_balances')->insert([
+                    'user_id' => $userId,
+                    'token_id' => $token->id,
+                    'amount_total' => 0,
+                    'amount_lock' => 0,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+            }
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();

@@ -2,13 +2,12 @@
 
 namespace App\Imports;
 
-use App\Models\TokenSaleInfo;
 use App\Models\PrivateUserUnlockBalance;
 use App\Services\UserService;
-use Carbon\Carbon;
-use App\Models\UnlockUserBalance;
+use App\Models\User;
 use App\Models\UserBalance;
 use App\Services\SaleInfoService;
+use App\Services\UserBalanceService;
 use App\Traits\CalculateNextRunDate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -27,14 +26,14 @@ class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow
 
     protected $saleInfoService;
 
-    protected $unlockUserBalance;
+    protected $userBalanceService;
 
     protected $userService;
 
-    public function __construct(UnlockUserBalance $unlockUserBalance, PrivateUserUnlockBalance $privateUserUnlockBalance)
+    public function __construct(PrivateUserUnlockBalance $privateUserUnlockBalance)
     {
-        $this->unlockUserBalance = $unlockUserBalance;
         $this->privateUserUnlockBalance = $privateUserUnlockBalance;
+        $this->userBalanceService = new UserBalanceService();
         $this->saleInfoService = new SaleInfoService();
         $this->userService = new UserService();
     }
@@ -57,20 +56,27 @@ class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow
     {
         $currentRowNumber = $this->getRowNumber();
         Log::info('[SUCCESS] Insert excel row: '.$currentRowNumber);
-        //check co user chua
-        $user = $this->userService->getUserByWalletAddress($row['wallet_address'])->count();
-        //neu co user roi thi update
+        //check user is existed
+        $user = $this->userService->getUserByWalletAddress($row['wallet_address']);
+
         if (!$user) {
-            # code...
+            $user = User::create([
+                'wallet_address' => $row['wallet_address'],
+                'vip_member' => User::VIP_MEMBER,
+            ]);
         }
-        //co user balance chua, co roi thi update chua co thi create
 
-        //neu chua co user thi create
+        //check user balance is existed
+        $balance = $this->userBalanceService->hasBalancesByUserId($user->id);
 
-        //create user balance
+        if (!$balance) {
+            $this->userBalanceService->createDefaultUserBalance($user->id);
+        }
 
+        $user->vip_member = User::VIP_MEMBER;
+        $user->save();
 
-        UserBalance::where('user_id', $row['user_id'])
+        UserBalance::where('user_id', $user->id)
                    ->where('token_id', $row['token_id'])
                    ->update([
                        'amount_total' => DB::raw('amount_total + ' . $row['amount_lock']),
