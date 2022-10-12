@@ -30,4 +30,27 @@ class UnlockBalanceHistoryService
             throw new Exception($e->getMessage());
         }
     }
+
+    /**
+     * Create private unlock balance history data
+     *
+     * @param $unlockId, $amount, $releaseTokenDate
+     */
+    public function createPrivateUnlockBalanceHistory($unlockId, $amount, $releaseTokenDate)
+    {
+        DB::beginTransaction();
+        try {
+            DB::table('private_unlock_balance_histories')->insert([
+                'unlock_id' => $unlockId,
+                'amount' => $amount,
+                'release_token_date' => $releaseTokenDate,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+        }
+    }
 }
