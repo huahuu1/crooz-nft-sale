@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmTokenRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\VerifyEmailRequest;
 use App\Http\Requests\WalletAddressRequest;
 use App\Models\User;
 use App\Notifications\EmailAuthenticationNotification;
@@ -163,7 +163,7 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function sendToken(UserRequest $request)
+    public function sendToken(VerifyEmailRequest $request)
     {
         try {
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
