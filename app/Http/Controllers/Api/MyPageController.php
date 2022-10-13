@@ -52,11 +52,11 @@ class MyPageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getHistoryListByWalletAddress($walletAddress, $maxPerPage = null)
+    public function getHistoryListOfUser($user, $maxPerPage = null)
     {
         $maxPerPage = $maxPerPage ?? config('defines.pagination.my_page');
 
-        $user = $this->userService->getUserByWalletAddress($walletAddress);
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
 
         if (! $user) {
             return response()->json([
@@ -81,14 +81,16 @@ class MyPageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getBalanceByWalletAddress($walletAddress)
+    public function getBalanceOfUser($user)
     {
-        $user = $this->userService->getUserByWalletAddress($walletAddress);
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+
         if (! $user) {
             return response()->json([
                 'message' => 'User not found',
             ], 404);
         }
+
         $balances = $this->userBalanceService->getUserBalances($user->id);
 
         return response()->json([
@@ -101,18 +103,47 @@ class MyPageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getNftByWalletAddress($walletAddress)
+    public function getNftOfUser($user, $maxPerPage = null)
     {
-        $user = $this->userService->getUserByWalletAddress($walletAddress);
+        $maxPerPage = $maxPerPage ?? config('defines.pagination.my_page');
+
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+
         if (! $user) {
             return response()->json([
                 'message' => 'User not found',
             ], 404);
         }
-        $nfts = $this->userNftService->getUserNfts($user->id);
+
+        $nfts = $this->userNftService->getUserNfts($user->id, $maxPerPage);
+        return response()->json([
+            'data' => $nfts->values()->all(),
+            'total_pages' => $nfts->lastPage()
+        ]);
+    }
+
+    /**
+     * Get nfts of a user by wallet address
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getNftOfUserByTypeId($user, $typeId, $maxPerPage = null)
+    {
+        $maxPerPage = $maxPerPage ?? config('defines.pagination.my_page');
+
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+
+        if (! $user) {
+            return response()->json([
+                'message' => 'User not found',
+            ], 404);
+        }
+
+        $nfts = $this->userNftService->getUserNftsByTypeId($user->id, $typeId, $maxPerPage);
 
         return response()->json([
-            'data' => $nfts,
+            'data' => $nfts->values()->all(),
+            'total_pages' => $nfts->lastPage()
         ]);
     }
 
@@ -248,5 +279,23 @@ class MyPageController extends Controller
                 'error' => $e,
             ], 500);
         }
+    }
+
+    /**
+     * Count nfts group by type id
+     *
+     * @return Nft
+     */
+    public function countNftGroupByTypeId($user)
+    {
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+        if (! $user) {
+            return response()->json([
+                'message' => 'User not found',
+            ], 404);
+        }
+        return response()->json([
+            'data' => $this->userNftService->countNftGroupByTypeId($user->id)->all(),
+        ]);
     }
 }

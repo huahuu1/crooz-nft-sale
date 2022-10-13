@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Nft;
+use DB;
 
 class UserNftService
 {
@@ -12,12 +13,36 @@ class UserNftService
      * @param $userId
      * @return Nft
      */
-    public function getUserNfts($userId)
+    public function getUserNfts($userId, $maxPerPage)
     {
-        $nfts = Nft::where('nft_owner_id', $userId)
+        return Nft::where('nft_owner_id', $userId)
                    ->with('nft_type')
-                   ->get();
+                   ->get()
+                   ->paginate($maxPerPage);
+    }
 
-        return $nfts;
+    /**
+     * Get nfts of a user by type id
+     *
+     * @param $userId
+     * @return Nft
+     */
+    public function getUserNftsByTypeId($userId, $typeId, $maxPerPage)
+    {
+        return Nft::where('nft_owner_id', $userId)
+                   ->where('type_id', $typeId)
+                   ->with('nft_type')
+                   ->get()
+                   ->paginate($maxPerPage);
+    }
+
+    /**
+     * Count nfts group by type id
+     *
+     * @return Nft
+     */
+    public function countNftGroupByTypeId($userId)
+    {
+        return Nft::select('type_id', DB::raw('count(*) as total'))->where('nft_owner_id', $userId)->with(['nft_type:id,name'])->groupBy('type_id')->get();
     }
 }

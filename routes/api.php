@@ -62,17 +62,21 @@ Route::middleware('auth:sanctum')->group(function () {
             'prefix' => 'my-page',
         ], function () {
             //get history purchase list in my page
-            Route::get('history-list/{wallet_address}/{max_per_page?}', 'getHistoryListByWalletAddress');
-            //get balances of a user by wallet address
-            Route::get('balance/{wallet_address}', 'getBalanceByWalletAddress');
-            //get nfts of a user by wallet address
-            Route::get('nft/{wallet_address}', 'getNftByWalletAddress');
+            Route::get('history-list/{user}/{max_per_page?}', 'getHistoryListOfUser');
+            //get balances of a user
+            Route::get('balance/{user}', 'getBalanceOfUser');
+            //get nfts of a user
+            Route::get('nft/{user}/{max_per_page?}', 'getNftOfUser');
+            //get nfts of a user
+            Route::get('nft/{user}/{type_id}/{max_per_page?}', 'getNftOfUserByTypeId');
             //user requests to withdrawl token
             Route::post('withdraw-token', 'requestToWithdrawToken');
             //update status of user_withdrawals
             Route::put('withdraw-token/update-status', 'updateStatusWithdrawRequest');
             //swap between token
             Route::put('swap-token', 'requestToSwapToken');
+            // count nfts group by type id
+            Route::get('count-nft-type/{user}', 'countNftGroupByTypeId');
         });
     });
 });
