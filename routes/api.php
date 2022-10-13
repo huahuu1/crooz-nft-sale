@@ -66,8 +66,6 @@ Route::middleware('auth:sanctum')->group(function () {
             //get balances of a user
             Route::get('balance/{user}', 'getBalanceOfUser');
             //get nfts of a user
-            Route::get('nft/{user}/{max_per_page?}', 'getNftOfUser');
-            //get nfts of a user
             Route::get('nft/{user}/{type_id}/{max_per_page?}', 'getNftOfUserByTypeId');
             //user requests to withdrawl token
             Route::post('withdraw-token', 'requestToWithdrawToken');
