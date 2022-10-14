@@ -32,6 +32,17 @@ class UserService
     }
 
     /**
+     * Get user by email
+     *
+     * @param $walletAddress
+     * @return User
+     */
+    public function getUserByEmail($email)
+    {
+        return User::select('id', 'email', 'wallet_address', 'token_validate', 'status')->where('email', $email)->first();
+    }
+
+    /**
      * Checking user has email or not by wallet address.
      *
      * @param $walletAddress

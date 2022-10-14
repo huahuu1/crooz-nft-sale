@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class VerifyEmailRequest extends FormRequest
+class ResetPasswordRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,8 +14,6 @@ class VerifyEmailRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email',
-            'wallet_address' => 'required|regex:'.config('regex.wallet_address'),
             'password' => [
                 'required',
                 'min:8',

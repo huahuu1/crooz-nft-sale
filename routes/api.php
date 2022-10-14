@@ -75,6 +75,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('swap-token', 'requestToSwapToken');
             // count nfts group by type id
             Route::get('count-nft-type/{user}', 'countNftGroupByTypeId');
+            // get user profile
+            Route::get('user/profile/{user}', 'getUserProfile');
+            //Send email reset password to the user
+            Route::post('reset-password', 'sendEmailResetPassword');
+            //Change the password of user
+            Route::post('change-password/{token}', 'changePassword');
         });
     });
 });
