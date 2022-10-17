@@ -77,6 +77,13 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('count-nft-type/{user}', 'countNftGroupByTypeId');
             // get user profile
             Route::get('user/profile/{user}', 'getUserProfile');
+        });
+    });
+
+    Route::controller(UserController::class)->group(function () {
+        Route::group([
+            'prefix' => 'my-page',
+        ], function () {
             //Send email reset password to the user
             Route::post('reset-password', 'sendEmailResetPassword');
             //Change the password of user
