@@ -59,32 +59,39 @@ Route::middleware(['language'])->group(function () {
 		});
 
 		//my page routes
-		Route::controller(MyPageController::class)->group(function () {
-			Route::group([
-				'prefix' => 'my-page',
-			], function () {
-				//get history purchase list in my page
-				Route::get('history-list/{user}/{max_per_page?}', 'getHistoryListOfUser');
-				//get balances of a user
-				Route::get('balance/{user}', 'getBalanceOfUser');
-				//get nfts of a user
-				Route::get('nft/{user}/{type_id}/{max_per_page?}', 'getNftOfUserByTypeId');
-				//user requests to withdrawl token
-				Route::post('withdraw-token', 'requestToWithdrawToken');
-				//update status of user_withdrawals
-				Route::put('withdraw-token/update-status', 'updateStatusWithdrawRequest');
-				//swap between token
-				Route::put('swap-token', 'requestToSwapToken');
-				// count nfts group by type id
-				Route::get('count-nft-type/{user}', 'countNftGroupByTypeId');
-				// get user profile
-				Route::get('user/profile/{user}', 'getUserProfile');
-				//Send email reset password to the user
-				Route::post('reset-password', 'sendEmailResetPassword');
-				//Change the password of user
-				Route::post('change-password/{token}', 'changePassword');
-			});
-		});
+        Route::controller(MyPageController::class)->group(function () {
+            Route::group([
+                'prefix' => 'my-page',
+            ], function () {
+                //get history purchase list in my page
+                Route::get('history-list/{user}/{max_per_page?}', 'getHistoryListOfUser');
+                //get balances of a user
+                Route::get('balance/{user}', 'getBalanceOfUser');
+                //get nfts of a user
+                Route::get('nft/{user}/{type_id}/{max_per_page?}', 'getNftOfUserByTypeId');
+                //user requests to withdrawl token
+                Route::post('withdraw-token', 'requestToWithdrawToken');
+                //update status of user_withdrawals
+                Route::put('withdraw-token/update-status', 'updateStatusWithdrawRequest');
+                //swap between token
+                Route::put('swap-token', 'requestToSwapToken');
+                // count nfts group by type id
+                Route::get('count-nft-type/{user}', 'countNftGroupByTypeId');
+                // get user profile
+                Route::get('user/profile/{user}', 'getUserProfile');
+            });
+        });
+
+        Route::controller(UserController::class)->group(function () {
+            Route::group([
+                'prefix' => 'my-page',
+            ], function () {
+                //Send email reset password to the user
+                Route::post('reset-password', 'sendEmailResetPassword');
+                //Change the password of user
+                Route::post('change-password/{token}', 'changePassword');
+            });
+        });
 	});
 
 	//display token sale info

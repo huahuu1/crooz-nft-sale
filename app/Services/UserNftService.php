@@ -31,7 +31,7 @@ class UserNftService
     {
         return Nft::where('nft_owner_id', $userId)
                    ->where('type_id', $typeId)
-                   ->with('nft_type')
+                   ->with('nftType')
                    ->get()
                    ->paginate($maxPerPage);
     }
@@ -43,6 +43,6 @@ class UserNftService
      */
     public function countNftGroupByTypeId($userId)
     {
-        return Nft::select('type_id', DB::raw('count(*) as total'))->where('nft_owner_id', $userId)->with(['nft_type:id,name'])->groupBy('type_id')->get();
+        return Nft::select('type_id', DB::raw('count(*) as total'))->where('nft_owner_id', $userId)->with(['nftType:id,name'])->groupBy('type_id')->get();
     }
 }
