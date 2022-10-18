@@ -43,9 +43,14 @@ class UserNftService
      */
     public function countNftGroupByTypeId($userId)
     {
-        return Nft::select('type_id', DB::raw('count(*) as total'))
-                  ->where('nft_owner_id', $userId)->with(['nftType:id,name'])
-                  ->groupBy('type_id')
-                  ->get();
+        $nftTypes = Nft::select('type_id', DB::raw('count(*) as total'))
+                   ->where('nft_owner_id', $userId)->with(['nftType:id,name'])
+                   ->groupBy('type_id')
+                   ->get();
+        $results = collect([]);
+        foreach ($nftTypes as $nftType) {
+            $results->push(collect($nftType)->slice(1));
+        }
+        return $results;
     }
 }
