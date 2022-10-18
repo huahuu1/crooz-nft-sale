@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\AuctionNft;
 use App\Models\Nft;
 use App\Models\NftType;
 
@@ -15,7 +16,7 @@ class UserNftService
      */
     public function getUserNfts($userId, $maxPerPage)
     {
-        return Nft::where('nft_owner_id', $userId)
+        return AuctionNft::where('owner_id', $userId)
                   ->with('nftType')
                   ->get()
                   ->paginate($maxPerPage);
@@ -25,11 +26,11 @@ class UserNftService
      * Get nfts of a user by type id
      *
      * @param $userId
-     * @return Nft
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getUserNftsByTypeId($userId, $typeId, $maxPerPage)
     {
-        return Nft::where('nft_owner_id', $userId)
+        return AuctionNft::where('owner_id', $userId)
                   ->where('type_id', $typeId)
                   ->with('nftType')
                   ->get()
@@ -44,7 +45,7 @@ class UserNftService
     public function countNftGroupByTypeId($userId)
     {
         return NftType::select(['id', 'name','status'])->withCount(['nfts' => function ($query) use ($userId) {
-            $query->where('nft_owner_id', $userId);
+            $query->where('owner_id', $userId);
         }])->get();
     }
 }

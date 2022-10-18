@@ -43,6 +43,36 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\AuctionNft
+ *
+ * @property int $id
+ * @property int $owner_id
+ * @property int $type_id
+ * @property string $image_url
+ * @property int|null $nft_auction_id
+ * @property int|null $status
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\NftType $nftType
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereImageUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereNftAuctionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereOwnerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereUpdatedAt($value)
+ */
+	class AuctionNft extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\CashFlow
  *
  * @property int $id
@@ -176,6 +206,8 @@ namespace App\Models{
  * @property int $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\AuctionNft[] $nfts
+ * @property-read int|null $nfts_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static \Illuminate\Database\Eloquent\Builder|NftType newModelQuery()

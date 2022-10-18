@@ -31,6 +31,6 @@ class NftType extends Model
      */
     public function nfts(): HasMany
     {
-        return $this->hasMany(Nft::class, 'type_id', 'id');
+        return $this->hasMany(AuctionNft::class, 'type_id', 'id');
     }
 }
