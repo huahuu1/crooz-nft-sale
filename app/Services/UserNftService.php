@@ -11,7 +11,7 @@ class UserNftService
      * Get nfts of a user
      *
      * @param $userId
-     * @return Nft
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getUserNfts($userId, $maxPerPage)
     {

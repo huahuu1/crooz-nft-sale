@@ -14,25 +14,25 @@ class HistoryListService
      * Get history list of token sale by user id
      *
      * @param $userId
-     * @return TokenSaleHistory
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getTokenSaleHistories($userId)
     {
-        return TokenSaleHistory::select(
+        return TokenSaleHistory::select([
             'token_sale_histories.*',
             'cash_flows.transaction_type as transaction_type'
-        )
-                                ->with(['user', 'token_master'])
-                                ->join('cash_flows', 'token_sale_histories.tx_hash', '=', 'cash_flows.tx_hash')
-                                ->where('token_sale_histories.user_id', $userId)
-                                ->get();
+        ])
+            ->with(['user', 'tokenMaster'])
+            ->join('cash_flows', 'token_sale_histories.tx_hash', '=', 'cash_flows.tx_hash')
+            ->where('token_sale_histories.user_id', $userId)
+            ->get();
     }
 
     /**
      * Get history list of token sale by user id
      *
      * @param $userId
-     * @return NftAuctionHistory
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getNftAuctionHistories($userId)
     {
@@ -40,10 +40,10 @@ class HistoryListService
             'nft_auction_histories.*',
             'cash_flows.transaction_type as transaction_type'
         )
-                                            ->with(['user', 'token_master'])
-                                            ->join('cash_flows', 'nft_auction_histories.tx_hash', '=', 'cash_flows.tx_hash')
-                                            ->where('nft_auction_histories.user_id', $userId)
-                                            ->get();
+            ->with(['user', 'tokenMaster'])
+            ->join('cash_flows', 'nft_auction_histories.tx_hash', '=', 'cash_flows.tx_hash')
+            ->where('nft_auction_histories.user_id', $userId)
+            ->get();
     }
 
     /**
@@ -55,7 +55,7 @@ class HistoryListService
     public function getTokenSaleHistoryByTxHash($txHash)
     {
         return TokenSaleHistory::select('id', 'user_id', 'token_id', 'token_sale_id', 'amount', 'status', 'tx_hash')
-                               ->where('tx_hash', $txHash)->first();
+            ->where('tx_hash', $txHash)->first();
     }
 
     /**
@@ -67,7 +67,7 @@ class HistoryListService
     public function getNftAuctionHistoryByTxHash($txHash)
     {
         return NftAuctionHistory::select('id', 'user_id', 'token_id', 'nft_auction_id', 'amount', 'status', 'tx_hash')
-                                ->where('tx_hash', $txHash)->first();
+            ->where('tx_hash', $txHash)->first();
     }
 
     /**
@@ -79,11 +79,14 @@ class HistoryListService
     public function getSuccessTokenSaleHistoryByUserIdHasPagination($userId, $maxPerPage)
     {
         return TokenSaleHistory::where('status', TokenSaleHistory::SUCCESS_STATUS)
-                               ->where('user_id', $userId)
-                               ->orderby('amount', 'desc')
-                               ->with(['user:id,email,wallet_address,token_validate,status', 'token_master:id,name,code,description,status'])
-                               ->get()
-                               ->paginate($maxPerPage);
+            ->where('user_id', $userId)
+            ->orderby('amount', 'desc')
+            ->with([
+                'user:id,email,wallet_address,token_validate,status',
+                'tokenMaster:id,name,code,description,status'
+            ])
+            ->get()
+            ->paginate($maxPerPage);
     }
 
     /**
@@ -95,10 +98,13 @@ class HistoryListService
     public function getSuccessNftAuctionHistoryByUserIdHasPagination($maxPerPage)
     {
         return NftAuctionHistory::where('status', NftAuctionHistory::SUCCESS_STATUS)
-                                ->orderby('amount', 'desc')
-                                ->with(['user:id,email,wallet_address,token_validate,status', 'token_master:id,name,code,description,status'])
-                                ->get()
-                                ->paginate($maxPerPage);
+            ->orderby('amount', 'desc')
+            ->with([
+                'user:id,email,wallet_address,token_validate,status',
+                'tokenMaster:id,name,code,description,status'
+            ])
+            ->get()
+            ->paginate($maxPerPage);
     }
 
     /**

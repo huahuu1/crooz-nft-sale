@@ -28,7 +28,8 @@ class UserController extends Controller
     /**
      * UserController constructor.
      *
-     * @param use UserBalanceService $userBalanceService, UserService $userService
+     * @param UserBalanceService $userBalanceService
+     * @param UserService $userService
      */
     public function __construct(
         UserService $userService,
@@ -41,7 +42,7 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -53,7 +54,7 @@ class UserController extends Controller
     /**
      * Update email of user.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function updateEmailByWalletAddress(UserRequest $request)
     {
@@ -87,7 +88,7 @@ class UserController extends Controller
     /**
      * create default balance of user.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function createDefaultBalanceByWalletAddress(UserBalanceRequest $request)
     {
@@ -124,7 +125,7 @@ class UserController extends Controller
     /**
      * Checking user has email or not by wallet address.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function checkEmailUserByWalletAddress($walletAddress)
     {
