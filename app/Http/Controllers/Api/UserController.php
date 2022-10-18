@@ -81,7 +81,7 @@ class UserController extends Controller
             return response()->json([
                 'message' => 'Update email failed',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -118,7 +118,7 @@ class UserController extends Controller
             return response()->json([
                 'message' => 'Create default balance failed',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -140,14 +140,14 @@ class UserController extends Controller
 
             return response()->json([
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
     /**
      * Send email to reset password
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function sendEmailResetPassword(Request $request)
     {
@@ -171,7 +171,10 @@ class UserController extends Controller
             );
 
             //Send email contains token to user
-            $emailAuthenticationNotification = new ResetPasswordNotification($passwordReset->email, $passwordReset->token);
+            $emailAuthenticationNotification = new ResetPasswordNotification(
+                $passwordReset->email,
+                $passwordReset->token
+            );
 
             $user->notify($emailAuthenticationNotification);
 
@@ -186,14 +189,14 @@ class UserController extends Controller
                 'success' => false,
                 'message' => 'Send email failed',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
     /**
      * Change the password of user
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function changePassword(ResetPasswordRequest $request, $token)
     {
@@ -230,7 +233,7 @@ class UserController extends Controller
                 'success' => false,
                 'message' => 'Reset password failed',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 }

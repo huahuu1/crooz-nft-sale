@@ -18,7 +18,7 @@ class ResetPasswordRequest extends FormRequest
                 'required',
                 'min:8',
                 'max:16',
-                'regex:'.config('regex.password')],
+                'regex:' . config('regex.password')],
             'password_confirm' => 'required|same:password'
         ];
     }

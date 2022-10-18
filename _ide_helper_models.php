@@ -86,7 +86,7 @@ namespace App\Models{
  * @property int $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\NftType $nft_type
+ * @property-read \App\Models\NftType $nftType
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static \Illuminate\Database\Eloquent\Builder|Nft newModelQuery()
@@ -119,7 +119,7 @@ namespace App\Models{
  * @property string $tx_hash
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\TokenMaster $token_master
+ * @property-read \App\Models\TokenMaster $tokenMaster
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @property-read \App\Models\User $user
@@ -192,6 +192,27 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\PasswordReset
+ *
+ * @property int $id
+ * @property string $email
+ * @property string $token
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|PasswordReset newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PasswordReset newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PasswordReset query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PasswordReset whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PasswordReset whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PasswordReset whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PasswordReset whereToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PasswordReset whereUpdatedAt($value)
+ */
+	class PasswordReset extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\TokenMaster
  *
  * @property int $id
@@ -230,7 +251,7 @@ namespace App\Models{
  * @property string $tx_hash
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\TokenMaster $token_master
+ * @property-read \App\Models\TokenMaster $tokenMaster
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @property-read \App\Models\User $user
@@ -289,12 +310,13 @@ namespace App\Models{
  * App\Models\TokenUnlockRule
  *
  * @property int $id
- * @property \Illuminate\Database\Eloquent\Collection|TokenUnlockRule[] $rule_code
+ * @property int $rule_code
  * @property int $period
  * @property string $unit
  * @property string $unlock_percentages
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|TokenUnlockRule[] $ruleCode
  * @property-read int|null $rule_code_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
@@ -324,7 +346,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
- * @property-read \App\Models\UnlockUserBalance $unlock_user_balance
+ * @property-read \App\Models\UnlockUserBalance $unlockUserBalance
  * @method static \Illuminate\Database\Eloquent\Builder|UnlockBalanceHistory newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|UnlockBalanceHistory newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|UnlockBalanceHistory query()
@@ -353,8 +375,8 @@ namespace App\Models{
  * @property int $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\TokenMaster $token_master
- * @property-read \App\Models\TokenSaleInfo $token_sale
+ * @property-read \App\Models\TokenMaster $tokenMaster
+ * @property-read \App\Models\TokenSaleInfo $tokenSale
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static \Illuminate\Database\Eloquent\Builder|UnlockUserBalance newModelQuery()
@@ -382,8 +404,10 @@ namespace App\Models{
  * @property int $id
  * @property string|null $email
  * @property string|null $wallet_address
+ * @property string|null $password
  * @property string|null $token_validate
  * @property int $status
+ * @property int $vip_member
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
@@ -397,9 +421,11 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereTokenValidate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereVipMember($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereWalletAddress($value)
  */
 	class User extends \Eloquent {}
@@ -416,7 +442,7 @@ namespace App\Models{
  * @property string $amount_lock
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\TokenMaster $token_master
+ * @property-read \App\Models\TokenMaster $tokenMaster
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static \Illuminate\Database\Eloquent\Builder|UserBalance newModelQuery()
@@ -443,6 +469,7 @@ namespace App\Models{
  * @property string $amount
  * @property string $request_time
  * @property string $status
+ * @property string|null $note
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
@@ -453,6 +480,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|UserWithdrawal whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|UserWithdrawal whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|UserWithdrawal whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserWithdrawal whereNote($value)
  * @method static \Illuminate\Database\Eloquent\Builder|UserWithdrawal whereRequestTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|UserWithdrawal whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|UserWithdrawal whereTokenId($value)

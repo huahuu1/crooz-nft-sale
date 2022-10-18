@@ -130,7 +130,7 @@ class MyPageController extends Controller
     /**
      * Get nfts of a user by wallet address
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getNftOfUserByTypeId($user, $typeId, $maxPerPage = null)
     {
@@ -174,7 +174,7 @@ class MyPageController extends Controller
             if ($request->amount > $amountAvailable) {
                 return response()->json([
                     'message' => 'The amount must be smaller than or equal to the available amount',
-                ], 500);
+                ], 400);
             }
 
             //create user withdrawal data
@@ -199,7 +199,7 @@ class MyPageController extends Controller
             return response()->json([
                 'message' => 'Withdraw request failed',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -246,7 +246,7 @@ class MyPageController extends Controller
             return response()->json([
                 'message' => 'Change status failed',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -279,7 +279,7 @@ class MyPageController extends Controller
             if ($request->amount > $amountAvailableFrom) {
                 return response()->json([
                     'message' => 'The amount must be smaller than or equal to the available amount',
-                ], 500);
+                ], 400);
             }
 
             $userBalanceTokenFrom->amount_total -= $request->amount;
@@ -297,14 +297,14 @@ class MyPageController extends Controller
             return response()->json([
                 'message' => 'Swap token failed',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
     /**
      * Count nfts group by type id
      *
-     * @return Nft
+     * @return \Illuminate\Http\JsonResponse
      */
     public function countNftGroupByTypeId($user)
     {
@@ -322,7 +322,7 @@ class MyPageController extends Controller
     /**
      * Get user profile
      *
-     * @return $user
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getUserProfile($user)
     {

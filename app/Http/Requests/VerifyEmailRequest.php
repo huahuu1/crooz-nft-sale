@@ -15,12 +15,12 @@ class VerifyEmailRequest extends FormRequest
     {
         return [
             'email' => 'required|email',
-            'wallet_address' => 'required|regex:'.config('regex.wallet_address'),
+            'wallet_address' => 'required|regex:' . config('regex.wallet_address'),
             'password' => [
                 'required',
                 'min:8',
                 'max:16',
-                'regex:'.config('regex.password')],
+                'regex:' . config('regex.password')],
             'password_confirm' => 'required|same:password'
         ];
     }

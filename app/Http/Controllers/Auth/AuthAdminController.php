@@ -44,7 +44,7 @@ class AuthAdminController extends Controller
             return response()->json([
                 'message' => 'Error in Login',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -73,7 +73,7 @@ class AuthAdminController extends Controller
 
             return response()->json([
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 }
