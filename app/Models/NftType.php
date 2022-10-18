@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 
 class NftType extends Model
@@ -22,4 +23,14 @@ class NftType extends Model
         'name',
         'status',
     ];
+
+    /**
+     * Get all of the nfts for the NftType
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function nfts(): HasMany
+    {
+        return $this->hasMany(Nft::class, 'type_id', 'id');
+    }
 }
