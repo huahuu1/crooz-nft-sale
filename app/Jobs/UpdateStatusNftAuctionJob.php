@@ -54,7 +54,13 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
             $response = $result['response'];
             $blockNumberCount = $result['block_count'];
             //checking time of pending transaction
-            $timeCheckingStatus = Carbon::now()->diffInHours(NftAuctionHistory::select('created_at')->where('tx_hash', $this->transaction->tx_hash)->first()->created_at);
+            $timeCheckingStatus = Carbon::now()
+                                        ->diffInHours(NftAuctionHistory::select('created_at')
+                                        ->where(
+                                            'tx_hash',
+                                            $this->transaction->tx_hash
+                                        )
+                                        ->first()->created_at);
 
             if (! empty($response['error']) || $timeCheckingStatus >= 6) {
                 //Update Transaction As Fail
@@ -68,7 +74,8 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                 if ($response && array_key_exists('result', $response) && !empty($response['result'])) {
                     $result = $response['result'];
                     //Validate transaction destination with our account
-                    if ((strtolower($result['to']) == strtolower($this->company_wallet)
+                    if (
+                        (strtolower($result['to']) == strtolower($this->company_wallet)
                             || strtolower($result['to']) == strtolower($this->contract_wallet))
                         && $blockNumberCount >= $successBlockCount
                         && $transactionStatus
@@ -79,13 +86,22 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                     }
 
                     if (!$transactionStatus) {
-                        Log::info("UpdateStatusNftAuctionJob - FAILED", ['result' => $result, 'transactionStatus' => $transactionStatus]);
+                        Log::info(
+                            "UpdateStatusNftAuctionJob - FAILED",
+                            ['result' => $result,
+                            'transactionStatus' => $transactionStatus]
+                        );
                         //Update Transaction As Fail
                         $this->transaction->status = NftAuctionHistory::FAILED_STATUS;
                         $this->transaction->update();
                     }
                 }
-                Log::info('[SUCCESS] Check Status Nft Auction for: ' . $this->transaction->id . ' (' . substr($this->transaction->tx_hash, 0, 10) . ')');
+                Log::info(
+                    '[SUCCESS] Check Status Nft Auction for: '
+                    . $this->transaction->id . ' ('
+                    . substr($this->transaction->tx_hash, 0, 10)
+                    . ')'
+                );
             }
         } catch (Exception $e) {
             Log::error($e);

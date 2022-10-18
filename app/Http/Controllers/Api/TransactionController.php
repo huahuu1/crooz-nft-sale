@@ -38,7 +38,10 @@ class TransactionController extends Controller
     /**
      * TransactionController constructor.
      *
-     * @param use userService $userService
+     * @param UserService $userService
+     * @param UnlockUserBalanceImport $unlockUserBalanceImport
+     * @param HistoryListService $historyListService
+     * @param CashFlowService $cashFlowService
      */
     public function __construct(
         UserService $userService,
@@ -55,8 +58,8 @@ class TransactionController extends Controller
     /**
      * Create transaction when a user deposit crypto.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\TransactionRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function createDepositTokenTransaction(TransactionRequest $request)
     {
@@ -78,9 +81,22 @@ class TransactionController extends Controller
                 ], 500);
             }
 
-            $this->historyListService->createTokenSaleHistory($user->id, $request->token_id, $request->token_sale_id, $request->amount, TokenSaleHistory::PENDING_STATUS, $request->tx_hash);
+            $this->historyListService->createTokenSaleHistory(
+                $user->id,
+                $request->token_id,
+                $request->token_sale_id,
+                $request->amount,
+                TokenSaleHistory::PENDING_STATUS,
+                $request->tx_hash
+            );
 
-            $this->cashFlowService->createCashFlow($user->id, $request->token_id, $request->amount, CashFlow::TOKEN_DEPOSIT, $request->tx_hash);
+            $this->cashFlowService->createCashFlow(
+                $user->id,
+                $request->token_id,
+                $request->amount,
+                CashFlow::TOKEN_DEPOSIT,
+                $request->tx_hash
+            );
 
             return response()->json([
                 'message' => __('createDepositTokenTransaction.success'),
@@ -98,8 +114,8 @@ class TransactionController extends Controller
     /**
      * Create transaction when a user deposit crypto.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\TransactionRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function createDepositNftTransaction(TransactionRequest $request)
     {
@@ -130,9 +146,22 @@ class TransactionController extends Controller
                 ], 500);
             }
 
-            $this->historyListService->createNftAuctionHistory($user->id, $request->token_id, $request->nft_auction_id, $request->amount, NftAuctionHistory::PENDING_STATUS, $request->tx_hash);
+            $this->historyListService->createNftAuctionHistory(
+                $user->id,
+                $request->token_id,
+                $request->nft_auction_id,
+                $request->amount,
+                NftAuctionHistory::PENDING_STATUS,
+                $request->tx_hash
+            );
 
-            $this->cashFlowService->createCashFlow($user->id, $request->token_id, $request->amount, CashFlow::NFT_DEPOSIT, $request->tx_hash);
+            $this->cashFlowService->createCashFlow(
+                $user->id,
+                $request->token_id,
+                $request->amount,
+                CashFlow::NFT_DEPOSIT,
+                $request->tx_hash
+            );
 
             return response()->json([
                 'message' => __('transaction.createDepositNftTransaction.success'),
@@ -216,7 +245,7 @@ class TransactionController extends Controller
     /**
      * Get purchase list of token sale
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getPurchaseListOfTokenSaleByWalletAddress($walletAddress, $maxPerPage = null)
     {
@@ -230,7 +259,10 @@ class TransactionController extends Controller
             ], 404);
         }
 
-        $tokeSaleHistory = $this->historyListService->getSuccessTokenSaleHistoryByUserIdHasPagination($user->id, $maxPerPage);
+        $tokeSaleHistory = $this->historyListService->getSuccessTokenSaleHistoryByUserIdHasPagination(
+            $user->id,
+            $maxPerPage
+        );
 
         return response()->json([
             'data' => $tokeSaleHistory->values()->all(),
@@ -241,7 +273,7 @@ class TransactionController extends Controller
     /**
      * Get purchase list of nft auction
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getPurchaseListOfNftAuction($maxPerPage = null)
     {
@@ -258,7 +290,7 @@ class TransactionController extends Controller
     /**
      * Import unlock user balance by excel
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function importUnlockUserBalance(Request $request)
     {

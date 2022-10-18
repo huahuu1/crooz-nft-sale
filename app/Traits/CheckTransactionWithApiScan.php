@@ -6,41 +6,35 @@ trait CheckTransactionWithApiScan
 {
     /**
      * @param $network
-     * @return collection
+     * @return mixed|\Illuminate\Config\Repository
      */
     public function configContractWallet($network)
     {
         switch ($network) {
             case 'ETHERS':
-                $contract_wallet = config('defines.api.eth.contract_wallet_usdt');
-                break;
+                return config('defines.api.eth.contract_wallet_usdt');
             case 'BSC':
-                $contract_wallet = config('defines.api.bsc.contract_wallet_usdt');
-                break;
+                return config('defines.api.bsc.contract_wallet_usdt');
         }
-        return $contract_wallet;
     }
 
     /**
      * @param $network
-     * @return collection
+     * @return mixed|\Illuminate\Config\Repository
      */
     public function configSuccessBlockCount($network)
     {
         switch ($network) {
             case 'ETHERS':
-                $successBlockCount = config('defines.api.eth.block_count');
-                break;
+                return config('defines.api.eth.block_count');
             case 'BSC':
-                $successBlockCount = config('defines.api.bsc.block_count');
-                break;
+                return config('defines.api.bsc.block_count');
         }
-        return $successBlockCount;
     }
 
     /**
      * @param $network
-     * @return collection
+     * @return mixed|\Illuminate\Config\Repository
      */
     public function configNetWork($network)
     {
@@ -65,24 +59,35 @@ trait CheckTransactionWithApiScan
      * Check Transaction With API Scan
      *
      * @param $transaction_hash
-     * @return collection
+     * @return \Illuminate\Support\Collection
      */
     public function checkWithApiScan($transaction_hash)
     {
         //get config network
         $configNetwork = $this->configNetWork(config('defines.network'));
         //get block of the transaction
-        $responseData = $this->getTransactionByHash($transaction_hash, $configNetwork['base_uri'], $configNetwork['api_key']);
+        $responseData = $this->getTransactionByHash(
+            $transaction_hash,
+            $configNetwork['base_uri'],
+            $configNetwork['api_key']
+        );
         if (! empty($responseData['result'])) {
             $transactionBlockNumber = $responseData['result']['blockNumber'];
             //get current block
-            $getCurrentBlockNumber = $this->getBlockNumber($configNetwork['base_uri'], $configNetwork['api_key']);
-            if(!empty($getCurrentBlockNumber['result'])){
+            $getCurrentBlockNumber = $this->getBlockNumber(
+                $configNetwork['base_uri'],
+                $configNetwork['api_key']
+            );
+            if (!empty($getCurrentBlockNumber['result'])) {
                 $blockCount = hexdec($getCurrentBlockNumber['result']) - hexdec($transactionBlockNumber);
             }
         }
         //get transaction status
-        $transactionStatus = $this->getTransactionReceiptStatus($transaction_hash, $configNetwork['base_uri'], $configNetwork['api_key']);
+        $transactionStatus = $this->getTransactionReceiptStatus(
+            $transaction_hash,
+            $configNetwork['base_uri'],
+            $configNetwork['api_key']
+        );
 
         return collect([
             'response' => $responseData,

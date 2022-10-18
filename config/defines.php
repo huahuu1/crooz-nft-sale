@@ -28,7 +28,7 @@ return [
         'token_sale' => env('MAX_PER_PAGE_TOKENSALE', 10),
     ],
     'queue' => [
-        'geneal' => 'geneal',
+        'general' => 'general',
         'check_status' => 'checkStatus',
     ],
     'password_decrypte' => env('PASSWORD_DECRYPTE', 'XENOPROJECT'),

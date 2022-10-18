@@ -19,7 +19,8 @@ class NftController extends Controller
     /**
      * NftController constructor.
      *
-     * @param use NftItemImport $nftItemImport, UserService $userService, UserWithdrawalService $userWithdrawalService
+     * @param NftItemImport $nftItemImport
+     * @param NftItemExport $nftItemExport
      */
     public function __construct(
         NftItemImport $nftItemImport,
@@ -32,7 +33,7 @@ class NftController extends Controller
     /**
      * Import nft item by excel
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function importNft(Request $request)
     {

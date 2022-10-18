@@ -15,7 +15,7 @@ class AuthAdminController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
     {
@@ -51,7 +51,7 @@ class AuthAdminController extends Controller
     /**
      * Logout api
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function logout()
     {

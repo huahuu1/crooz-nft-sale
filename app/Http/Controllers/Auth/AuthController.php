@@ -24,7 +24,7 @@ class AuthController extends Controller
     /**
      * AuthController constructor.
      *
-     * @param use UserService $userService
+     * @param UserService $userService
      */
     public function __construct(UserService $userService)
     {
@@ -34,7 +34,7 @@ class AuthController extends Controller
     /**
      * Register api
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function register(RegisterRequest $request)
     {
@@ -61,7 +61,7 @@ class AuthController extends Controller
     /**
      * Login api
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
     {
@@ -98,7 +98,7 @@ class AuthController extends Controller
     /**
      * Logout api
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function logout()
     {
@@ -121,7 +121,7 @@ class AuthController extends Controller
     /**
      * Register by Wallet Address api
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function registerByWalletAddress(WalletAddressRequest $request)
     {
@@ -161,7 +161,7 @@ class AuthController extends Controller
     /**
      * Send token to mail
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function sendToken(VerifyEmailRequest $request)
     {
@@ -215,7 +215,7 @@ class AuthController extends Controller
     /**
      * Check token of user input is correct or not
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function confirmToken(ConfirmTokenRequest $request)
     {
