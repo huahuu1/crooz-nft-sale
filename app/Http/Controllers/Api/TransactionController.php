@@ -70,7 +70,7 @@ class TransactionController extends Controller
             if ($depositTransaction) {
                 return response()->json([
                     'message' => __('createDepositTokenTransaction.duplicate'),
-                ], 500);
+                ], 400);
             }
 
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
@@ -78,7 +78,7 @@ class TransactionController extends Controller
             if (! $user) {
                 return response()->json([
                     'message' => __('createDepositTokenTransaction.connect_metamask'),
-                ], 500);
+                ], 400);
             }
 
             $this->historyListService->createTokenSaleHistory(
@@ -107,7 +107,7 @@ class TransactionController extends Controller
             return response()->json([
                 'message' => __('createDepositTokenTransaction.fail'),
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -128,14 +128,20 @@ class TransactionController extends Controller
             if ($depositTransaction) {
                 return response()->json([
                     'message' => __('transaction.createDepositNftTransaction.duplicate'),
-                ], 500);
+                ], 400);
             }
 
             //prevent amount smaller than min price
             if ($request->amount < $minPrice) {
                 return response()->json([
-                    'message' => __('transaction.createDepositNftTransaction.min_price', ['tokenName' => $tokenName, 'minPrice' => $minPrice]),
-                ], 500);
+                    'message' => __(
+                        'transaction.createDepositNftTransaction.min_price',
+                        [
+                        'tokenName' => $tokenName,
+                        'minPrice' => $minPrice
+                        ]
+                    ),
+                ], 400);
             }
 
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
@@ -143,7 +149,7 @@ class TransactionController extends Controller
             if (! $user) {
                 return response()->json([
                     'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
-                ], 500);
+                ], 400);
             }
 
             $this->historyListService->createNftAuctionHistory(
@@ -172,7 +178,7 @@ class TransactionController extends Controller
             return response()->json([
                 'message' => __('transaction.createDepositNftTransaction.fail'),
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -180,7 +186,7 @@ class TransactionController extends Controller
      * Create transaction when a user deposit crypto.
      *
      * @param $transactions
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function insertMissedTransaction(Request $request)
     {
@@ -238,7 +244,7 @@ class TransactionController extends Controller
             return response()->json([
                 'message' => 'Deposit failed - 入金失敗しました。',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -317,7 +323,7 @@ class TransactionController extends Controller
                 return response()->json([
                     'message' => 'Import unlock user balance failed!!',
                     'error' => $e,
-                ], 500);
+                ], 400);
             }
         } else {
             return response()->json([

@@ -61,7 +61,7 @@ class NftController extends Controller
                 return response()->json([
                     'message' => 'Import nft failed!!',
                     'error' => $e,
-                ], 500);
+                ], 400);
             }
         } else {
             return response()->json([
@@ -84,7 +84,7 @@ class NftController extends Controller
             return response()->json([
                 'message' => 'Export failed!!',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 }

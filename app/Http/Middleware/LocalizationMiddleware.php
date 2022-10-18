@@ -17,7 +17,9 @@ class LocalizationMiddleware
     public function handle(Request $request, Closure $next)
     {
         //Check header request and set language default
-        $lang = ($request->hasHeader('X-localization')) ? $request->header('X-localization') : config('defines.language_default');
+        $lang = ($request->hasHeader('X-localization'))
+        ? $request->header('X-localization')
+        : config('defines.language_default');
         //Set laravel localization
         app()->setLocale($lang);
 

@@ -54,7 +54,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'User registration failed',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -91,7 +91,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Error in Login',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -114,7 +114,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -154,7 +154,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'User registration failed',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -179,7 +179,7 @@ class AuthController extends Controller
             if ($checkDuplicateEmail > 0) {
                 return response()->json([
                     'message' => 'The Email Address entered already exists in the system',
-                ], 500);
+                ], 400);
             }
 
             //Token is random 6 digits
@@ -208,7 +208,7 @@ class AuthController extends Controller
                 'success' => false,
                 'message' => 'Send email failed',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -237,7 +237,7 @@ class AuthController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Verify email token wrong',
-                ], 500);
+                ], 400);
             }
 
             return response()->json([
@@ -249,7 +249,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 }
