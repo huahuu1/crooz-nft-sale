@@ -315,7 +315,7 @@ class MyPageController extends Controller
             ], 404);
         }
         return response()->json([
-            'data' => $this->userNftService->countNftGroupByTypeId($user->id)->all(),
+            'data' => $this->userNftService->countNftGroupByTypeId($user->id),
         ]);
     }
 
