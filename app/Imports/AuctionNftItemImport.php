@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\AuctionNft;
+use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
@@ -49,6 +50,11 @@ class AuctionNftItemImport implements ToModel, WithStartRow, WithChunkReading, S
         $currentRowNumber = $this->getRowNumber();
         Log::info('[SUCCESS] Insert excel row: ' . $currentRowNumber);
         $user = $this->userService->getUserByWalletAddress($row[0]);
+        if (! $user) {
+            $user = User::create([
+                'wallet_address' => $row[0],
+            ]);
+        }
         return new AuctionNft([
             'owner_id' => $user->id,
             'image_url' => $row[1],
