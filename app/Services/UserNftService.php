@@ -10,12 +10,12 @@ class UserNftService
      * Get nfts of a user
      *
      * @param $userId
-     * @return Nft
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getUserNfts($userId)
     {
         $nfts = Nft::where('nft_owner_id', $userId)
-                   ->with('nft_type')
+                   ->with('nftType')
                    ->get();
 
         return $nfts;

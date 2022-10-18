@@ -74,19 +74,6 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * App\Models\LockInfo
- *
- * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
- * @property-read int|null $tokens_count
- * @method static \Illuminate\Database\Eloquent\Builder|LockInfo newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|LockInfo newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|LockInfo query()
- */
-	class LockInfo extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
  * App\Models\Nft
  *
  * @property int $id

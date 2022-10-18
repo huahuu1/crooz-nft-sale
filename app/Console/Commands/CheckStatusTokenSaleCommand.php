@@ -10,6 +10,7 @@ use Illuminate\Console\Command;
 class CheckStatusTokenSaleCommand extends Command
 {
     use CheckTransactionWithApiScan;
+
     /**
      * The name and signature of the console command.
      *
@@ -40,17 +41,15 @@ class CheckStatusTokenSaleCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return int
      */
     public function handle()
     {
-        return $this->validateTransactions();
+        $this->validateTransactions();
     }
 
     /**
      * Validate Metamask Transaction
      *
-     * @return void
      */
     public function validateTransactions()
     {
@@ -60,7 +59,14 @@ class CheckStatusTokenSaleCommand extends Command
         $pendingTransactions = $this->transactions->pendingTokenSaleTransactions()->limit(10)->get();
         if (! empty($pendingTransactions)) {
             foreach ($pendingTransactions as $key => $transaction) {
-                UpdateStatusTokenSaleJob::dispatch($transaction, $company_wallet, $contract_wallet, $key)->onQueue(config('defines.queue.check_status'))->delay(now()->addSeconds(($key + 1) * 5));
+                UpdateStatusTokenSaleJob::dispatch(
+                    $transaction,
+                    $company_wallet,
+                    $contract_wallet,
+                    $key
+                )
+                    ->onQueue(config('defines.queue.check_status'))
+                    ->delay(now()->addSeconds(($key + 1) * 5));
             }
         }
     }
