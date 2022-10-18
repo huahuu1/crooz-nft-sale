@@ -7,7 +7,21 @@ use App\Models\User;
 class UserService
 {
     /**
-     * Get balances of a user follow token id
+     * Get user by wallet address or by user id
+     *
+     * @param $value
+     * @return User
+     */
+    public function getUserByWalletAddressOrByUserId($value)
+    {
+        return User::select('id', 'email', 'wallet_address', 'token_validate', 'status')
+                   ->where('wallet_address', $value)
+                   ->orWhere('id', $value)
+                   ->first();
+    }
+
+    /**
+     * Get user by wallet address
      *
      * @param $walletAddress
      * @return User
@@ -21,6 +35,17 @@ class UserService
             'token_validate',
             'status'
         )->where('wallet_address', $walletAddress)->first();
+    }
+
+    /**
+     * Get user by email
+     *
+     * @param $walletAddress
+     * @return User
+     */
+    public function getUserByEmail($email)
+    {
+        return User::select('id', 'email', 'wallet_address', 'token_validate', 'status')->where('email', $email)->first();
     }
 
     /**

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\SwapTokenRequest;
 use App\Http\Requests\WithdrawRequest;
+use App\Models\PasswordReset;
 use App\Models\UserWithdrawal;
+use App\Notifications\ResetPasswordNotification;
 use App\Services\HistoryListService;
 use App\Services\UserBalanceService;
 use App\Services\UserNftService;
@@ -13,8 +16,10 @@ use App\Services\UserService;
 use App\Services\UserWithdrawalService;
 use Carbon\Carbon;
 use Exception;
+use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Str;
 
 class MyPageController extends Controller
 {
@@ -54,11 +59,11 @@ class MyPageController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getHistoryListByWalletAddress($walletAddress, $maxPerPage = null)
+    public function getHistoryListOfUser($user, $maxPerPage = null)
     {
         $maxPerPage = $maxPerPage ?? config('defines.pagination.my_page');
 
-        $user = $this->userService->getUserByWalletAddress($walletAddress);
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
 
         if (! $user) {
             return response()->json([
@@ -86,14 +91,16 @@ class MyPageController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getBalanceByWalletAddress($walletAddress)
+    public function getBalanceOfUser($user)
     {
-        $user = $this->userService->getUserByWalletAddress($walletAddress);
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+
         if (! $user) {
             return response()->json([
                 'message' => 'User not found',
             ], 404);
         }
+
         $balances = $this->userBalanceService->getUserBalances($user->id);
 
         return response()->json([
@@ -106,18 +113,47 @@ class MyPageController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getNftByWalletAddress($walletAddress)
+    public function getNftOfUser($user, $maxPerPage = null)
     {
-        $user = $this->userService->getUserByWalletAddress($walletAddress);
+        $maxPerPage = $maxPerPage ?? config('defines.pagination.my_page');
+
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+
         if (! $user) {
             return response()->json([
                 'message' => 'User not found',
             ], 404);
         }
-        $nfts = $this->userNftService->getUserNfts($user->id);
+
+        $nfts = $this->userNftService->getUserNfts($user->id, $maxPerPage);
+        return response()->json([
+            'data' => $nfts->values()->all(),
+            'total_pages' => $nfts->lastPage()
+        ]);
+    }
+
+    /**
+     * Get nfts of a user by wallet address
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getNftOfUserByTypeId($user, $typeId, $maxPerPage = null)
+    {
+        $maxPerPage = $maxPerPage ?? config('defines.pagination.my_page');
+
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+
+        if (! $user) {
+            return response()->json([
+                'message' => 'User not found',
+            ], 404);
+        }
+
+        $nfts = $this->userNftService->getUserNftsByTypeId($user->id, $typeId, $maxPerPage);
 
         return response()->json([
-            'data' => $nfts,
+            'data' => $nfts->values()->all(),
+            'total_pages' => $nfts->lastPage()
         ]);
     }
 
@@ -265,6 +301,132 @@ class MyPageController extends Controller
 
             return response()->json([
                 'message' => 'Swap token failed',
+                'error' => $e,
+            ], 500);
+        }
+    }
+
+    /**
+     * Count nfts group by type id
+     *
+     * @return Nft
+     */
+    public function countNftGroupByTypeId($user)
+    {
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+        if (! $user) {
+            return response()->json([
+                'message' => 'User not found',
+            ], 404);
+        }
+        return response()->json([
+            'data' => $this->userNftService->countNftGroupByTypeId($user->id)->all(),
+        ]);
+    }
+
+    /**
+     * Get user profile
+     *
+     * @return $user
+     */
+    public function getUserProfile($user)
+    {
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+        if (! $user) {
+            return response()->json([
+                'message' => 'User not found',
+            ], 404);
+        }
+        return response()->json([
+            'data' => $user,
+        ]);
+    }
+
+    /**
+     * Send email to reset password
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function sendEmailResetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+        try {
+            $user = $this->userService->getUserByEmail($request->email);
+
+            if (! $user) {
+                return response()->json([
+                    'message' => 'User does not exist',
+                ], 404);
+            }
+
+            $passwordReset = PasswordReset::updateOrCreate(
+                [
+                    'email' => $request->email,
+                    'token' => Str::random(60),
+                ]
+            );
+
+            //Send email contains token to user
+            $emailAuthenticationNotification = new ResetPasswordNotification($passwordReset->email, $passwordReset->token);
+
+            $user->notify($emailAuthenticationNotification);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Send email successfully',
+            ], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Send email failed',
+                'error' => $e,
+            ], 500);
+        }
+    }
+
+    /**
+     * Change the password of user
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function changePassword(ResetPasswordRequest $request, $token)
+    {
+        try {
+            $passwordReset = PasswordReset::where('token', $token)->first();
+
+            if (!$passwordReset) {
+                return response()->json([
+                    'message' => 'This password reset token is invalid',
+                ], 422);
+            }
+
+            if (Carbon::parse($passwordReset->updated_at)->addMinutes(720)->isPast()) {
+                $passwordReset->delete();
+
+                return response()->json([
+                    'message' => 'This password reset token is invalid',
+                ], 422);
+            }
+
+            $user = $this->userService->getUserByEmail($passwordReset->email);
+            $user->password = Hash::make($request->password);
+            $user->save();
+            $passwordReset->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Reset password successfully',
+            ], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Reset password failed',
                 'error' => $e,
             ], 500);
         }
