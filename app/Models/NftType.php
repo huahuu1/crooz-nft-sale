@@ -25,7 +25,7 @@ class NftType extends Model
     ];
 
     /**
-     * Get all of the comments for the NftType
+     * Get all of the nfts for the NftType
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
