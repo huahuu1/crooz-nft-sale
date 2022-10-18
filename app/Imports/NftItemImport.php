@@ -2,31 +2,38 @@
 
 namespace App\Imports;
 
-use App\Jobs\NftItemJob;
-use App\Models\Nft;
+use App\Models\AuctionNft;
+use App\Services\UserService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\RemembersRowNumber;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithStartRow;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
 
-class NftItemImport implements ToModel, WithHeadingRow, WithChunkReading, ShouldQueue
+class NftItemImport implements ToModel, WithStartRow, WithChunkReading, ShouldQueue
 {
     use RemembersRowNumber;
 
-    protected $nft;
+    protected $auctionNft;
 
-    public function __construct(Nft $nft)
+    protected $userService;
+
+    public function __construct(AuctionNft $auctionNft)
     {
-        $this->nft = $nft;
+        $this->auctionNft = $auctionNft;
+        $this->userService = new UserService();
     }
 
-    public function headingRow(): int
+    /**
+     * @return int
+     */
+    public function startRow(): int
     {
-        return 1;
+        return 2;
     }
 
     public function chunkSize(): int
@@ -42,28 +49,19 @@ class NftItemImport implements ToModel, WithHeadingRow, WithChunkReading, Should
     {
         $currentRowNumber = $this->getRowNumber();
         Log::info('[SUCCESS] Insert excel row: ' . $currentRowNumber);
-
-        // nft to run job upload image to s3
-        // NftItemJob::dispatch([
-        //     'image_url' => $row['image_url'],
-        //     'serial_no' => $row['serial_no'],
-        // ])->onQueue(config('defines.queue.geneal'))->delay(now()->addSeconds($currentRowNumber * 5));
-
-        return new Nft([
-            'serial_no' => $row['serial_no'],
-            'type_id' => $row['type_id'],
-            'nft_id' => $row['nft_id'],
-            'nft_owner_id' => $row['nft_owner_id'],
-            'tx_hash' => $row['tx_hash'],
-            'image_url' => $row['image_url'],
-            'status' => $row['status'],
+        $user = $this->userService->getUserByWalletAddress($row[0]);
+        return new AuctionNft([
+            'owner_id' => $user->id,
+            'image_url' => $row[1],
+            'type_id' => $row[2],
+            'nft_auction_id' => $row[3],
         ]);
     }
 
     public function importNft()
     {
         try {
-            Excel::import(new NftItemImport($this->nft), request()->file('file'));
+            Excel::import(new NftItemImport($this->auctionNft), request()->file('file'));
         } catch (ValidationException $e) {
             Log::info($e);
         }
