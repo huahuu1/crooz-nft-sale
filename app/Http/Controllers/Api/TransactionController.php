@@ -66,7 +66,7 @@ class TransactionController extends Controller
             //prevent duplicate transactions
             if ($depositTransaction) {
                 return response()->json([
-                    'message' => 'This deposit transaction is duplicated',
+                    'message' => __('createDepositTokenTransaction.duplicate'),
                 ], 500);
             }
 
@@ -74,7 +74,7 @@ class TransactionController extends Controller
 
             if (! $user) {
                 return response()->json([
-                    'message' => 'Please connect to metamask',
+                    'message' => __('createDepositTokenTransaction.connect_metamask'),
                 ], 500);
             }
 
@@ -83,13 +83,13 @@ class TransactionController extends Controller
             $this->cashFlowService->createCashFlow($user->id, $request->token_id, $request->amount, CashFlow::TOKEN_DEPOSIT, $request->tx_hash);
 
             return response()->json([
-                'message' => 'Deposit transaction successfully - 入金成功しました。',
+                'message' => __('createDepositTokenTransaction.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Deposit failed - 入金失敗しました。',
+                'message' => __('createDepositTokenTransaction.fail'),
                 'error' => $e,
             ], 500);
         }
@@ -111,14 +111,14 @@ class TransactionController extends Controller
             //prevent duplicate transactions
             if ($depositTransaction) {
                 return response()->json([
-                    'message' => 'This deposit transaction is duplicated',
+                    'message' => __('transaction.createDepositNftTransaction.duplicate'),
                 ], 500);
             }
 
             //prevent amount smaller than min price
             if ($request->amount < $minPrice) {
                 return response()->json([
-                    'message' => "The amount of {$tokenName} must be larger or equal to {$minPrice}",
+                    'message' => __('transaction.createDepositNftTransaction.min_price', ['tokenName' => $tokenName, 'minPrice' => $minPrice]),
                 ], 500);
             }
 
@@ -126,7 +126,7 @@ class TransactionController extends Controller
 
             if (! $user) {
                 return response()->json([
-                    'message' => 'Please connect to metamask',
+                    'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
                 ], 500);
             }
 
@@ -135,13 +135,13 @@ class TransactionController extends Controller
             $this->cashFlowService->createCashFlow($user->id, $request->token_id, $request->amount, CashFlow::NFT_DEPOSIT, $request->tx_hash);
 
             return response()->json([
-                'message' => 'Deposit transaction successfully - 入金成功しました。',
+                'message' => __('transaction.createDepositNftTransaction.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Deposit failed - 入金失敗しました。',
+                'message' => __('transaction.createDepositNftTransaction.fail'),
                 'error' => $e,
             ], 500);
         }
