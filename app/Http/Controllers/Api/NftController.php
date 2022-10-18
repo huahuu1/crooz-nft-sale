@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Exports\NftItemExport;
 use App\Http\Controllers\Controller;
-use App\Imports\NftItemImport;
+use App\Imports\AuctionNftItemImport;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -12,21 +12,21 @@ use Illuminate\Support\Facades\Validator;
 
 class NftController extends Controller
 {
-    protected $nftItemImport;
+    protected $auctionNftItemImport;
 
     protected $nftItemExport;
 
     /**
      * NftController constructor.
      *
-     * @param NftItemImport $nftItemImport
+     * @param AuctionNftItemImport $auctionNftItemImport
      * @param NftItemExport $nftItemExport
      */
     public function __construct(
-        NftItemImport $nftItemImport,
+        AuctionNftItemImport $auctionNftItemImport,
         NftItemExport $nftItemExport,
     ) {
-        $this->nftItemImport = $nftItemImport;
+        $this->auctionNftItemImport = $auctionNftItemImport;
         $this->nftItemExport = $nftItemExport;
     }
 
@@ -50,7 +50,7 @@ class NftController extends Controller
 
         if (! $validator->fails()) {
             try {
-                $this->nftItemImport->importNft();
+                $this->auctionNftItemImport->importNft();
 
                 return response()->json([
                     'message' => 'Import nft successfully!!',
