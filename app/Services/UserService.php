@@ -45,7 +45,9 @@ class UserService
      */
     public function getUserByEmail($email)
     {
-        return User::select('id', 'email', 'wallet_address', 'token_validate', 'status')->where('email', $email)->first();
+        return User::select('id', 'email', 'wallet_address', 'token_validate', 'status')
+                   ->where('email', $email)
+                   ->first();
     }
 
     /**

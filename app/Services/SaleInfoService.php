@@ -11,7 +11,7 @@ class SaleInfoService
      * Get sale info by Id
      *
      * @param $id
-     * @return tokenSaleInfo
+     * @return TokenSaleInfo
      */
     public function getSaleInfoAndUnlockRule($id)
     {

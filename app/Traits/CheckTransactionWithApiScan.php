@@ -100,7 +100,7 @@ trait CheckTransactionWithApiScan
      * Check Transaction With API Scan
      *
      * @param $txHash
-     * @return \Illuminate\Support\Collection
+     * @return bool
      */
     public function isTransactionExisted($txHash)
     {
