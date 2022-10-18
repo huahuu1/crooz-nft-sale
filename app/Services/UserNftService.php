@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Nft;
-use DB;
+use App\Models\NftType;
 
 class UserNftService
 {
@@ -43,14 +43,8 @@ class UserNftService
      */
     public function countNftGroupByTypeId($userId)
     {
-        $nftTypes = Nft::select('type_id', DB::raw('count(*) as total'))
-                   ->where('nft_owner_id', $userId)->with(['nftType:id,name'])
-                   ->groupBy('type_id')
-                   ->get();
-        $results = collect([]);
-        foreach ($nftTypes as $nftType) {
-            $results->push(collect($nftType)->slice(1));
-        }
-        return $results;
+        return NftType::select(['id', 'name','status'])->withCount(['nfts' => function ($query) use ($userId) {
+            $query->where('nft_owner_id', $userId);
+        }])->get();
     }
 }
