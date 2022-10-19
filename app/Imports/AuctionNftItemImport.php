@@ -56,10 +56,9 @@ class AuctionNftItemImport implements ToModel, WithStartRow, WithChunkReading, S
             ]);
         }
         return new AuctionNft([
-            'owner_id' => $user->id,
-            'image_url' => $row[1],
-            'type_id' => $row[2],
-            'nft_auction_id' => $row[3],
+            'wallet_address' => $row[0],
+            'nft_id' => $row[1],
+            'nft_auction_id' => $row[2],
         ]);
     }
 

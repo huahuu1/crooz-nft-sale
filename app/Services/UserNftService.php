@@ -28,13 +28,23 @@ class UserNftService
      * @param $userId
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getUserNftsByTypeId($userId, $typeId, $maxPerPage)
+    public function getUserNftsByTypeId($walletAddress, $nftType, $maxPerPage)
     {
-        return AuctionNft::where('owner_id', $userId)
-                  ->where('type_id', $typeId)
-                  ->with('nftType')
-                  ->get()
-                  ->paginate($maxPerPage);
+        return AuctionNft::select(
+            'auction_nfts.id',
+            'auction_nfts.wallet_address',
+            'auction_nfts.nft_id',
+            'auction_nfts.nft_auction_id',
+            'nfts.nft_type',
+            'nfts.name',
+            'nfts.image_url',
+            'auction_nfts.status'
+        )
+            ->join('nfts', 'nfts.nft_id', '=', 'auction_nfts.nft_id')
+            ->where('wallet_address', $walletAddress)
+            ->where('nfts.nft_type', $nftType)
+            ->get()
+            ->paginate($maxPerPage);
     }
 
     /**
@@ -42,10 +52,12 @@ class UserNftService
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function countNftGroupByTypeId($userId)
+    public function countNftGroupByTypeId($walletAddress)
     {
-        return NftType::select(['id', 'name','status'])->withCount(['nfts' => function ($query) use ($userId) {
-            $query->where('owner_id', $userId);
-        }])->get();
+        return NftType::select(['id', 'name','status'])
+        ->withCount(['auctionNfts' => function ($query) use ($walletAddress) {
+            $query->where('wallet_address', $walletAddress);
+        }])
+        ->get();
     }
 }

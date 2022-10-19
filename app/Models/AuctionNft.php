@@ -20,19 +20,18 @@ class AuctionNft extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'owner_id',
-        'type_id',
-        'image_url',
+        'wallet_address',
+        'nft_id',
         'nft_auction_id',
         'status',
     ];
 
     /**
-     * Get the nft type relates to the auction nft.
+     * Get the nft relates to the auction nft.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function nftType(): BelongsTo
+    public function nfts(): BelongsTo
     {
-        return $this->belongsTo(NftType::class, 'type_id');
+        return $this->belongsTo(Nft::class, 'nft_id', 'nft_id');
     }
 }

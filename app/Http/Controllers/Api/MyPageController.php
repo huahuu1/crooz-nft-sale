@@ -132,7 +132,7 @@ class MyPageController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getNftOfUserByTypeId($user, $typeId, $maxPerPage = null)
+    public function getNftOfUserByTypeId($user, $nftType, $maxPerPage = null)
     {
         $maxPerPage = $maxPerPage ?? config('defines.pagination.my_page');
 
@@ -144,7 +144,7 @@ class MyPageController extends Controller
             ], 404);
         }
 
-        $nfts = $this->userNftService->getUserNftsByTypeId($user->id, $typeId, $maxPerPage);
+        $nfts = $this->userNftService->getUserNftsByTypeId($user->wallet_address, $nftType, $maxPerPage);
 
         return response()->json([
             'data' => $nfts->values()->all(),
@@ -315,7 +315,7 @@ class MyPageController extends Controller
             ], 404);
         }
         return response()->json([
-            'data' => $this->userNftService->countNftGroupByTypeId($user->id),
+            'data' => $this->userNftService->countNftGroupByTypeId($user->wallet_address),
         ]);
     }
 

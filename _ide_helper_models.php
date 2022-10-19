@@ -46,14 +46,13 @@ namespace App\Models{
  * App\Models\AuctionNft
  *
  * @property int $id
- * @property int $owner_id
- * @property int $type_id
- * @property string $image_url
+ * @property string|null $wallet_address
+ * @property int $nft_id
  * @property int|null $nft_auction_id
  * @property int|null $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\NftType $nftType
+ * @property-read \App\Models\Nft $nfts
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft newModelQuery()
@@ -61,12 +60,11 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft query()
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereImageUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereNftAuctionId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereOwnerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereNftId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereWalletAddress($value)
  */
 	class AuctionNft extends \Eloquent {}
 }
@@ -106,16 +104,15 @@ namespace App\Models{
 /**
  * App\Models\Nft
  *
- * @property int $id
- * @property string $serial_no
- * @property int $type_id
- * @property string $nft_id
- * @property int $nft_owner_id
- * @property string|null $tx_hash
+ * @property int $nft_id
+ * @property int $nft_type
+ * @property string $name
  * @property string $image_url
- * @property int $status
+ * @property int|null $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\AuctionNft[] $auctionNfts
+ * @property-read int|null $auction_nfts_count
  * @property-read \App\Models\NftType $nftType
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
@@ -123,14 +120,11 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Nft newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Nft query()
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Nft whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereImageUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Nft whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereNftId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Nft whereNftOwnerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Nft whereSerialNo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Nft whereNftType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Nft whereTxHash($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Nft whereTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereUpdatedAt($value)
  */
 	class Nft extends \Eloquent {}
@@ -206,7 +200,9 @@ namespace App\Models{
  * @property int $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\AuctionNft[] $nfts
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Nft[] $auctionNfts
+ * @property-read int|null $auction_nfts_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Nft[] $nfts
  * @property-read int|null $nfts_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
