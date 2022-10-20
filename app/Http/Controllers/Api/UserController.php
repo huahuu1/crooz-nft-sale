@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\UserBalanceRequest;
 use App\Http\Requests\UserRequest;
@@ -194,11 +195,11 @@ class UserController extends Controller
     }
 
     /**
-     * Change the password of user
+     * Reset the password of user
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function changePassword(ResetPasswordRequest $request, $token)
+    public function resetPassword(ResetPasswordRequest $request, $token)
     {
         try {
             $passwordReset = PasswordReset::where('token', $token)->first();
@@ -221,6 +222,33 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
             $user->save();
             $passwordReset->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Reset password successfully',
+            ], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Reset password failed',
+                'error' => $e,
+            ], 400);
+        }
+    }
+
+    /**
+     * Change the password of user
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function changePassword(ChangePasswordRequest $request, $user)
+    {
+        try {
+            $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+            $user->password = Hash::make($request->password);
+            $user->save();
 
             return response()->json([
                 'success' => true,
