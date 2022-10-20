@@ -13,4 +13,8 @@
             'success' => 'Deposit transaction successfully',
             'fail' => 'Deposit failed',
         ],
+        'importUnlockUserBalance' => [
+            'success' => 'Import unlock user balance successfully',
+            'fail' => 'Import unlock user balance failed',
+        ],
     ];

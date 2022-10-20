@@ -53,13 +53,13 @@ class NftController extends Controller
                 $this->auctionNftItemImport->importNft();
 
                 return response()->json([
-                    'message' => 'Import nft successfully!!',
+                    'message' => __('nft.importNft.success'),
                 ], 200);
             } catch (Exception $e) {
                 Log::error($e);
 
                 return response()->json([
-                    'message' => 'Import nft failed!!',
+                    'message' => __('nft.importNft.fail'),
                     'error' => $e,
                 ], 400);
             }
@@ -76,13 +76,13 @@ class NftController extends Controller
             $this->nftItemExport->exportNft();
 
             return response()->json([
-                'message' => 'Export successfully!!',
+                'message' => 'Export successfully',
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Export failed!!',
+                'message' => 'Export failed',
                 'error' => $e,
             ], 400);
         }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\UserBalanceRequest;
 use App\Http\Requests\UserRequest;
@@ -63,7 +64,7 @@ class UserController extends Controller
 
             if (! $user) {
                 return response()->json([
-                    'message' => 'User not found',
+                    'message' => __('user.getUser.not_found'),
                 ], 404);
             }
 
@@ -73,13 +74,13 @@ class UserController extends Controller
 
             return response()->json([
                 'data' => $user,
-                'message' => 'Update email successfully',
+                'message' => __('user.updateEmailByWalletAddress.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Update email failed',
+                'message' => __('user.updateEmailByWalletAddress.fail'),
                 'error' => $e,
             ], 400);
         }
@@ -96,7 +97,7 @@ class UserController extends Controller
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
             if (! $user) {
                 return response()->json([
-                    'message' => 'User not found',
+                    'message' => __('user.getUser.not_found'),
                 ], 404);
             }
 
@@ -110,13 +111,13 @@ class UserController extends Controller
             }
 
             return response()->json([
-                'message' => 'Create default balance successfully',
+                'message' => __('user.createDefaultBalanceByWalletAddress.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Create default balance failed',
+                'message' => __('user.createDefaultBalanceByWalletAddress.fail'),
                 'error' => $e,
             ], 400);
         }
@@ -159,7 +160,7 @@ class UserController extends Controller
 
             if (! $user) {
                 return response()->json([
-                    'message' => 'User does not exist',
+                    'message' => __('user.getUser.not_found'),
                 ], 404);
             }
 
@@ -180,32 +181,32 @@ class UserController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Send email successfully',
+                'message' => __('user.sendEmailResetPassword.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Send email failed',
+                'message' => __('user.sendEmailResetPassword.fail'),
                 'error' => $e,
             ], 400);
         }
     }
 
     /**
-     * Change the password of user
+     * Reset the password of user
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function changePassword(ResetPasswordRequest $request, $token)
+    public function resetPassword(ResetPasswordRequest $request, $token)
     {
         try {
             $passwordReset = PasswordReset::where('token', $token)->first();
 
             if (!$passwordReset) {
                 return response()->json([
-                    'message' => 'This password reset token is invalid',
+                    'message' => __('user.resetPassword.token_invalid'),
                 ], 422);
             }
 
@@ -213,7 +214,7 @@ class UserController extends Controller
                 $passwordReset->delete();
 
                 return response()->json([
-                    'message' => 'This password reset token is invalid',
+                    'message' => __('user.resetPassword.token_invalid'),
                 ], 422);
             }
 
@@ -224,14 +225,41 @@ class UserController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Reset password successfully',
+                'message' => __('user.resetPassword.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Reset password failed',
+                'message' => __('user.resetPassword.fail'),
+                'error' => $e,
+            ], 400);
+        }
+    }
+
+    /**
+     * Change the password of user
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function changePassword(ChangePasswordRequest $request, $user)
+    {
+        try {
+            $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => __('user.changePassword.success'),
+            ], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => __('user.changePassword.fail'),
                 'error' => $e,
             ], 400);
         }

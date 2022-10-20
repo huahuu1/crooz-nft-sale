@@ -87,9 +87,11 @@ Route::middleware(['language'])->group(function () {
                 'prefix' => 'my-page',
             ], function () {
                 //Send email reset password to the user
-                Route::post('reset-password', 'sendEmailResetPassword');
+                Route::post('request-reset-password', 'sendEmailResetPassword');
+                //Reset the password of user
+                Route::post('reset-password/{token}', 'resetPassword');
                 //Change the password of user
-                Route::post('change-password/{token}', 'changePassword');
+                Route::post('change-password/{user}', 'changePassword');
             });
         });
     });
@@ -110,8 +112,8 @@ Route::middleware(['language'])->group(function () {
             TransactionController::class, 'getPurchaseListOfTokenSaleByWalletAddress'
         ]);
         //purchase list of nft auction
-        Route::get('nft-auction/{max_per_page?}', [
-            TransactionController::class, 'getPurchaseListOfNftAuction'
+        Route::get('nft-auction/{user}/{max_per_page?}', [
+            TransactionController::class, 'getPurchaseListOfNftAuctionOfUser'
         ]);
     });
 });

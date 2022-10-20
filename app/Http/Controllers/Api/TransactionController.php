@@ -235,14 +235,14 @@ class TransactionController extends Controller
                 }
             }
             return response()->json([
-                'message' => 'Deposit transaction successfully - 入金成功しました。',
+                'message' => __('transaction.createDepositNftTransaction.success'),
                 'results' => $results
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Deposit failed - 入金失敗しました。',
+                'message' => __('transaction.createDepositNftTransaction.fail'),
                 'error' => $e,
             ], 400);
         }
@@ -261,7 +261,7 @@ class TransactionController extends Controller
 
         if (! $user) {
             return response()->json([
-                'message' => 'User not found',
+                'message' => __('user.getUser.not_found'),
             ], 404);
         }
 
@@ -281,11 +281,34 @@ class TransactionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
+    public function getPurchaseListOfNftAuctionOfUser($user, $maxPerPage = null)
+    {
+        $maxPerPage = $maxPerPage ?? config('defines.pagination.nft_auction');
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+
+        if (! $user) {
+            return response()->json([
+                'message' => 'User not found',
+            ], 404);
+        }
+
+        $nftAuctionHistory = $this->historyListService->getSuccessNftAuctionHistoryByUserIdHasPagination($user->id, $maxPerPage);
+
+        return response()->json([
+            'data' => $nftAuctionHistory->values()->all(),
+            'total_pages' => $nftAuctionHistory->lastPage(),
+        ]);
+    }
+
+    /**
+     * Get purchase list of nft auction
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function getPurchaseListOfNftAuction($maxPerPage = null)
     {
         $maxPerPage = $maxPerPage ?? config('defines.pagination.nft_auction');
-
-        $nftAuctionHistory = $this->historyListService->getSuccessNftAuctionHistoryByUserIdHasPagination($maxPerPage);
+        $nftAuctionHistory = $this->historyListService->getSuccessNftAuctionHistoryHasPagination($maxPerPage);
 
         return response()->json([
             'data' => $nftAuctionHistory->values()->all(),
@@ -315,13 +338,13 @@ class TransactionController extends Controller
                 $this->unlockUserBalanceImport->importUnlockUserBalance();
 
                 return response()->json([
-                    'message' => 'Import unlock user balance successfully!!',
+                    'message' => __('transaction.importUnlockUserBalance.success'),
                 ], 200);
             } catch (Exception $e) {
                 Log::error($e);
 
                 return response()->json([
-                    'message' => 'Import unlock user balance failed!!',
+                    'message' => __('transaction.importUnlockUserBalance.fail'),
                     'error' => $e,
                 ], 400);
             }

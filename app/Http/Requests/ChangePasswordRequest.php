@@ -2,11 +2,13 @@
 
 namespace App\Http\Requests;
 
+use Auth;
+use Hash;
 use Illuminate\Foundation\Http\FormRequest;
 
-class VerifyEmailRequest extends FormRequest
+class ChangePasswordRequest extends FormRequest
 {
-    /**
+     /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, mixed>
@@ -14,12 +16,19 @@ class VerifyEmailRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email',
-            'wallet_address' => 'required|regex:' . config('regex.wallet_address'),
+            'old_password' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if (!Hash::check($value, Auth::user()->password)) {
+                        $fail(__('requestValidate.old_password.not_match'));
+                    }
+                }
+            ],
             'password' => [
                 'required',
                 'min:8',
                 'max:16',
+                'different:old_password',
                 'regex:' . config('regex.password')],
             'password_confirm' => 'required|same:password'
         ];
@@ -33,15 +42,12 @@ class VerifyEmailRequest extends FormRequest
     public function messages()
     {
         return [
-            'email.required' => __('requestValidate.email.required'),
-            'email.invalid' => __('requestValidate.email.invalid'),
-            'wallet_address.required' => __('requestValidate.wallet_address.required'),
-            'wallet_address.regex' => __('requestValidate.wallet_address.regex'),
             'password.required' => __('requestValidate.password.required'),
             'password.min' => __('requestValidate.password.min'),
             'password.max' => __('requestValidate.password.max'),
             'password.regex' => __('requestValidate.password.regex'),
             'password_confirm' => __('requestValidate.password_confirm'),
+            'old_password.required' => __('requestValidate.old_password.required'),
         ];
     }
 }

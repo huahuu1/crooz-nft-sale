@@ -31,10 +31,10 @@ class ResetPasswordRequest extends FormRequest
     public function messages()
     {
         return [
-            'password.min' => 'Please enter a password has at least 8 digits',
-            'password.max' => 'Please enter a password has 16 digits or less',
-            'password.regex' => 'The password format is invalid',
-            'password_confirm' => 'The password confirm and password must match',
+            'password.min' => __('requestValidate.password.min'),
+            'password.max' => __('requestValidate.password.max'),
+            'password.regex' => __('requestValidate.password.regex'),
+            'password_confirm' => __('requestValidate.password_confirm'),
         ];
     }
 }
