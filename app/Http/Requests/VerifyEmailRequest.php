@@ -33,10 +33,15 @@ class VerifyEmailRequest extends FormRequest
     public function messages()
     {
         return [
-            'password.min' => 'Please enter a password has at least 8 digits',
-            'password.max' => 'Please enter a password has 16 digits or less',
-            'password.regex' => 'The password format is invalid',
-            'password_confirm' => 'The password confirm and password must match',
+            'email.required' => __('requestValidate.email.required'),
+            'email.invalid' => __('requestValidate.email.invalid'),
+            'wallet_address.required' => __('requestValidate.wallet_address.required'),
+            'wallet_address.regex' => __('requestValidate.wallet_address.regex'),
+            'password.required' => __('requestValidate.password.required'),
+            'password.min' => __('requestValidate.password.min'),
+            'password.max' => __('requestValidate.password.max'),
+            'password.regex' => __('requestValidate.password.regex'),
+            'password_confirm' => __('requestValidate.password_confirm'),
         ];
     }
 }

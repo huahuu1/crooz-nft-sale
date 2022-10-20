@@ -62,7 +62,7 @@ class MyPageController extends Controller
 
         if (! $user) {
             return response()->json([
-                'message' => 'User not found',
+                'message' => __('user.getUser.not_found'),
             ], 404);
         }
 
@@ -92,7 +92,7 @@ class MyPageController extends Controller
 
         if (! $user) {
             return response()->json([
-                'message' => 'User not found',
+                'message' => __('user.getUser.not_found'),
             ], 404);
         }
 
@@ -116,7 +116,7 @@ class MyPageController extends Controller
 
         if (! $user) {
             return response()->json([
-                'message' => 'User not found',
+                'message' => __('user.getUser.not_found'),
             ], 404);
         }
 
@@ -140,7 +140,7 @@ class MyPageController extends Controller
 
         if (! $user) {
             return response()->json([
-                'message' => 'User not found',
+                'message' => __('user.getUser.not_found'),
             ], 404);
         }
 
@@ -163,7 +163,7 @@ class MyPageController extends Controller
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
             if (! $user) {
                 return response()->json([
-                    'message' => 'User not found',
+                    'message' => __('user.getUser.not_found'),
                 ], 404);
             }
 
@@ -173,7 +173,7 @@ class MyPageController extends Controller
 
             if ($request->amount > $amountAvailable) {
                 return response()->json([
-                    'message' => 'The amount must be smaller than or equal to the available amount',
+                    'message' => __('mypage.requestToWithdrawToken.max_amount'),
                 ], 400);
             }
 
@@ -191,13 +191,13 @@ class MyPageController extends Controller
             $userBalance->update();
 
             return response()->json([
-                'message' => 'Withdraw request successfully',
+                'message' => __('mypage.requestToWithdrawToken.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Withdraw request failed',
+                'message' => __('mypage.requestToWithdrawToken.fail'),
                 'error' => $e,
             ], 400);
         }
@@ -215,7 +215,7 @@ class MyPageController extends Controller
 
             if (! $userWithdrawal) {
                 return response()->json([
-                    'message' => 'Withdraw request not found',
+                    'message' => __('mypage.updateStatusWithdrawRequest.not_found'),
                 ], 404);
             }
 
@@ -238,13 +238,13 @@ class MyPageController extends Controller
             }
 
             return response()->json([
-                'message' => 'Change status successfully',
+                'message' => __('mypage.updateStatusWithdrawRequest.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Change status failed',
+                'message' => __('mypage.updateStatusWithdrawRequest.fail'),
                 'error' => $e,
             ], 400);
         }
@@ -261,7 +261,7 @@ class MyPageController extends Controller
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
             if (! $user) {
                 return response()->json([
-                    'message' => 'User not found',
+                    'message' => __('user.getUser.not_found'),
                 ], 404);
             }
 
@@ -311,7 +311,7 @@ class MyPageController extends Controller
         $user = $this->userService->getUserByWalletAddressOrByUserId($user);
         if (! $user) {
             return response()->json([
-                'message' => 'User not found',
+                'message' => __('user.getUser.not_found'),
             ], 404);
         }
         return response()->json([
@@ -329,7 +329,7 @@ class MyPageController extends Controller
         $user = $this->userService->getUserByWalletAddressOrByUserId($user);
         if (! $user) {
             return response()->json([
-                'message' => 'User not found',
+                'message' => __('user.getUser.not_found'),
             ], 404);
         }
         return response()->json([

@@ -64,7 +64,7 @@ class UserController extends Controller
 
             if (! $user) {
                 return response()->json([
-                    'message' => 'User not found',
+                    'message' => __('user.getUser.not_found'),
                 ], 404);
             }
 
@@ -74,13 +74,13 @@ class UserController extends Controller
 
             return response()->json([
                 'data' => $user,
-                'message' => 'Update email successfully',
+                'message' => __('user.updateEmailByWalletAddress.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Update email failed',
+                'message' => __('user.updateEmailByWalletAddress.fail'),
                 'error' => $e,
             ], 400);
         }
@@ -97,7 +97,7 @@ class UserController extends Controller
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
             if (! $user) {
                 return response()->json([
-                    'message' => 'User not found',
+                    'message' => __('user.getUser.not_found'),
                 ], 404);
             }
 
@@ -111,13 +111,13 @@ class UserController extends Controller
             }
 
             return response()->json([
-                'message' => 'Create default balance successfully',
+                'message' => __('user.createDefaultBalanceByWalletAddress.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Create default balance failed',
+                'message' => __('user.createDefaultBalanceByWalletAddress.fail'),
                 'error' => $e,
             ], 400);
         }
@@ -160,7 +160,7 @@ class UserController extends Controller
 
             if (! $user) {
                 return response()->json([
-                    'message' => 'User does not exist',
+                    'message' => __('user.getUser.not_found'),
                 ], 404);
             }
 
@@ -181,14 +181,14 @@ class UserController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Send email successfully',
+                'message' => __('user.sendEmailResetPassword.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Send email failed',
+                'message' => __('user.sendEmailResetPassword.fail'),
                 'error' => $e,
             ], 400);
         }
@@ -206,7 +206,7 @@ class UserController extends Controller
 
             if (!$passwordReset) {
                 return response()->json([
-                    'message' => 'This password reset token is invalid',
+                    'message' => __('user.resetPassword.token_invalid'),
                 ], 422);
             }
 
@@ -214,7 +214,7 @@ class UserController extends Controller
                 $passwordReset->delete();
 
                 return response()->json([
-                    'message' => 'This password reset token is invalid',
+                    'message' => __('user.resetPassword.token_invalid'),
                 ], 422);
             }
 
@@ -225,14 +225,14 @@ class UserController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Reset password successfully',
+                'message' => __('user.resetPassword.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Reset password failed',
+                'message' => __('user.resetPassword.fail'),
                 'error' => $e,
             ], 400);
         }
@@ -252,14 +252,14 @@ class UserController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Reset password successfully',
+                'message' => __('user.changePassword.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Reset password failed',
+                'message' => __('user.changePassword.fail'),
                 'error' => $e,
             ], 400);
         }

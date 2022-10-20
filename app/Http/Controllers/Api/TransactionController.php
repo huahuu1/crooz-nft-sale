@@ -235,14 +235,14 @@ class TransactionController extends Controller
                 }
             }
             return response()->json([
-                'message' => 'Deposit transaction successfully - 入金成功しました。',
+                'message' => __('transaction.createDepositNftTransaction.success'),
                 'results' => $results
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Deposit failed - 入金失敗しました。',
+                'message' => __('transaction.createDepositNftTransaction.fail'),
                 'error' => $e,
             ], 400);
         }
@@ -261,7 +261,7 @@ class TransactionController extends Controller
 
         if (! $user) {
             return response()->json([
-                'message' => 'User not found',
+                'message' => __('user.getUser.not_found'),
             ], 404);
         }
 
@@ -338,13 +338,13 @@ class TransactionController extends Controller
                 $this->unlockUserBalanceImport->importUnlockUserBalance();
 
                 return response()->json([
-                    'message' => 'Import unlock user balance successfully!!',
+                    'message' => __('transaction.importUnlockUserBalance.success'),
                 ], 200);
             } catch (Exception $e) {
                 Log::error($e);
 
                 return response()->json([
-                    'message' => 'Import unlock user balance failed!!',
+                    'message' => __('transaction.importUnlockUserBalance.fail'),
                     'error' => $e,
                 ], 400);
             }
