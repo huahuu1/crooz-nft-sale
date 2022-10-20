@@ -110,8 +110,8 @@ Route::middleware(['language'])->group(function () {
             TransactionController::class, 'getPurchaseListOfTokenSaleByWalletAddress'
         ]);
         //purchase list of nft auction
-        Route::get('nft-auction/{wallet_address}/{max_per_page?}', [
-            TransactionController::class, 'getPurchaseListOfNftAuctionByWalletAddress'
+        Route::get('nft-auction/{user}/{max_per_page?}', [
+            TransactionController::class, 'getPurchaseListOfNftAuctionOfUser'
         ]);
     });
 });

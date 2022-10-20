@@ -281,11 +281,10 @@ class TransactionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getPurchaseListOfNftAuctionByWalletAddress($walletAddress, $maxPerPage = null)
+    public function getPurchaseListOfNftAuctionOfUser($user, $maxPerPage = null)
     {
         $maxPerPage = $maxPerPage ?? config('defines.pagination.nft_auction');
-        info($maxPerPage);
-        $user = $this->userService->getUserByWalletAddress($walletAddress);
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
 
         if (! $user) {
             return response()->json([
