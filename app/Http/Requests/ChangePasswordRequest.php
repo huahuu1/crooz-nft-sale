@@ -20,7 +20,7 @@ class ChangePasswordRequest extends FormRequest
                 'required',
                 function ($attribute, $value, $fail) {
                     if (!Hash::check($value, Auth::user()->password)) {
-                        $fail('The old password does not match');
+                        $fail(__('requestValidate.old_password.not_match'));
                     }
                 }
             ],
@@ -42,10 +42,12 @@ class ChangePasswordRequest extends FormRequest
     public function messages()
     {
         return [
-            'password.min' => 'Please enter a password has at least 8 digits',
-            'password.max' => 'Please enter a password has 16 digits or less',
-            'password.regex' => 'The password format is invalid',
-            'password_confirm' => 'The password confirm and password must match',
+            'password.required' => __('requestValidate.password.required'),
+            'password.min' => __('requestValidate.password.min'),
+            'password.max' => __('requestValidate.password.max'),
+            'password.regex' => __('requestValidate.password.regex'),
+            'password_confirm' => __('requestValidate.password_confirm'),
+            'old_password.required' => __('requestValidate.old_password.required'),
         ];
     }
 }
