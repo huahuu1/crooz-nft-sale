@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmTokenRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\VerifyEmailRequest;
 use App\Http\Requests\WalletAddressRequest;
 use App\Models\User;
 use App\Notifications\EmailAuthenticationNotification;
@@ -24,7 +24,7 @@ class AuthController extends Controller
     /**
      * AuthController constructor.
      *
-     * @param use UserService $userService
+     * @param UserService $userService
      */
     public function __construct(UserService $userService)
     {
@@ -34,7 +34,7 @@ class AuthController extends Controller
     /**
      * Register api
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function register(RegisterRequest $request)
     {
@@ -54,14 +54,14 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'User registration failed',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
     /**
      * Login api
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
     {
@@ -91,14 +91,14 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Error in Login',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
     /**
      * Logout api
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function logout()
     {
@@ -114,14 +114,14 @@ class AuthController extends Controller
 
             return response()->json([
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
     /**
      * Register by Wallet Address api
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function registerByWalletAddress(WalletAddressRequest $request)
     {
@@ -154,16 +154,16 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'User registration failed',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
     /**
      * Send token to mail
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function sendToken(UserRequest $request)
+    public function sendToken(VerifyEmailRequest $request)
     {
         try {
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
@@ -179,13 +179,16 @@ class AuthController extends Controller
             if ($checkDuplicateEmail > 0) {
                 return response()->json([
                     'message' => 'The Email Address entered already exists in the system',
-                ], 500);
+                ], 400);
             }
 
             //Token is random 6 digits
             $tokenValidate = random_int(100000, 999999);
 
             $user->token_validate = $tokenValidate;
+
+            //create user password
+            $user->password = Hash::make($request['password']);
 
             $user->save();
 
@@ -205,14 +208,14 @@ class AuthController extends Controller
                 'success' => false,
                 'message' => 'Send email failed',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
     /**
      * Check token of user input is correct or not
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function confirmToken(ConfirmTokenRequest $request)
     {
@@ -234,7 +237,7 @@ class AuthController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Verify email token wrong',
-                ], 500);
+                ], 400);
             }
 
             return response()->json([
@@ -246,7 +249,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 }

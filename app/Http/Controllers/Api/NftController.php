@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Exports\NftItemExport;
 use App\Http\Controllers\Controller;
-use App\Imports\NftItemImport;
+use App\Imports\AuctionNftItemImport;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -12,27 +12,28 @@ use Illuminate\Support\Facades\Validator;
 
 class NftController extends Controller
 {
-    protected $nftItemImport;
+    protected $auctionNftItemImport;
 
     protected $nftItemExport;
 
     /**
      * NftController constructor.
      *
-     * @param use NftItemImport $nftItemImport, UserService $userService, UserWithdrawalService $userWithdrawalService
+     * @param AuctionNftItemImport $auctionNftItemImport
+     * @param NftItemExport $nftItemExport
      */
     public function __construct(
-        NftItemImport $nftItemImport,
+        AuctionNftItemImport $auctionNftItemImport,
         NftItemExport $nftItemExport,
     ) {
-        $this->nftItemImport = $nftItemImport;
+        $this->auctionNftItemImport = $auctionNftItemImport;
         $this->nftItemExport = $nftItemExport;
     }
 
     /**
      * Import nft item by excel
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function importNft(Request $request)
     {
@@ -49,7 +50,7 @@ class NftController extends Controller
 
         if (! $validator->fails()) {
             try {
-                $this->nftItemImport->importNft();
+                $this->auctionNftItemImport->importNft();
 
                 return response()->json([
                     'message' => 'Import nft successfully!!',
@@ -60,7 +61,7 @@ class NftController extends Controller
                 return response()->json([
                     'message' => 'Import nft failed!!',
                     'error' => $e,
-                ], 500);
+                ], 400);
             }
         } else {
             return response()->json([
@@ -83,7 +84,7 @@ class NftController extends Controller
             return response()->json([
                 'message' => 'Export failed!!',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 }

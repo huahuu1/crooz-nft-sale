@@ -13,8 +13,14 @@ class UnlockUserBalanceService
      *
      * @param $tokenId, $tokenSaleId, $userId, $amountLock, $amountLockRemain, $nextRunDate
      */
-    public function createUnlockUserBalance($tokenId, $tokenSaleId, $userId, $amountLock, $amountLockRemain, $nextRunDate)
-    {
+    public function createUnlockUserBalance(
+        $tokenId,
+        $tokenSaleId,
+        $userId,
+        $amountLock,
+        $amountLockRemain,
+        $nextRunDate
+    ) {
         DB::beginTransaction();
         try {
             DB::table('user_unlock_balances')->insert([

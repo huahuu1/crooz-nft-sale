@@ -15,7 +15,7 @@ class AuthAdminController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
     {
@@ -44,14 +44,14 @@ class AuthAdminController extends Controller
             return response()->json([
                 'message' => 'Error in Login',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
     /**
      * Logout api
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function logout()
     {
@@ -73,7 +73,7 @@ class AuthAdminController extends Controller
 
             return response()->json([
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 }

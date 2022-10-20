@@ -36,6 +36,6 @@ class EmailAuthenticationMail extends Mailable
         return $this->markdown('mails.emailAuthentication')
                     ->from(config('mail.send_token_validate'), config('mail.send_token_validate'))
                     ->subject('[Xeno] Verify your email')
-                    ->with('mail', $this->email, $this->token_validate);
+                    ->with($this->email, $this->token_validate);
     }
 }

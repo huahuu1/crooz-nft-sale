@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             NftTypeSeeder::class,
             AdminSeeder::class,
             TokenUnlockRuleSeeder::class,
+            NftSeeder::class,
         ]);
 
         \App\Models\TokenSaleInfo::factory(1)->create();

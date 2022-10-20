@@ -36,7 +36,7 @@ class TokenMaster extends Model
     /**
      * Display information of the token master.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public static function getTokenMasters()
     {
@@ -46,7 +46,7 @@ class TokenMaster extends Model
     /**
      * Display information of the token master by id.
      *
-     * @return \Illuminate\Http\Response
+     * @return \App\Models\TokenMaster
      */
     public static function getTokenMasterById($id)
     {

@@ -59,12 +59,22 @@ class CreateOrUpdateUserBalanceJob implements ShouldQueue
             //get info of token sale
             $tokenSaleInfo = $this->saleInfoService->getSaleInfoAndUnlockRule($this->transaction->token_sale_id);
             //the next date to run unlock
-            $nextRunDate = $this->calculateNextRunDate($tokenSaleInfo->token_unlock_rules[0]->unit, $tokenSaleInfo->token_unlock_rules[0]->period, $tokenSaleInfo->end_date);
+            $nextRunDate = $this->calculateNextRunDate(
+                $tokenSaleInfo->token_unlock_rules[0]->unit,
+                $tokenSaleInfo->token_unlock_rules[0]->period,
+                $tokenSaleInfo->end_date
+            );
             //exchange rate between tokens and GT
             $amountLock = $this->transaction->amount * $tokenSaleInfo->price;
 
-            $this->unlockUserBalanceService->createUnlockUserBalance(TokenMaster::GT, $this->transaction->token_sale_id, $this->transaction->user_id, $amountLock, $amountLock, $nextRunDate);
-
+            $this->unlockUserBalanceService->createUnlockUserBalance(
+                TokenMaster::GT,
+                $this->transaction->token_sale_id,
+                $this->transaction->user_id,
+                $amountLock,
+                $amountLock,
+                $nextRunDate
+            );
             //check the user has email or not
             $email = $this->userService->hasVerifiedEmailByUserId($this->transaction->user_id);
             //if not email then create user balance, if has email then update it

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 
 class Nft extends Model
@@ -19,20 +21,29 @@ class Nft extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'serial_no',
-        'type_id',
         'nft_id',
-        'nft_owner_id',
-        'tx_hash',
+        'nft_type',
+        'name',
         'image_url',
         'status',
     ];
 
     /**
      * Get the nft type relates to the nft.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function nft_type()
+    public function nftType(): BelongsTo
     {
-        return $this->belongsTo(NftType::class, 'type_id');
+        return $this->belongsTo(NftType::class, 'nft_type', 'id');
+    }
+
+    /**
+     * Get all of the nfts for the NftType
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function auctionNfts(): HasMany
+    {
+        return $this->hasMany(AuctionNft::class, 'nft_id', 'nft_id');
     }
 }
