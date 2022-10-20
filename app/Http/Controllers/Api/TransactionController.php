@@ -308,8 +308,6 @@ class TransactionController extends Controller
     public function getPurchaseListOfNftAuction($maxPerPage = null)
     {
         $maxPerPage = $maxPerPage ?? config('defines.pagination.nft_auction');
-        info('test');
-        info($maxPerPage);
         $nftAuctionHistory = $this->historyListService->getSuccessNftAuctionHistoryHasPagination($maxPerPage);
 
         return response()->json([
