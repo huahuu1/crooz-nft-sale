@@ -3,12 +3,14 @@
 namespace App\Imports;
 
 use App\Models\PrivateUserUnlockBalance;
+use App\Models\TokenMaster;
 use App\Services\UserService;
 use App\Models\User;
 use App\Models\UserBalance;
 use App\Services\SaleInfoService;
 use App\Services\UserBalanceService;
 use App\Traits\CalculateNextRunDate;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\RemembersRowNumber;
@@ -16,6 +18,7 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow
 {
@@ -76,29 +79,23 @@ class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow
         $user->vip_member = User::VIP_MEMBER;
         $user->save();
 
+        //check if the token unlock date is up to date
+        $currentDate = Carbon::createMidnightDate();
+        $releaseDay = $currentDate->diffInDays(Date::excelToDateTimeObject($row['unlock_date'])->format('Y-m-d'), false);
+
         UserBalance::where('user_id', $user->id)
-                   ->where('token_id', $row['token_id'])
+                   ->where('token_id', TokenMaster::GT)
                    ->update([
-                       'amount_total' => DB::raw('amount_total + ' . $row['amount_lock']),
-                       'amount_lock' => DB::raw('amount_lock + ' . $row['amount_lock']),
+                       'amount_total' => DB::raw('amount_total + ' . $row['token_unlock_volume']),
+                       'amount_lock' => DB::raw('amount_lock + ' . $row['token_unlock_volume']),
                    ]);
 
-        //get info of token sale
-        $tokenSaleInfo = $this->saleInfoService->getSaleInfoAndUnlockRule($row['token_sale_id']);
-        //the next date to run unlock
-        $nextRunDate = $this->calculateNextRunDate(
-            $tokenSaleInfo->token_unlock_rules[0]->unit,
-            $tokenSaleInfo->token_unlock_rules[0]->period,
-            $tokenSaleInfo->end_date
-        );
-
         return new PrivateUserUnlockBalance([
-            'token_id' => $row['token_id'],
-            'token_sale_id' => $row['token_sale_id'],
             'wallet_address' => $row['wallet_address'],
-            'amount_lock' => $row['amount_lock'],
-            'amount_lock_remain' => $row['amount_lock_remain'],
-            'next_run_date' => $nextRunDate,
+            'token_unlock_volume' => $row['token_unlock_volume'],
+            'unlock_date' => Date::excelToDateTimeObject($row['unlock_date'])->format('Y-m-d'),
+            'token_id' => TokenMaster::GT,
+            'status' => $releaseDay > 0 ? 0 : 1
         ]);
     }
 

@@ -20,13 +20,10 @@ class PrivateUserUnlockBalance extends Model
      */
     protected $fillable = [
         'token_id',
-        'token_sale_id',
         'wallet_address',
-        'amount_lock',
-        'amount_lock_remain',
-        'next_run_date',
+        'token_unlock_volume',
+        'unlock_date',
         'status',
-        'current_order_unlock',
     ];
 
     /**
