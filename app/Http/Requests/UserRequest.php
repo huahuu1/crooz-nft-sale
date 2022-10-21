@@ -18,4 +18,19 @@ class UserRequest extends FormRequest
             'wallet_address' => 'required|regex:' . config('regex.wallet_address'),
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'email.required' => __('requestValidate.email.required'),
+            'email.invalid' => __('requestValidate.email.invalid'),
+            'wallet_address.required' => __('requestValidate.wallet_address.required'),
+            'wallet_address.regex' => __('requestValidate.wallet_address.regex'),
+        ];
+    }
 }

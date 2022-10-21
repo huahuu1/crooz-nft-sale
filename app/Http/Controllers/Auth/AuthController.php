@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmTokenRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\VerifyEmailRequest;
 use App\Http\Requests\WalletAddressRequest;
 use App\Models\User;
 use App\Notifications\EmailAuthenticationNotification;
@@ -46,15 +46,15 @@ class AuthController extends Controller
             ]);
 
             return response()->json([
-                'message' => 'User registered successfully.',
+                'message' => __('authCustom.register.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'User registration failed',
+                'message' => __('authCustom.register.fail'),
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -75,7 +75,7 @@ class AuthController extends Controller
 
             if (! $user || ! Hash::check($request->password, $user->password, [])) {
                 return response()->json([
-                    'message' => 'The username or password is incorrect',
+                    'message' => __('authCustom.login.login_invalid'),
                 ], 404);
             }
 
@@ -89,9 +89,9 @@ class AuthController extends Controller
             Log::error($e);
 
             return response()->json([
-                'message' => 'Error in Login',
+                'message' => __('authCustom.login.fail'),
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -107,14 +107,14 @@ class AuthController extends Controller
             Auth::user()->tokens()->delete();
 
             return response()->json([
-                'message' => 'Logout',
+                'message' => __('authCustom.logout.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -138,7 +138,7 @@ class AuthController extends Controller
                 $token = $user->createToken('authToken')->plainTextToken;
 
                 return response()->json([
-                    'message' => 'User registered successfully.',
+                    'message' => __('authCustom.register.success'),
                     'data' => $user,
                     'access_token' => $token,
                 ], 200);
@@ -152,9 +152,9 @@ class AuthController extends Controller
             Log::error($e);
 
             return response()->json([
-                'message' => 'User registration failed',
+                'message' => __('authCustom.register.fail'),
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -163,14 +163,14 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function sendToken(UserRequest $request)
+    public function sendToken(VerifyEmailRequest $request)
     {
         try {
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
 
             if (! $user) {
                 return response()->json([
-                    'message' => 'User does not exist',
+                    'message' => __('user.getUser.not_found'),
                 ], 404);
             }
 
@@ -178,14 +178,17 @@ class AuthController extends Controller
 
             if ($checkDuplicateEmail > 0) {
                 return response()->json([
-                    'message' => 'The Email Address entered already exists in the system',
-                ], 500);
+                    'message' => __('user.email.duplicate'),
+                ], 400);
             }
 
             //Token is random 6 digits
             $tokenValidate = random_int(100000, 999999);
 
             $user->token_validate = $tokenValidate;
+
+            //create user password
+            $user->password = Hash::make($request['password']);
 
             $user->save();
 
@@ -196,16 +199,16 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Send email successfully',
+                'message' => __('authCustom.sendToken.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Send email failed',
+                'message' => __('authCustom.sendToken.fail'),
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -225,7 +228,7 @@ class AuthController extends Controller
                 $user->save();
 
                 return response()->json([
-                    'message' => 'Token has expired',
+                    'message' => __('authCustom.confirmToken.token_expired'),
                 ], 404);
             }
 
@@ -233,20 +236,22 @@ class AuthController extends Controller
             if ($user->token_validate != $request->token_validate) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Verify email token wrong',
-                ], 500);
+                    'message' => __('authCustom.confirmToken.wrong_input'),
+                ], 400);
             }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Verify email token successfully',
+                'message' => __('authCustom.confirmToken.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
+                'success' => false,
+                'message' => __('authCustom.confirmToken.fail'),
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 }

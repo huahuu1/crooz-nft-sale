@@ -24,6 +24,7 @@ use Nullix\CryptoJsAes\CryptoJsAes;
 class TransactionController extends Controller
 {
     use CheckTransactionWithApiScan;
+
     use ApiScanTransaction;
 
     protected $userService;
@@ -68,16 +69,16 @@ class TransactionController extends Controller
             //prevent duplicate transactions
             if ($depositTransaction) {
                 return response()->json([
-                    'message' => 'This deposit transaction is duplicated',
-                ], 500);
+                    'message' => __('createDepositTokenTransaction.duplicate'),
+                ], 400);
             }
 
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
 
             if (! $user) {
                 return response()->json([
-                    'message' => 'Please connect to metamask',
-                ], 500);
+                    'message' => __('createDepositTokenTransaction.connect_metamask'),
+                ], 400);
             }
 
             $this->historyListService->createTokenSaleHistory(
@@ -98,15 +99,15 @@ class TransactionController extends Controller
             );
 
             return response()->json([
-                'message' => 'Deposit transaction successfully - 入金成功しました。',
+                'message' => __('createDepositTokenTransaction.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Deposit failed - 入金失敗しました。',
+                'message' => __('createDepositTokenTransaction.fail'),
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -126,23 +127,29 @@ class TransactionController extends Controller
             //prevent duplicate transactions
             if ($depositTransaction) {
                 return response()->json([
-                    'message' => 'This deposit transaction is duplicated',
-                ], 500);
+                    'message' => __('transaction.createDepositNftTransaction.duplicate'),
+                ], 400);
             }
 
             //prevent amount smaller than min price
             if ($request->amount < $minPrice) {
                 return response()->json([
-                    'message' => "The amount of {$tokenName} must be larger or equal to {$minPrice}",
-                ], 500);
+                    'message' => __(
+                        'transaction.createDepositNftTransaction.min_price',
+                        [
+                        'tokenName' => $tokenName,
+                        'minPrice' => $minPrice
+                        ]
+                    ),
+                ], 400);
             }
 
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
 
             if (! $user) {
                 return response()->json([
-                    'message' => 'Please connect to metamask',
-                ], 500);
+                    'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
+                ], 400);
             }
 
             $this->historyListService->createNftAuctionHistory(
@@ -163,15 +170,15 @@ class TransactionController extends Controller
             );
 
             return response()->json([
-                'message' => 'Deposit transaction successfully - 入金成功しました。',
+                'message' => __('transaction.createDepositNftTransaction.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Deposit failed - 入金失敗しました。',
+                'message' => __('transaction.createDepositNftTransaction.fail'),
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -179,19 +186,17 @@ class TransactionController extends Controller
      * Create transaction when a user deposit crypto.
      *
      * @param $transactions
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function insertMissedTransaction(Request $request)
     {
         try {
-            $password = env('PASSWORD_DECRYPTE');
+            $password = config('defines.password_decrypte');
             $request = $request->all();
             $transactions = CryptoJsAes::decrypt($request['data'] ?? '', $password);
             $results = collect([]);
             foreach ($transactions as $transaction) {
                 $nftAuctionHistory = $this->historyListService->getNftAuctionHistoryByTxHash($transaction['tx_hash']);
-                $minPrice = (int) NftAuctionInfo::getLatestInfoNftAuction()->min_price;
-                $tokenName = TokenMaster::getTokenMasterById($transaction['token_id'])->code;
                 $isTransactionExistedOnBlockChain = $this->isTransactionExisted($transaction['tx_hash']);
                 //case transaction is existed in history table and on blockchain
                 //and case not existed on blockchain
@@ -199,6 +204,7 @@ class TransactionController extends Controller
                     $results->push([
                         'tx_hash' => $transaction['tx_hash'],
                         'insert' => false,
+                        'count' => $transaction['count'] + 1
                     ]);
                 }
                 //case transaction is not existed in history table but existed on blockchain
@@ -207,13 +213,6 @@ class TransactionController extends Controller
                         'tx_hash' => $transaction['tx_hash'],
                         'insert' => true,
                     ]);
-
-                    //prevent amount smaller than min price
-                    if ($transaction['amount'] < $minPrice) {
-                        return response()->json([
-                            'message' => "The amount of {$tokenName} must be larger or equal to {$minPrice}",
-                        ], 500);
-                    }
 
                     $user = $this->userService->getUserByWalletAddress($transaction['wallet_address']);
 
@@ -236,16 +235,16 @@ class TransactionController extends Controller
                 }
             }
             return response()->json([
-                'message' => 'Deposit transaction successfully - 入金成功しました。',
+                'message' => __('transaction.createDepositNftTransaction.success'),
                 'results' => $results
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Deposit failed - 入金失敗しました。',
+                'message' => __('transaction.createDepositNftTransaction.fail'),
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -262,7 +261,7 @@ class TransactionController extends Controller
 
         if (! $user) {
             return response()->json([
-                'message' => 'User not found',
+                'message' => __('user.getUser.not_found'),
             ], 404);
         }
 
@@ -282,11 +281,34 @@ class TransactionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
+    public function getPurchaseListOfNftAuctionOfUser($user, $maxPerPage = null)
+    {
+        $maxPerPage = $maxPerPage ?? config('defines.pagination.nft_auction');
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+
+        if (! $user) {
+            return response()->json([
+                'message' => 'User not found',
+            ], 404);
+        }
+
+        $nftAuctionHistory = $this->historyListService->getSuccessNftAuctionHistoryByUserIdHasPagination($user->id, $maxPerPage);
+
+        return response()->json([
+            'data' => $nftAuctionHistory->values()->all(),
+            'total_pages' => $nftAuctionHistory->lastPage(),
+        ]);
+    }
+
+    /**
+     * Get purchase list of nft auction
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function getPurchaseListOfNftAuction($maxPerPage = null)
     {
         $maxPerPage = $maxPerPage ?? config('defines.pagination.nft_auction');
-
-        $nftAuctionHistory = $this->historyListService->getSuccessNftAuctionHistoryByUserIdHasPagination($maxPerPage);
+        $nftAuctionHistory = $this->historyListService->getSuccessNftAuctionHistoryHasPagination($maxPerPage);
 
         return response()->json([
             'data' => $nftAuctionHistory->values()->all(),
@@ -316,15 +338,15 @@ class TransactionController extends Controller
                 $this->privateUserUnlockBalanceImport->importPrivateUserUnlockBalance();
 
                 return response()->json([
-                    'message' => 'Import private user unlock balance successfully!!',
+                    'message' => __('transaction.importUnlockUserBalance.success'),
                 ], 200);
             } catch (Exception $e) {
                 Log::error($e);
 
                 return response()->json([
-                    'message' => 'Import private user unlock balance failed!!',
+                    'message' => __('transaction.importUnlockUserBalance.fail'),
                     'error' => $e,
-                ], 500);
+                ], 400);
             }
         } else {
             return response()->json([

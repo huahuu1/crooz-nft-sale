@@ -28,7 +28,12 @@ class RegisterRequest extends FormRequest
     public function messages()
     {
         return [
-            'unique' => 'This email is already used',
+            'mail.required' => __('requestValidate.email.required'),
+            'mail.invalid' => __('requestValidate.email.invalid'),
+            'unique' => __('requestValidate.mail.unique'),
+            'status.required' => __('requestValidate.status.required'),
+            'password.required' => __('requestValidate.password.required'),
+            'password_confirm' => __('requestValidate.password_confirm'),
         ];
     }
 }

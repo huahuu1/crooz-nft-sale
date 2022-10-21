@@ -29,7 +29,7 @@ class AuthAdminController extends Controller
 
             if (! $admin || ! Hash::check($request->password, $admin->password, [])) {
                 return response()->json([
-                    'message' => 'The username or password is incorrect',
+                    'message' => __('authCustom.login.login_invalid'),
                 ], 404);
             }
             $token = $admin->createToken('authAminToken')->plainTextToken;
@@ -42,9 +42,9 @@ class AuthAdminController extends Controller
             Log::error($e);
 
             return response()->json([
-                'message' => 'Error in Login',
+                'message' => __('authCustom.login.fail'),
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -61,19 +61,19 @@ class AuthAdminController extends Controller
                 Auth::guard('admin')->user()->tokens()->delete();
 
                 return response()->json([
-                    'message' => 'Logout',
+                    'message' => __('authCustom.logout.success'),
                 ], 200);
             }
 
             return response()->json([
-                'message' => 'Access Denied',
+                'message' => __('authCustom.access.denied'),
             ], 201);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 }

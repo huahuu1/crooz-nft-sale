@@ -30,5 +30,7 @@ return [
     'queue' => [
         'general' => 'general',
         'check_status' => 'checkStatus',
-    ]
+    ],
+    'password_decrypte' => env('PASSWORD_DECRYPTE', 'XENOPROJECT'),
+    'language_default' => 'en'
 ];
