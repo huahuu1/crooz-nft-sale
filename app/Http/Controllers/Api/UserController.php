@@ -3,14 +3,22 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\UserBalanceRequest;
 use App\Http\Requests\UserRequest;
+use App\Models\PasswordReset;
 use App\Models\TokenMaster;
 use App\Models\User;
+use App\Notifications\ResetPasswordNotification;
 use App\Services\UserBalanceService;
 use App\Services\UserService;
+use Carbon\Carbon;
 use Exception;
+use Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
+use Str;
 
 class UserController extends Controller
 {
@@ -56,7 +64,7 @@ class UserController extends Controller
 
             if (! $user) {
                 return response()->json([
-                    'message' => 'User not found',
+                    'message' => __('user.getUser.not_found'),
                 ], 404);
             }
 
@@ -66,15 +74,15 @@ class UserController extends Controller
 
             return response()->json([
                 'data' => $user,
-                'message' => 'Update email successfully',
+                'message' => __('user.updateEmailByWalletAddress.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Update email failed',
+                'message' => __('user.updateEmailByWalletAddress.fail'),
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -89,7 +97,7 @@ class UserController extends Controller
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
             if (! $user) {
                 return response()->json([
-                    'message' => 'User not found',
+                    'message' => __('user.getUser.not_found'),
                 ], 404);
             }
 
@@ -100,15 +108,15 @@ class UserController extends Controller
             }
 
             return response()->json([
-                'message' => 'Create default balance successfully',
+                'message' => __('user.createDefaultBalanceByWalletAddress.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Create default balance failed',
+                'message' => __('user.createDefaultBalanceByWalletAddress.fail'),
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -130,7 +138,127 @@ class UserController extends Controller
 
             return response()->json([
                 'error' => $e,
-            ], 500);
+            ], 400);
+        }
+    }
+
+    /**
+     * Send email to reset password
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sendEmailResetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+        try {
+            $user = $this->userService->getUserByEmail($request->email);
+
+            if (! $user) {
+                return response()->json([
+                    'message' => __('user.getUser.not_found'),
+                ], 404);
+            }
+
+            $passwordReset = PasswordReset::updateOrCreate(
+                [
+                    'email' => $request->email,
+                    'token' => Str::random(60),
+                ]
+            );
+
+            //Send email contains token to user
+            $emailAuthenticationNotification = new ResetPasswordNotification(
+                $passwordReset->email,
+                $passwordReset->token
+            );
+
+            $user->notify($emailAuthenticationNotification);
+
+            return response()->json([
+                'success' => true,
+                'message' => __('user.sendEmailResetPassword.success'),
+            ], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => __('user.sendEmailResetPassword.fail'),
+                'error' => $e,
+            ], 400);
+        }
+    }
+
+    /**
+     * Reset the password of user
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function resetPassword(ResetPasswordRequest $request, $token)
+    {
+        try {
+            $passwordReset = PasswordReset::where('token', $token)->first();
+
+            if (!$passwordReset) {
+                return response()->json([
+                    'message' => __('user.resetPassword.token_invalid'),
+                ], 422);
+            }
+
+            if (Carbon::parse($passwordReset->updated_at)->addMinutes(720)->isPast()) {
+                $passwordReset->delete();
+
+                return response()->json([
+                    'message' => __('user.resetPassword.token_invalid'),
+                ], 422);
+            }
+
+            $user = $this->userService->getUserByEmail($passwordReset->email);
+            $user->password = Hash::make($request->password);
+            $user->save();
+            $passwordReset->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => __('user.resetPassword.success'),
+            ], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => __('user.resetPassword.fail'),
+                'error' => $e,
+            ], 400);
+        }
+    }
+
+    /**
+     * Change the password of user
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function changePassword(ChangePasswordRequest $request, $user)
+    {
+        try {
+            $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => __('user.changePassword.success'),
+            ], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => __('user.changePassword.fail'),
+                'error' => $e,
+            ], 400);
         }
     }
 }

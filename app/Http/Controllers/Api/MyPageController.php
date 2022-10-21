@@ -54,15 +54,15 @@ class MyPageController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getHistoryListByWalletAddress($walletAddress, $maxPerPage = null)
+    public function getHistoryListOfUser($user, $maxPerPage = null)
     {
         $maxPerPage = $maxPerPage ?? config('defines.pagination.my_page');
 
-        $user = $this->userService->getUserByWalletAddress($walletAddress);
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
 
         if (! $user) {
             return response()->json([
-                'message' => 'User not found',
+                'message' => __('user.getUser.not_found'),
             ], 404);
         }
 
@@ -86,14 +86,16 @@ class MyPageController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getBalanceByWalletAddress($walletAddress)
+    public function getBalanceOfUser($user)
     {
-        $user = $this->userService->getUserByWalletAddress($walletAddress);
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+
         if (! $user) {
             return response()->json([
-                'message' => 'User not found',
+                'message' => __('user.getUser.not_found'),
             ], 404);
         }
+
         $balances = $this->userBalanceService->getUserBalances($user->id);
 
         return response()->json([
@@ -106,18 +108,47 @@ class MyPageController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getNftByWalletAddress($walletAddress)
+    public function getNftOfUser($user, $maxPerPage = null)
     {
-        $user = $this->userService->getUserByWalletAddress($walletAddress);
+        $maxPerPage = $maxPerPage ?? config('defines.pagination.my_page');
+
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+
         if (! $user) {
             return response()->json([
-                'message' => 'User not found',
+                'message' => __('user.getUser.not_found'),
             ], 404);
         }
-        $nfts = $this->userNftService->getUserNfts($user->id);
+
+        $nfts = $this->userNftService->getUserNfts($user->id, $maxPerPage);
+        return response()->json([
+            'data' => $nfts->values()->all(),
+            'total_pages' => $nfts->lastPage()
+        ]);
+    }
+
+    /**
+     * Get nfts of a user by wallet address
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getNftOfUserByTypeId($user, $nftType, $maxPerPage = null)
+    {
+        $maxPerPage = $maxPerPage ?? config('defines.pagination.my_page');
+
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+
+        if (! $user) {
+            return response()->json([
+                'message' => __('user.getUser.not_found'),
+            ], 404);
+        }
+
+        $nfts = $this->userNftService->getUserNftsByTypeId($user->wallet_address, $nftType, $maxPerPage);
 
         return response()->json([
-            'data' => $nfts,
+            'data' => $nfts->values()->all(),
+            'total_pages' => $nfts->lastPage()
         ]);
     }
 
@@ -132,7 +163,7 @@ class MyPageController extends Controller
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
             if (! $user) {
                 return response()->json([
-                    'message' => 'User not found',
+                    'message' => __('user.getUser.not_found'),
                 ], 404);
             }
 
@@ -142,8 +173,8 @@ class MyPageController extends Controller
 
             if ($request->amount > $amountAvailable) {
                 return response()->json([
-                    'message' => 'The amount must be smaller than or equal to the available amount',
-                ], 500);
+                    'message' => __('mypage.requestToWithdrawToken.max_amount'),
+                ], 400);
             }
 
             //create user withdrawal data
@@ -160,15 +191,15 @@ class MyPageController extends Controller
             $userBalance->update();
 
             return response()->json([
-                'message' => 'Withdraw request successfully',
+                'message' => __('mypage.requestToWithdrawToken.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Withdraw request failed',
+                'message' => __('mypage.requestToWithdrawToken.fail'),
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -184,7 +215,7 @@ class MyPageController extends Controller
 
             if (! $userWithdrawal) {
                 return response()->json([
-                    'message' => 'Withdraw request not found',
+                    'message' => __('mypage.updateStatusWithdrawRequest.not_found'),
                 ], 404);
             }
 
@@ -207,15 +238,15 @@ class MyPageController extends Controller
             }
 
             return response()->json([
-                'message' => 'Change status successfully',
+                'message' => __('mypage.updateStatusWithdrawRequest.success'),
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
-                'message' => 'Change status failed',
+                'message' => __('mypage.updateStatusWithdrawRequest.fail'),
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -230,7 +261,7 @@ class MyPageController extends Controller
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
             if (! $user) {
                 return response()->json([
-                    'message' => 'User not found',
+                    'message' => __('user.getUser.not_found'),
                 ], 404);
             }
 
@@ -248,7 +279,7 @@ class MyPageController extends Controller
             if ($request->amount > $amountAvailableFrom) {
                 return response()->json([
                     'message' => 'The amount must be smaller than or equal to the available amount',
-                ], 500);
+                ], 400);
             }
 
             $userBalanceTokenFrom->amount_total -= $request->amount;
@@ -266,7 +297,43 @@ class MyPageController extends Controller
             return response()->json([
                 'message' => 'Swap token failed',
                 'error' => $e,
-            ], 500);
+            ], 400);
         }
+    }
+
+    /**
+     * Count nfts group by type id
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function countNftGroupByTypeId($user)
+    {
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+        if (! $user) {
+            return response()->json([
+                'message' => __('user.getUser.not_found'),
+            ], 404);
+        }
+        return response()->json([
+            'data' => $this->userNftService->countNftGroupByTypeId($user->wallet_address),
+        ]);
+    }
+
+    /**
+     * Get user profile
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUserProfile($user)
+    {
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+        if (! $user) {
+            return response()->json([
+                'message' => __('user.getUser.not_found'),
+            ], 404);
+        }
+        return response()->json([
+            'data' => $user,
+        ]);
     }
 }
