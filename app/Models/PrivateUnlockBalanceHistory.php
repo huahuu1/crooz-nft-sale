@@ -22,7 +22,7 @@ class PrivateUnlockBalanceHistory extends Model
     protected $fillable = [
         'unlock_id',
         'amount',
-        'release_token_date',
+        'unlock_token_date',
     ];
 
     /**

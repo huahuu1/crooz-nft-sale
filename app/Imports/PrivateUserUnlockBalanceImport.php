@@ -7,8 +7,10 @@ use App\Models\TokenMaster;
 use App\Services\UserService;
 use App\Models\User;
 use App\Models\UserBalance;
+use App\Models\UserWithdrawal;
 use App\Services\SaleInfoService;
 use App\Services\UserBalanceService;
+use App\Services\UserWithdrawalService;
 use App\Traits\CalculateNextRunDate;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -33,12 +35,15 @@ class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow
 
     protected $userService;
 
+    protected $userWithdrawalService;
+
     public function __construct(PrivateUserUnlockBalance $privateUserUnlockBalance)
     {
         $this->privateUserUnlockBalance = $privateUserUnlockBalance;
         $this->userBalanceService = new UserBalanceService();
         $this->saleInfoService = new SaleInfoService();
         $this->userService = new UserService();
+        $this->userWithdrawalService = new UserWithdrawalService();
     }
 
     public function headingRow(): int
@@ -58,7 +63,7 @@ class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow
     public function model(array $row)
     {
         $currentRowNumber = $this->getRowNumber();
-        Log::info('[SUCCESS] Insert excel row: '.$currentRowNumber);
+        Log::info('[SUCCESS] Insert excel row: ' . $currentRowNumber);
         //check user is existed
         $user = $this->userService->getUserByWalletAddress($row['wallet_address']);
 
@@ -81,22 +86,37 @@ class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow
 
         //check if the token unlock date is up to date
         $currentDate = Carbon::createMidnightDate();
-        $releaseDay = $currentDate->diffInDays(Date::excelToDateTimeObject($row['unlock_date'])->format('Y-m-d'), false);
+        $releaseDay = $currentDate->diffInDays(Date::excelToDateTimeObject($row['unlock_date'])
+                                  ->format('Y-m-d'), false);
 
-        UserBalance::where('user_id', $user->id)
-                   ->where('token_id', TokenMaster::GT)
-                   ->update([
-                       'amount_total' => DB::raw('amount_total + ' . $row['token_unlock_volume']),
-                       'amount_lock' => DB::raw('amount_lock + ' . $row['token_unlock_volume']),
-                   ]);
+        $userBalance = UserBalance::where('user_id', $user->id)
+                                  ->where('token_id', TokenMaster::GT)
+                                  ->first();
 
-        return new PrivateUserUnlockBalance([
+        $userBalance->update([
+            'amount_total' => DB::raw('amount_total + ' . $row['token_unlock_volume']),
+            'amount_lock' => DB::raw('amount_lock + ' . $row['token_unlock_volume']),
+        ]);
+
+        $privateUserUnlockBalance = PrivateUserUnlockBalance::create([
             'wallet_address' => $row['wallet_address'],
             'token_unlock_volume' => $row['token_unlock_volume'],
             'unlock_date' => Date::excelToDateTimeObject($row['unlock_date'])->format('Y-m-d'),
-            'token_id' => TokenMaster::GT,
+            'token_id' => $userBalance->token_id,
             'status' => $releaseDay > 0 ? 0 : 1
         ]);
+
+        //create user withdrawal data
+        $this->userWithdrawalService->createUserWithdrawal(
+            $user->id,
+            $userBalance->token_id,
+            $privateUserUnlockBalance->id,
+            $row['token_unlock_volume'],
+            Carbon::now(),
+            $releaseDay > 0 ? UserWithdrawal::WAITING_STATUS : UserWithdrawal::OPEN_STATUS
+        );
+
+        return $privateUserUnlockBalance;
     }
 
     public function importPrivateUserUnlockBalance()

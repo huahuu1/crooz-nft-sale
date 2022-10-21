@@ -39,7 +39,7 @@ class PrivateUserUnlockBalance extends Model
     /**
      * Get the token master that owns the private user unlock balance.
      */
-    public function token_master()
+    public function tokenMaster()
     {
         return $this->belongsTo(TokenMaster::class, 'token_id');
     }
@@ -47,7 +47,7 @@ class PrivateUserUnlockBalance extends Model
     /**
      * Get the token sale id that owns the private user unlock balance.
      */
-    public function token_sale()
+    public function tokenSale()
     {
         return $this->belongsTo(TokenSaleInfo::class, 'token_sale_id');
     }

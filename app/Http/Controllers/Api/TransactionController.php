@@ -292,7 +292,10 @@ class TransactionController extends Controller
             ], 404);
         }
 
-        $nftAuctionHistory = $this->historyListService->getSuccessNftAuctionHistoryByUserIdHasPagination($user->id, $maxPerPage);
+        $nftAuctionHistory = $this->historyListService->getSuccessNftAuctionHistoryByUserIdHasPagination(
+            $user->id,
+            $maxPerPage
+        );
 
         return response()->json([
             'data' => $nftAuctionHistory->values()->all(),

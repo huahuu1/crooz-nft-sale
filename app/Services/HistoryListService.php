@@ -100,7 +100,10 @@ class HistoryListService
         return NftAuctionHistory::where('status', NftAuctionHistory::SUCCESS_STATUS)
                                 ->where('user_id', $userId)
                                 ->orderby('created_at', 'desc')
-                                ->with(['user:id,email,wallet_address,token_validate,status', 'tokenMaster:id,name,code,description,status'])
+                                ->with(
+                                    ['user:id,email,wallet_address,token_validate,status',
+                                    'tokenMaster:id,name,code,description,status']
+                                )
                                 ->get()
                                 ->paginate($maxPerPage);
     }
