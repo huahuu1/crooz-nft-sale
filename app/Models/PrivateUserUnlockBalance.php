@@ -27,28 +27,10 @@ class PrivateUserUnlockBalance extends Model
     ];
 
     /**
-     * Get ALl private user unlock balance
-     *
-     * @return mixed
-     */
-    public function getPrivateUserUnlockBalances()
-    {
-        return PrivateUserUnlockBalance::where('status', 1)->with(['token_master', 'token_sale']);
-    }
-
-    /**
      * Get the token master that owns the private user unlock balance.
      */
     public function tokenMaster()
     {
         return $this->belongsTo(TokenMaster::class, 'token_id');
-    }
-
-    /**
-     * Get the token sale id that owns the private user unlock balance.
-     */
-    public function tokenSale()
-    {
-        return $this->belongsTo(TokenSaleInfo::class, 'token_sale_id');
     }
 }

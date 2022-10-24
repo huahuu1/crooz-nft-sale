@@ -8,7 +8,6 @@ use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\UserBalanceRequest;
 use App\Http\Requests\UserRequest;
 use App\Models\PasswordReset;
-use App\Models\TokenMaster;
 use App\Models\User;
 use App\Notifications\ResetPasswordNotification;
 use App\Services\UserBalanceService;

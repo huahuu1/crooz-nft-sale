@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\UserWithdrawal;
+use App\Services\UnlockUserBalanceService;
 use App\Services\UserService;
 use App\Services\UserWithdrawalService;
 use Carbon\Carbon;
@@ -17,6 +18,8 @@ class PrivateUnlockController extends Controller
 
     protected $userWithdrawalService;
 
+    protected $unlockUserBalanceService;
+
     /**
      * UserController constructor.
      *
@@ -25,10 +28,12 @@ class PrivateUnlockController extends Controller
      */
     public function __construct(
         UserService $userService,
-        UserWithdrawalService $userWithdrawalService
+        UserWithdrawalService $userWithdrawalService,
+        UnlockUserBalanceService $unlockUserBalanceService
     ) {
         $this->userWithdrawalService = $userWithdrawalService;
         $this->userService = $userService;
+        $this->unlockUserBalanceService = $unlockUserBalanceService;
     }
 
     /**
@@ -61,5 +66,31 @@ class PrivateUnlockController extends Controller
                 'error' => $e,
             ], 400);
         }
+    }
+
+    /**
+     * Get data of private user unlock balance
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getPrivateUserUnlockBalances()
+    {
+        $result = $this->unlockUserBalanceService->getPrivateUserUnlockBalances();
+        return response()->json([
+            'data' => $result
+        ]);
+    }
+
+    /**
+     * Get data of user withdrawal
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUserWithdrawals()
+    {
+        $result = $this->userWithdrawalService->getUserWithdrawalByIdHasPrivateUnlock();
+        return response()->json([
+            'data' => $result
+        ]);
     }
 }
