@@ -104,10 +104,7 @@ class UserController extends Controller
             $userBalance = $this->userBalanceService->hasBalancesByUserId($user->id);
 
             if (! $userBalance) {
-                $tokenList = TokenMaster::getTokenMasters();
-                foreach ($tokenList as $token) {
-                    $this->userBalanceService->createUserBalance($user->id, $token->id, 0, 0);
-                }
+                $this->userBalanceService->createDefaultUserBalance($user->id);
             }
 
             return response()->json([

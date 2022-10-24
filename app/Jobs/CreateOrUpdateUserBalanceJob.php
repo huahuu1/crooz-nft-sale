@@ -81,10 +81,7 @@ class CreateOrUpdateUserBalanceJob implements ShouldQueue
             if (! $email) {
                 $hasBalance = $this->userBalanceService->hasBalancesByUserId($this->transaction->user_id);
                 if (! $hasBalance) {
-                    $tokenList = TokenMaster::getTokenMasters();
-                    foreach ($tokenList as $token) {
-                        $this->userBalanceService->createUserBalance($this->transaction->user_id, $token->id, 0, 0);
-                    }
+                    $this->userBalanceService->createDefaultUserBalance($this->transaction->user_id);
                 }
             }
             $userBalance = $this->userBalanceService->getUserBalances($this->transaction->user_id)[0];
