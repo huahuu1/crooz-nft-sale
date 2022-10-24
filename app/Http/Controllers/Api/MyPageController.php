@@ -178,13 +178,13 @@ class MyPageController extends Controller
             }
 
             //create user withdrawal data
-            $this->userWithdrawalService->createUserWithdrawal(
-                $user->id,
-                $request->token_id,
-                $request->amount,
-                Carbon::now(),
-                UserWithdrawal::REQUESTING_STATUS
-            );
+            // $this->userWithdrawalService->createUserWithdrawal(
+            //     $user->id,
+            //     $request->token_id,
+            //     $request->amount,
+            //     Carbon::now(),
+            //     UserWithdrawal::OPEN_STATUS
+            // );
 
             //update amount total
             $userBalance->amount_total -= $request->amount;
@@ -225,7 +225,7 @@ class MyPageController extends Controller
 
             //case reject withdrawl request: refund to user's balance
             //delete withdraw request after reject
-            if ($request->status == UserWithdrawal::REJECT_STATUS) {
+            if ($request->status == UserWithdrawal::FAIL_STATUS) {
                 $userBalance = $this->userBalanceService->getUserBalanceByTokenId(
                     $userWithdrawal->user_id,
                     $userWithdrawal->token_id

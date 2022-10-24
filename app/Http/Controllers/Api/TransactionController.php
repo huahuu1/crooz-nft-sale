@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TransactionRequest;
-use App\Imports\UnlockUserBalanceImport;
+use App\Imports\PrivateUserUnlockBalanceImport;
 use App\Models\CashFlow;
 use App\Models\NftAuctionHistory;
 use App\Models\NftAuctionInfo;
@@ -29,7 +29,7 @@ class TransactionController extends Controller
 
     protected $userService;
 
-    protected $unlockUserBalanceImport;
+    protected $privateUserUnlockBalanceImport;
 
     protected $historyListService;
 
@@ -45,12 +45,12 @@ class TransactionController extends Controller
      */
     public function __construct(
         UserService $userService,
-        UnlockUserBalanceImport $unlockUserBalanceImport,
+        PrivateUserUnlockBalanceImport $privateUserUnlockBalanceImport,
         HistoryListService $historyListService,
         CashFlowService $cashFlowService
     ) {
         $this->userService = $userService;
-        $this->unlockUserBalanceImport = $unlockUserBalanceImport;
+        $this->privateUserUnlockBalanceImport = $privateUserUnlockBalanceImport;
         $this->historyListService = $historyListService;
         $this->cashFlowService = $cashFlowService;
     }
@@ -292,7 +292,10 @@ class TransactionController extends Controller
             ], 404);
         }
 
-        $nftAuctionHistory = $this->historyListService->getSuccessNftAuctionHistoryByUserIdHasPagination($user->id, $maxPerPage);
+        $nftAuctionHistory = $this->historyListService->getSuccessNftAuctionHistoryByUserIdHasPagination(
+            $user->id,
+            $maxPerPage
+        );
 
         return response()->json([
             'data' => $nftAuctionHistory->values()->all(),
@@ -321,7 +324,7 @@ class TransactionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function importUnlockUserBalance(Request $request)
+    public function importPrivateUserUnlockBalance(Request $request)
     {
         $validator = Validator::make(
             [
@@ -335,7 +338,7 @@ class TransactionController extends Controller
         );
         if (! $validator->fails()) {
             try {
-                $this->unlockUserBalanceImport->importUnlockUserBalance();
+                $this->privateUserUnlockBalanceImport->importPrivateUserUnlockBalance();
 
                 return response()->json([
                     'message' => __('transaction.importUnlockUserBalance.success'),

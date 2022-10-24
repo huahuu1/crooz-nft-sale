@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\PrivateUserUnlockBalance;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -38,5 +39,22 @@ class UnlockUserBalanceService
             DB::rollBack();
             throw new Exception($e->getMessage());
         }
+    }
+
+    /**
+     * get all private user unlock balance data
+     *
+     */
+    public function getPrivateUserUnlockBalances() {
+        return PrivateUserUnlockBalance::select(
+            'id',
+            'token_id',
+            'wallet_address',
+            'token_unlock_volume',
+            'unlock_date',
+            'status'
+        )
+        ->with('tokenMaster:id,name,code')
+        ->get();
     }
 }

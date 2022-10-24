@@ -8,7 +8,6 @@ use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\UserBalanceRequest;
 use App\Http\Requests\UserRequest;
 use App\Models\PasswordReset;
-use App\Models\TokenMaster;
 use App\Models\User;
 use App\Notifications\ResetPasswordNotification;
 use App\Services\UserBalanceService;
@@ -104,10 +103,7 @@ class UserController extends Controller
             $userBalance = $this->userBalanceService->hasBalancesByUserId($user->id);
 
             if (! $userBalance) {
-                $tokenList = TokenMaster::getTokenMasters();
-                foreach ($tokenList as $token) {
-                    $this->userBalanceService->createUserBalance($user->id, $token->id, 0, 0);
-                }
+                $this->userBalanceService->createDefaultUserBalance($user->id);
             }
 
             return response()->json([
