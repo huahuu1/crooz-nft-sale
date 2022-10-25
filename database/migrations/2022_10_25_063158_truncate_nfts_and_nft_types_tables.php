@@ -26,20 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::create('nfts', function (Blueprint $table) {
-            $table->unsignedBigInteger('nft_id')->autoIncrement();
-            $table->foreignId('nft_type')->constrained('nft_types');
-            $table->string('name');
-            $table->string('image_url');
-            $table->boolean('status')->nullable()->default(1);
-            $table->timestamps();
-        });
-
-        Schema::create('nft_types', function (Blueprint $table) {
-            $table->id()->autoIncrement();
-            $table->string('name', 100);
-            $table->boolean('status');
-            $table->timestamps();
-        });
+        //do nothing
     }
 };
