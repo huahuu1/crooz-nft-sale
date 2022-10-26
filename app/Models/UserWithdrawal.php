@@ -46,4 +46,13 @@ class UserWithdrawal extends Model
     {
         return $this->belongsTo(PrivateUserUnlockBalance::class, 'private_unlock_id');
     }
+
+    /**
+     * Get the private unlock history relates to user withdrawal.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function privateUnlockHistory(): BelongsTo
+    {
+        return $this->belongsTo(PrivateUnlockBalanceHistory::class, 'private_unlock_id', 'unlock_id');
+    }
 }

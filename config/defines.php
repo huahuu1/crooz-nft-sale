@@ -22,6 +22,7 @@ return [
         'company_nft' => env('NFT_COMPANY_WALLET', '0x3e91A94484f04e7b8B5a0156e2373D4788F8Cc8d'),
     ],
     'network' => env('NETWORK_BLOCKCHAIN', 'ETHERS'),
+    'uri_unlock_token' => env('URI_UNLOCK_TOKEN', 'http://ec2-54-150-255-124.ap-northeast-1.compute.amazonaws.com:3000'),
     'pagination' => [
         'my_page' => env('MAX_PER_PAGE_MYPAGE', 100),
         'nft_auction' => env('MAX_PER_PAGE_AUCTION', 100),
@@ -32,5 +33,6 @@ return [
         'check_status' => 'checkStatus',
     ],
     'password_decrypte' => env('PASSWORD_DECRYPTE', 'XENOPROJECT'),
-    'language_default' => 'en'
+    'language_default' => 'en',
+    'api_key' => env('API_KEY', '314199DC-D666-465F-A8F9-781842380900'),
 ];

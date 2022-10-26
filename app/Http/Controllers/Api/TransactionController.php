@@ -39,7 +39,7 @@ class TransactionController extends Controller
      * TransactionController constructor.
      *
      * @param UserService $userService
-     * @param UnlockUserBalanceImport $unlockUserBalanceImport
+     * @param PrivateUserUnlockBalanceImport $privateUserUnlockBalanceImport
      * @param HistoryListService $historyListService
      * @param CashFlowService $cashFlowService
      */
@@ -306,7 +306,7 @@ class TransactionController extends Controller
     /**
      * Get purchase list of nft auction
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getPurchaseListOfNftAuction($maxPerPage = null)
     {

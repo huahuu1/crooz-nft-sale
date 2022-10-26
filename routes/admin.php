@@ -25,12 +25,18 @@ Route::middleware(['language'])->group(function () {
 
             Route::controller(PrivateUnlockController::class)->group(function () {
                 Route::get('private-unlock-balance', 'getPrivateUserUnlockBalances');
-                Route::get('user-withdrawal', 'getUserWithdrawals');
+                Route::get('user-withdrawal', 'getUserWithdrawalsHasPrivateUnlock');
                 Route::group([
                     'prefix' => 'private-unlock',
                 ], function () {
                     //change status when release date is up to date
-                    Route::get('check-status', 'checkStatusUserWithdrawalRequest');
+                    Route::get('get-data', 'getDataPrivateUnlock');
+                    //change status when release date is up to date
+                    Route::get('check-unlock-date', 'checkUnlockTokenUpToDate');
+                    //transfer token when approve user withdrawal request
+                    Route::post('approve', 'approveWithdrawalRequest');
+                    //check status of withdrawal request
+                    Route::post('check-status', 'checkStatusWithdrawalRequests');
                 });
             });
 
