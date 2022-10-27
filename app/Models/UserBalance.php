@@ -36,7 +36,7 @@ class UserBalance extends Model
     public const GT = 3;
 
     /**
-     * Get the token relates to user balanace.
+     * Get the token relates to user balance.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function tokenMaster(): BelongsTo
