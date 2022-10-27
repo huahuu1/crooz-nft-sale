@@ -75,7 +75,7 @@ class PrivateUnlockController extends Controller
                 //check if the token unlock date is up to date
                 $currentDate = Carbon::createMidnightDate();
                 $releaseDay = $currentDate->diffInDays($userWithdrawal->privateUnlock->unlock_date, false);
-                if ($releaseDay <= 0 && $userWithdrawal->status == UserWithdrawal::WAITING_STATUS) {
+                if ($releaseDay <= 0 && $userWithdrawal->status == 'WAITING') {
                     $userWithdrawal->status = UserWithdrawal::OPEN_STATUS;
                     $userWithdrawal->save();
                 }
