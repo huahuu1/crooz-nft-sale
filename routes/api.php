@@ -69,7 +69,7 @@ Route::middleware(['language'])->group(function () {
                 Route::get('balance/{user}', 'getBalanceOfUser');
                 //get nfts of a user
                 Route::get('nft/{user}/{nft_type}/{max_per_page?}', 'getNftOfUserByTypeId');
-                //user requests to withdrawl token
+                //user requests to withdrawal token
                 Route::post('withdraw-token', 'requestToWithdrawToken');
                 //update status of user_withdrawals
                 Route::put('withdraw-token/update-status', 'updateStatusWithdrawRequest');
