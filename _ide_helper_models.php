@@ -511,6 +511,7 @@ namespace App\Models{
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
+ * @property-read \App\Models\UserPartner|null $userPartner
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
@@ -554,6 +555,27 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|UserBalance whereUserId($value)
  */
 	class UserBalance extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\UserPartner
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPartner newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPartner newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPartner query()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPartner whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPartner whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPartner whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPartner whereUserId($value)
+ */
+	class UserPartner extends \Eloquent {}
 }
 
 namespace App\Models{

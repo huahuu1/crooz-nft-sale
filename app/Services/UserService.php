@@ -34,7 +34,10 @@ class UserService
             'wallet_address',
             'token_validate',
             'status'
-        )->where('wallet_address', $walletAddress)->first();
+        )
+        ->with('userPartner:id,user_id')
+        ->where('wallet_address', $walletAddress)
+        ->first();
     }
 
     /**

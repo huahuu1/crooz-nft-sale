@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -46,4 +47,13 @@ class User extends Authenticatable
     ];
 
     public const VIP_MEMBER = 1;
+
+    /**
+     * Get the user partner relates to user.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function userPartner(): BelongsTo
+    {
+        return $this->belongsTo(UserPartner::class, 'id', 'user_id');
+    }
 }
