@@ -24,6 +24,8 @@ Route::middleware(['language'])->group(function () {
             });
 
             Route::controller(PrivateUnlockController::class)->group(function () {
+                Route::get('private-unlock-balance', 'getPrivateUserUnlockBalances');
+                Route::get('user-withdrawal', 'getUserWithdrawals');
                 Route::group([
                     'prefix' => 'private-unlock',
                 ], function () {

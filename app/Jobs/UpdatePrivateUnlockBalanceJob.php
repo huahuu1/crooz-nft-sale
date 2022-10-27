@@ -103,13 +103,13 @@ class UpdatePrivateUnlockBalanceJob implements ShouldQueue
                 Carbon::now()
             );
             //create user withdrawal data
-            $this->userWithdrawalService->createUserWithdrawal(
-                $this->userBalance->user_id,
-                $this->userBalance->token_id,
-                $this->unlockAmount,
-                Carbon::now(),
-                UserWithdrawal::REQUESTING_STATUS
-            );
+            // $this->userWithdrawalService->createUserWithdrawal(
+            //     $this->userBalance->user_id,
+            //     $this->userBalance->token_id,
+            //     $this->unlockAmount,
+            //     Carbon::now(),
+            //     UserWithdrawal::REQUESTING_STATUS
+            // );
             //update amount total
             $this->userBalance->amount_total -= $this->unlockAmount;
             $this->userBalance->update();
