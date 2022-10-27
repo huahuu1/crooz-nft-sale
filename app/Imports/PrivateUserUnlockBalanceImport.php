@@ -94,8 +94,7 @@ class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow
                                   ->first();
 
         $userBalance->update([
-            'amount_total' => DB::raw('amount_total + ' . $row['token_unlock_volume']),
-            'amount_lock' => DB::raw('amount_lock + ' . $row['token_unlock_volume']),
+            'amount_total' => DB::raw('amount_total + ' . $row['token_unlock_volume'])
         ]);
 
         $privateUserUnlockBalance = PrivateUserUnlockBalance::create([
@@ -103,6 +102,8 @@ class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow
             'token_unlock_volume' => $row['token_unlock_volume'],
             'unlock_date' => Date::excelToDateTimeObject($row['unlock_date'])->format('Y-m-d'),
             'token_id' => $userBalance->token_id,
+            'token_type' => $row['token_type'],
+            'investor_classification' => $row['investor_classification'],
             'status' => $releaseDay > 0 ? 0 : 1
         ]);
 

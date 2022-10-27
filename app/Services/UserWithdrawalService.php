@@ -21,12 +21,12 @@ class UserWithdrawalService
     }
 
     /**
-     * Get balances of a user follow token id
+     * Get user withdrawal requests with private unlock
      *
      * @param $id
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getUserWithdrawalByIdHasPrivateUnlock()
+    public function getUserWithdrawalsHasPrivateUnlock()
     {
         return UserWithdrawal::select(
             'id',
@@ -42,6 +42,60 @@ class UserWithdrawalService
             'privateUnlock:id,token_id,wallet_address,token_unlock_volume,unlock_date,status'
         )
         ->get();
+    }
+
+    /**
+     * Get user withdrawal requests with private unlock history
+     *
+     * @param $id
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getUserWithdrawalsHasPrivateUnlockHistory()
+    {
+        return UserWithdrawal::select(
+            'id',
+            'user_id',
+            'token_id',
+            'private_unlock_id',
+            'amount',
+            'request_time',
+            'status',
+            'note'
+        )
+        ->where('status', UserWithdrawal::PROCESSING_STATUS)
+        ->with(
+            'privateUnlockHistory:id,unlock_id,amount,unlock_token_date,admin_id,network_id,tx_hash,status'
+        )
+        ->get();
+    }
+
+    /**
+     * Get user withdrawal requests with private unlock history
+     *
+     * @param $id
+     * @return \App\Models\UserWithdrawal
+     */
+    public function getUserWithdrawalByTxHash($txHash)
+    {
+        return UserWithdrawal::select(
+            'user_withdrawals.id',
+            'user_withdrawals.user_id',
+            'user_withdrawals.token_id',
+            'user_withdrawals.private_unlock_id',
+            'user_withdrawals.amount',
+            'user_withdrawals.request_time',
+            'user_withdrawals.status',
+            'user_withdrawals.note',
+            'private_unlock_balance_histories.tx_hash'
+        )
+        ->join(
+            'private_unlock_balance_histories',
+            'private_unlock_balance_histories.unlock_id',
+            '=',
+            'user_withdrawals.private_unlock_id'
+        )
+        ->where('private_unlock_balance_histories.tx_hash', $txHash)
+        ->first();
     }
 
     /**
