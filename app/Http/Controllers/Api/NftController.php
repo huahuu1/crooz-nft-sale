@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Exports\NftItemExport;
 use App\Http\Controllers\Controller;
 use App\Imports\AuctionNftItemImport;
+use App\Services\UserNftService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -16,6 +17,8 @@ class NftController extends Controller
 
     protected $nftItemExport;
 
+    protected $userNftService;
+
     /**
      * NftController constructor.
      *
@@ -25,9 +28,11 @@ class NftController extends Controller
     public function __construct(
         AuctionNftItemImport $auctionNftItemImport,
         NftItemExport $nftItemExport,
+        UserNftService $userNftService
     ) {
         $this->auctionNftItemImport = $auctionNftItemImport;
         $this->nftItemExport = $nftItemExport;
+        $this->userNftService = $userNftService;
     }
 
     /**
@@ -86,5 +91,18 @@ class NftController extends Controller
                 'error' => $e,
             ], 400);
         }
+    }
+
+    /**
+     * Import nft item by excel
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAuctionNftData()
+    {
+        $result = $this->userNftService->getAuctionNfts();
+        return response()->json([
+            'data' => $result
+        ]);
     }
 }
