@@ -23,7 +23,17 @@ class PrivateUnlockBalanceHistory extends Model
         'unlock_id',
         'amount',
         'unlock_token_date',
+        'admin_id',
+        'network_id',
+        'tx_hash',
+        'status',
     ];
+
+    public const PENDING_STATUS = 1;
+
+    public const SUCCESS_STATUS = 2;
+
+    public const FAIL_STATUS = 3;
 
     /**
      * Get the unlock user balance that owns the unlock balance histories.
@@ -32,5 +42,14 @@ class PrivateUnlockBalanceHistory extends Model
     public function privateUserUnlockBalance(): BelongsTo
     {
         return $this->belongsTo(PrivateUserUnlockBalance::class, 'unlock_id');
+    }
+
+    /**
+     * Get the admin relates to unlock balance history.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function admin(): BelongsTo
+    {
+        return $this->belongsTo(admin::class, 'admin_id');
     }
 }

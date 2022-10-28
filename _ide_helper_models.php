@@ -248,8 +248,12 @@ namespace App\Models{
  * @property string $amount
  * @property string $unlock_token_date
  * @property int $admin_id
+ * @property int $network_id
+ * @property string $tx_hash
+ * @property string $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Admin $admin
  * @property-read \App\Models\PrivateUserUnlockBalance $privateUserUnlockBalance
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
@@ -260,6 +264,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUnlockBalanceHistory whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUnlockBalanceHistory whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUnlockBalanceHistory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PrivateUnlockBalanceHistory whereNetworkId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PrivateUnlockBalanceHistory whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PrivateUnlockBalanceHistory whereTxHash($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUnlockBalanceHistory whereUnlockId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUnlockBalanceHistory whereUnlockTokenDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUnlockBalanceHistory whereUpdatedAt($value)
@@ -273,6 +280,8 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $token_id
+ * @property int $token_type
+ * @property int $investor_classification
  * @property string $wallet_address
  * @property string $token_unlock_volume
  * @property string|null $unlock_date
@@ -280,7 +289,6 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\TokenMaster $tokenMaster
- * @property-read \App\Models\TokenSaleInfo|null $tokenSale
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUserUnlockBalance newModelQuery()
@@ -288,8 +296,10 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUserUnlockBalance query()
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUserUnlockBalance whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUserUnlockBalance whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PrivateUserUnlockBalance whereInvestorClassification($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUserUnlockBalance whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUserUnlockBalance whereTokenId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PrivateUserUnlockBalance whereTokenType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUserUnlockBalance whereTokenUnlockVolume($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUserUnlockBalance whereUnlockDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUserUnlockBalance whereUpdatedAt($value)
@@ -501,6 +511,7 @@ namespace App\Models{
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
+ * @property-read \App\Models\UserPartner|null $userPartner
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
@@ -548,6 +559,27 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\UserPartner
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPartner newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPartner newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPartner query()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPartner whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPartner whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPartner whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPartner whereUserId($value)
+ */
+	class UserPartner extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\UserWithdrawal
  *
  * @property int $id
@@ -561,6 +593,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\PrivateUserUnlockBalance $privateUnlock
+ * @property-read \App\Models\PrivateUnlockBalanceHistory $privateUnlockHistory
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static \Illuminate\Database\Eloquent\Builder|UserWithdrawal newModelQuery()
