@@ -104,6 +104,7 @@ class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow
             'token_id' => $userBalance->token_id,
             'token_type' => $row['token_type'],
             'investor_classification' => $row['investor_classification'],
+            'investor_name' => $row['investor_name'],
             'status' => $releaseDay > 0 ? 0 : 1
         ]);
 

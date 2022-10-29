@@ -22,6 +22,7 @@ class PrivateUserUnlockBalance extends Model
         'token_id',
         'token_type',
         'investor_classification',
+        'investor_name',
         'wallet_address',
         'token_unlock_volume',
         'unlock_date',

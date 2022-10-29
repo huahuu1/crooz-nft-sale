@@ -62,6 +62,8 @@ class PrivateUnlockService
             'private_user_unlock_balances.token_unlock_volume',
             'user_withdrawals.status',
             'private_user_unlock_balances.wallet_address',
+            'private_user_unlock_balances.investor_classification',
+            'private_user_unlock_balances.investor_name',
             'private_unlock_balance_histories.tx_hash',
         )
         ->leftJoin(
@@ -78,6 +80,7 @@ class PrivateUnlockService
         )
         ->leftJoin('user_balances', 'user_balances.user_id', '=', 'user_withdrawals.user_id')
         ->where('user_balances.token_id', TokenMaster::GT)
+        ->orderBy('private_user_unlock_balances.unlock_date', 'ASC')
         ->get();
     }
 }
