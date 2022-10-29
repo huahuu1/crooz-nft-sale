@@ -23,6 +23,25 @@ class UserNftService
     }
 
     /**
+     * Get all auction nfts
+     *
+     * @param $userId
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAuctionNfts()
+    {
+        return AuctionNft::select(
+            'id',
+            'wallet_address',
+            'nft_id',
+            'nft_auction_id',
+            'status'
+        )
+        ->with('nfts:nft_id,nft_type,name,image_url,status')
+        ->get();
+    }
+
+    /**
      * Get nfts of a user by type id
      *
      * @param $userId
