@@ -52,8 +52,8 @@ class User extends Authenticatable
      * Get the user partner relates to user.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function userPartner(): BelongsTo
+    public function gxePartnerUser(): BelongsTo
     {
-        return $this->belongsTo(UserPartner::class, 'id', 'user_id');
+        return $this->belongsTo(GxePartnerUsers::class, 'id', 'user_id');
     }
 }

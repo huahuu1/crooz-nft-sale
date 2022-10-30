@@ -35,7 +35,7 @@ class UserService
             'token_validate',
             'status'
         )
-        ->with('userPartner:id,user_id')
+        ->with('gxePartnerUser:id,user_id')
         ->where('wallet_address', $walletAddress)
         ->first();
     }
