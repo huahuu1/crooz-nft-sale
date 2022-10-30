@@ -48,7 +48,7 @@ namespace App\Models{
  * @property int $id
  * @property string|null $wallet_address
  * @property int $nft_id
- * @property int|null $nft_auction_id
+ * @property int $nft_delivery_source_id
  * @property int|null $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -60,7 +60,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft query()
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereNftAuctionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereNftDeliverySourceId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereNftId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereUpdatedAt($value)
