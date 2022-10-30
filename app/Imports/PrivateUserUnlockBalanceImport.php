@@ -16,13 +16,14 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\RemembersRowNumber;
+use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow
+class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow, SkipsEmptyRows
 {
     use RemembersRowNumber;
     use CalculateNextRunDate;

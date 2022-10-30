@@ -14,7 +14,7 @@ class UserPartnerSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('user_partners')->insert([
+        DB::table('gxe_partner_users')->insert([
             [
                 'id' => 1,
                 'user_id' => 1,
