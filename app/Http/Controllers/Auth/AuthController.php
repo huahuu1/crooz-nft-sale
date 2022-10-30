@@ -187,9 +187,6 @@ class AuthController extends Controller
 
             $user->token_validate = $tokenValidate;
 
-            //create user password
-            $user->password = Hash::make($request['password']);
-
             $user->save();
 
             //Send email contains token to user
