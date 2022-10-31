@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,6 +38,7 @@ class AuthAdminController extends Controller
             return response()->json([
                 'access_token' => $token,
                 'data' => $admin,
+                'exit_token' => Carbon::now('UTC')->addHours(3)
             ], 200);
         } catch (Exception $e) {
             Log::error($e);

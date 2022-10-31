@@ -25,6 +25,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('check:nft-auction')->everyThreeMinutes();
         $schedule->command('unlock:user-balance')->daily();
         $schedule->command('telescope:prune')->daily();
+        $schedule->command('sanctum:prune-expired --hours=24')->daily();
     }
 
     /**
