@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             TokenUnlockRuleSeeder::class,
             NftSeeder::class,
             GxePartnerUserSeeder::class,
+            NftDeliverySourceSeeder::class
         ]);
 
         \App\Models\TokenSaleInfo::factory(1)->create();

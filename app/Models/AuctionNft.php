@@ -22,7 +22,7 @@ class AuctionNft extends Model
     protected $fillable = [
         'wallet_address',
         'nft_id',
-        'nft_auction_id',
+        'nft_delivery_source_id',
         'status',
     ];
 

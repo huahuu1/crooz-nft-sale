@@ -34,7 +34,7 @@ class UserNftService
             'id',
             'wallet_address',
             'nft_id',
-            'nft_auction_id',
+            'nft_delivery_source_id',
             'status'
         )
         ->with('nfts:nft_id,nft_type,name,image_url,status')
@@ -53,7 +53,7 @@ class UserNftService
             'auction_nfts.id',
             'auction_nfts.wallet_address',
             'auction_nfts.nft_id',
-            'auction_nfts.nft_auction_id',
+            'auction_nfts.nft_delivery_source_id',
             'nfts.nft_type',
             'nfts.name',
             'nfts.image_url',
@@ -62,6 +62,7 @@ class UserNftService
             ->join('nfts', 'nfts.nft_id', '=', 'auction_nfts.nft_id')
             ->where('wallet_address', $walletAddress)
             ->where('nfts.nft_type', $nftType)
+            ->where('auction_nfts.status', '=', 1)
             ->get()
             ->paginate($maxPerPage);
     }
