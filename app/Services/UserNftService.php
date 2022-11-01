@@ -23,6 +23,31 @@ class UserNftService
     }
 
     /**
+     * Get all auction nfts
+     *
+     * @param $userId
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAuctionNfts($params)
+    {
+        return AuctionNft::select(
+            'id',
+            'wallet_address',
+            'nft_id',
+            'nft_delivery_source_id',
+            'status',
+            'created_at as upload_date'
+        )
+        ->with('nfts:nft_id,nft_type,name,image_url,status')
+        ->orderBy('upload_date', 'DESC')
+        ->when(!empty($params['wallet_address']), function ($q) use ($params) {
+            $keyword = '%' . $params['wallet_address'] . '%';
+            $q->where('wallet_address', 'like', $keyword);
+        })
+        ->get();
+    }
+
+    /**
      * Get nfts of a user by type id
      *
      * @param $userId
@@ -34,7 +59,7 @@ class UserNftService
             'auction_nfts.id',
             'auction_nfts.wallet_address',
             'auction_nfts.nft_id',
-            'auction_nfts.nft_auction_id',
+            'auction_nfts.nft_delivery_source_id',
             'nfts.nft_type',
             'nfts.name',
             'nfts.image_url',
@@ -43,6 +68,7 @@ class UserNftService
             ->join('nfts', 'nfts.nft_id', '=', 'auction_nfts.nft_id')
             ->where('wallet_address', $walletAddress)
             ->where('nfts.nft_type', $nftType)
+            ->where('auction_nfts.status', '=', 1)
             ->get()
             ->paginate($maxPerPage);
     }

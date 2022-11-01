@@ -127,7 +127,6 @@ class AuthController extends Controller
     {
         try {
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
-
             if (! $user) {
                 User::create([
                     'wallet_address' => $request->wallet_address,
@@ -141,12 +140,14 @@ class AuthController extends Controller
                     'message' => __('authCustom.register.success'),
                     'data' => $user,
                     'access_token' => $token,
+                    'exit_token' => Carbon::now('UTC')->addHours(3)
                 ], 200);
             }
 
             return response()->json([
                 'data' => $user,
                 'access_token' => $user->createToken('authToken')->plainTextToken,
+                'exit_token' => Carbon::now('UTC')->addHours(3)
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
@@ -186,9 +187,6 @@ class AuthController extends Controller
             $tokenValidate = random_int(100000, 999999);
 
             $user->token_validate = $tokenValidate;
-
-            //create user password
-            $user->password = Hash::make($request['password']);
 
             $user->save();
 

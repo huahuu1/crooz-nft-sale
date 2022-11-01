@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
 
-class UserPartner extends Model
+class GxePartnerUsers extends Model
 {
     use HasApiTokens;
     use HasFactory;
 
-    protected $table = 'user_partners';
+    protected $table = 'gxe_partner_users';
 
     /**
      * The attributes that are mass assignable.

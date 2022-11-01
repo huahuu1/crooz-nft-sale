@@ -48,7 +48,7 @@ namespace App\Models{
  * @property int $id
  * @property string|null $wallet_address
  * @property int $nft_id
- * @property int|null $nft_auction_id
+ * @property int $nft_delivery_source_id
  * @property int|null $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -60,7 +60,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft query()
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereNftAuctionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereNftDeliverySourceId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereNftId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AuctionNft whereUpdatedAt($value)
@@ -98,6 +98,27 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlow whereUserId($value)
  */
 	class CashFlow extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\GxePartnerUsers
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|GxePartnerUsers newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|GxePartnerUsers newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|GxePartnerUsers query()
+ * @method static \Illuminate\Database\Eloquent\Builder|GxePartnerUsers whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GxePartnerUsers whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GxePartnerUsers whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GxePartnerUsers whereUserId($value)
+ */
+	class GxePartnerUsers extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -282,6 +303,7 @@ namespace App\Models{
  * @property int $token_id
  * @property int $token_type
  * @property int $investor_classification
+ * @property string $investor_name
  * @property string $wallet_address
  * @property string $token_unlock_volume
  * @property string|null $unlock_date
@@ -297,6 +319,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUserUnlockBalance whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUserUnlockBalance whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUserUnlockBalance whereInvestorClassification($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PrivateUserUnlockBalance whereInvestorName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUserUnlockBalance whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUserUnlockBalance whereTokenId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PrivateUserUnlockBalance whereTokenType($value)
@@ -507,11 +530,11 @@ namespace App\Models{
  * @property int $vip_member
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\GxePartnerUsers|null $gxePartnerUser
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
- * @property-read \App\Models\UserPartner|null $userPartner
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
@@ -555,27 +578,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|UserBalance whereUserId($value)
  */
 	class UserBalance extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
- * App\Models\UserPartner
- *
- * @property int $id
- * @property int $user_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
- * @property-read int|null $tokens_count
- * @method static \Illuminate\Database\Eloquent\Builder|UserPartner newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|UserPartner newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|UserPartner query()
- * @method static \Illuminate\Database\Eloquent\Builder|UserPartner whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UserPartner whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UserPartner whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UserPartner whereUserId($value)
- */
-	class UserPartner extends \Eloquent {}
 }
 
 namespace App\Models{

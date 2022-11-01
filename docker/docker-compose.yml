@@ -1,0 +1,46 @@
+version: "3"
+
+services:
+  php:
+    container_name: backend
+    build:
+      context: ../
+      dockerfile: ./docker/php/Dockerfile
+    image: xeno-backend
+    volumes:
+      - ../:/var/www/backend
+    networks:
+      - xeno_portal
+  nginx:
+    container_name: nginx
+    build:
+      context: ../
+      dockerfile: ./docker/nginx/Dockerfile
+    image: xeno-nginx
+    environment:
+      - ENV_NAME=${ENV_NAME}
+    volumes:
+      - ../public:/var/www/backend/public
+    ports:
+      - "80:80"
+      - "8081:8081"
+    depends_on:
+      - php
+    networks:
+      - xeno_portal
+  worker:
+    container_name: worker
+    build:
+      context: ../
+      dockerfile: ./docker/worker/Dockerfile
+    image: xeno-worker
+    volumes:
+      - ../:/var/www/backend
+    depends_on:
+      - php
+    networks:
+      - xeno_portal
+networks:
+  xeno_portal:
+    name: xeno_portal
+    driver: bridge

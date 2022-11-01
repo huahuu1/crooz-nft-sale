@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class UserPartnerSeeder extends Seeder
+class GxePartnerUserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,7 +14,7 @@ class UserPartnerSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('user_partners')->insert([
+        DB::table('gxe_partner_users')->insert([
             [
                 'id' => 1,
                 'user_id' => 1,
