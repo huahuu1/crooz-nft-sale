@@ -98,9 +98,9 @@ class NftController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getAuctionNftData()
+    public function getAuctionNftData(Request $request)
     {
-        $result = $this->userNftService->getAuctionNfts();
+        $result = $this->userNftService->getAuctionNfts($request->all());
         return response()->json([
             'data' => $result
         ]);
