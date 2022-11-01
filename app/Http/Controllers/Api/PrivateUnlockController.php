@@ -269,9 +269,9 @@ class PrivateUnlockController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getDataPrivateUnlock()
+    public function getDataPrivateUnlock(Request $request)
     {
-        $result = $this->privateUnlockService->getDataPrivateUnlock();
+        $result = $this->privateUnlockService->getDataPrivateUnlock($request->all());
         return response()->json([
             'data' => $result
         ]);

@@ -51,7 +51,7 @@ class PrivateUnlockService
      * get data of private unlock
      *
      */
-    public function getDataPrivateUnlock()
+    public function getDataPrivateUnlock($params)
     {
         return UserWithdrawal::select(
             'user_withdrawals.id',
@@ -81,6 +81,16 @@ class PrivateUnlockService
         ->leftJoin('user_balances', 'user_balances.user_id', '=', 'user_withdrawals.user_id')
         ->where('user_balances.token_id', TokenMaster::GT)
         ->orderBy('private_user_unlock_balances.unlock_date', 'ASC')
+        ->when(!empty($params['unlock_date']), function ($q) use ($params) {
+            $q->whereDate('private_user_unlock_balances.unlock_date', $params['unlock_date']);
+        })
+        ->when(!empty($params['status']), function ($q) use ($params) {
+            $q->where('user_withdrawals.status', $params['status']);
+        })
+        ->when(!empty($params['wallet_address']), function ($q) use ($params) {
+            $keyword = '%' . $params['wallet_address'] . '%';
+            $q->where('private_user_unlock_balances.wallet_address', 'like', $keyword);
+        })
         ->get();
     }
 }
