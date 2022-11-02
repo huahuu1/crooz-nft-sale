@@ -100,7 +100,7 @@ class NftController extends Controller
      */
     public function getAuctionNftData(Request $request, $maxPerPage = null)
     {
-        $maxPerPage = $maxPerPage ?? config('defines.pagination.my_page');
+        $maxPerPage = $maxPerPage ?? config('defines.pagination.admin');
         $result = $this->userNftService->getAuctionNfts($request->all(), $maxPerPage);
         return response()->json([
             'data' => $result->values()->all(),
