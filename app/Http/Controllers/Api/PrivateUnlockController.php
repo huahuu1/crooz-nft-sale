@@ -272,6 +272,12 @@ class PrivateUnlockController extends Controller
     public function getDataPrivateUnlock(Request $request, $maxPerPage = null)
     {
         $maxPerPage = $maxPerPage ?? config('defines.pagination.admin');
+        if (count($request->all()) <= 1) {
+            return response()->json([
+                'data' => [],
+                'total_pages' => 1
+            ]);
+        }
         $result = $this->privateUnlockService->getDataPrivateUnlock($request->all(), $maxPerPage);
         return response()->json([
             'data' => $result->values()->all(),
