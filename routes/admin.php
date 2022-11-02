@@ -17,7 +17,7 @@ Route::middleware(['language'])->group(function () {
             Route::post('import-nft', [NftController::class, 'importNft']);
             Route::get('export-nft', [NftController::class, 'exportNft']);
             //get auction nft data
-            Route::get('get-auction-nft', [NftController::class, 'getAuctionNftData']);
+            Route::get('get-auction-nft/{max_per_page?}', [NftController::class, 'getAuctionNftData']);
             Route::group([
                 'prefix' => 'import',
             ], function () {

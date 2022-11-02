@@ -28,7 +28,7 @@ class UserNftService
      * @param $userId
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getAuctionNfts($params)
+    public function getAuctionNfts($params, $maxPerPage)
     {
         return AuctionNft::select(
             'id',
@@ -44,7 +44,8 @@ class UserNftService
             $keyword = '%' . $params['wallet_address'] . '%';
             $q->where('wallet_address', 'like', $keyword);
         })
-        ->get();
+        ->get()
+        ->paginate($maxPerPage);
     }
 
     /**
