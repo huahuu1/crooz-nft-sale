@@ -17,7 +17,7 @@ Route::middleware(['language'])->group(function () {
             Route::post('import-nft', [NftController::class, 'importNft']);
             Route::get('export-nft', [NftController::class, 'exportNft']);
             //get auction nft data
-            Route::get('get-auction-nft', [NftController::class, 'getAuctionNftData']);
+            Route::get('get-auction-nft/{max_per_page?}', [NftController::class, 'getAuctionNftData']);
             Route::group([
                 'prefix' => 'import',
             ], function () {
@@ -32,7 +32,7 @@ Route::middleware(['language'])->group(function () {
                     'prefix' => 'private-unlock',
                 ], function () {
                     //change status when release date is up to date
-                    Route::get('get-data', 'getDataPrivateUnlock');
+                    Route::get('get-data/{max_per_page?}', 'getDataPrivateUnlock');
                     //change status when release date is up to date
                     Route::get('check-unlock-date', 'checkUnlockTokenUpToDate');
                     //transfer token when approve user withdrawal request

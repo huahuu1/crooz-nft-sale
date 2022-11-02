@@ -28,17 +28,24 @@ class UserNftService
      * @param $userId
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getAuctionNfts()
+    public function getAuctionNfts($params, $maxPerPage)
     {
         return AuctionNft::select(
             'id',
             'wallet_address',
             'nft_id',
             'nft_delivery_source_id',
-            'status'
+            'status',
+            'created_at as upload_date'
         )
         ->with('nfts:nft_id,nft_type,name,image_url,status')
-        ->get();
+        ->orderBy('upload_date', 'DESC')
+        ->when(!empty($params['wallet_address']), function ($q) use ($params) {
+            $keyword = '%' . $params['wallet_address'] . '%';
+            $q->where('wallet_address', 'like', $keyword);
+        })
+        ->get()
+        ->paginate($maxPerPage);
     }
 
     /**

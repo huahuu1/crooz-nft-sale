@@ -118,6 +118,15 @@ class PrivateUnlockController extends Controller
             $unlockInfo = $this->privateUnlockService->getPrivateUserUnlockBalanceById(
                 $userWithdrawal->private_unlock_id
             );
+            //prevent duplicate execute request
+            if ($userWithdrawal->status != "OPEN") {
+                return response()->json([
+                    'error' => 'The withdrawal request has been executed',
+                ], 400);
+            }
+            //update status of user withdrawal request
+            $userWithdrawal->status = UserWithdrawal::PROCESSING_STATUS;
+            $userWithdrawal->save();
             //call api token transfer
             $result = $this->tokenTransfers(
                 $baseUri,
@@ -145,9 +154,6 @@ class PrivateUnlockController extends Controller
                     $result['txHash'],
                     $this->statusPrivateUnlockHistory($result['status'])
                 );
-                //update status of user withdrawal request
-                $userWithdrawal->status = UserWithdrawal::PROCESSING_STATUS;
-                $userWithdrawal->save();
             }
 
             return response()->json([
@@ -269,11 +275,19 @@ class PrivateUnlockController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getDataPrivateUnlock()
+    public function getDataPrivateUnlock(Request $request, $maxPerPage = null)
     {
-        $result = $this->privateUnlockService->getDataPrivateUnlock();
+        $maxPerPage = $maxPerPage ?? config('defines.pagination.admin');
+        if (count($request->all()) <= 1) {
+            return response()->json([
+                'data' => [],
+                'total_pages' => 1
+            ]);
+        }
+        $result = $this->privateUnlockService->getDataPrivateUnlock($request->all(), $maxPerPage);
         return response()->json([
-            'data' => $result
+            'data' => $result->values()->all(),
+            'total_pages' => $result->lastPage()
         ]);
     }
 }
