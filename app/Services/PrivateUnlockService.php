@@ -81,6 +81,8 @@ class PrivateUnlockService
         ->leftJoin('user_balances', 'user_balances.user_id', '=', 'user_withdrawals.user_id')
         ->where('user_balances.token_id', TokenMaster::GT)
         ->orderBy('private_user_unlock_balances.unlock_date', 'ASC')
+        ->orderBy('private_user_unlock_balances.investor_classification', 'ASC')
+        ->orderBy('private_user_unlock_balances.investor_name', 'ASC')
         ->when(!empty($params['unlock_date']), function ($q) use ($params) {
             $q->whereDate('private_user_unlock_balances.unlock_date', $params['unlock_date']);
         })
