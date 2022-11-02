@@ -25,6 +25,7 @@ return [
     'uri_unlock_token' => env('URI_UNLOCK_TOKEN', 'http://ec2-54-150-255-124.ap-northeast-1.compute.amazonaws.com:3000'),
     'pagination' => [
         'my_page' => env('MAX_PER_PAGE_MYPAGE', 100),
+        'admin' => env('MAX_PER_PAGE_ADMIN', 10),
         'nft_auction' => env('MAX_PER_PAGE_AUCTION', 100),
         'token_sale' => env('MAX_PER_PAGE_TOKENSALE', 10),
     ],

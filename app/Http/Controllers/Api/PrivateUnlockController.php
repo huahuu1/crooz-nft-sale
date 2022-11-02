@@ -269,11 +269,13 @@ class PrivateUnlockController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getDataPrivateUnlock(Request $request)
+    public function getDataPrivateUnlock(Request $request, $maxPerPage = null)
     {
-        $result = $this->privateUnlockService->getDataPrivateUnlock($request->all());
+        $maxPerPage = $maxPerPage ?? config('defines.pagination.admin');
+        $result = $this->privateUnlockService->getDataPrivateUnlock($request->all(), $maxPerPage);
         return response()->json([
-            'data' => $result
+            'data' => $result->values()->all(),
+            'total_pages' => $result->lastPage()
         ]);
     }
 }
