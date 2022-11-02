@@ -32,7 +32,7 @@ Route::middleware(['language'])->group(function () {
                     'prefix' => 'private-unlock',
                 ], function () {
                     //change status when release date is up to date
-                    Route::get('get-data', 'getDataPrivateUnlock');
+                    Route::get('get-data/{max_per_page?}', 'getDataPrivateUnlock');
                     //change status when release date is up to date
                     Route::get('check-unlock-date', 'checkUnlockTokenUpToDate');
                     //transfer token when approve user withdrawal request

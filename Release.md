@@ -91,9 +91,13 @@ You need to use Amazon Cloud and Aurora MYSQL to the database, S3 to upload file
 
         > `NETWORK_BLOCKCHAIN=BSC`
 
-9. Set default password decrypted
+9. Change default password decrypted
     > `PASSWORD_DECRYPTE=YOUR_PASSWORD_DECRYPTE`
-10. Save env file
+10. Change api key transfer token
+    > `API_KEY = YOUR_API_KEY`
+11. Change api url transfer
+    > `URI_UNLOCK_TOKEN=YOUR_API_URL`
+12. Save env file
     > `:wq`
 
 ## III. Setup website

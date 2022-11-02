@@ -51,7 +51,7 @@ class PrivateUnlockService
      * get data of private unlock
      *
      */
-    public function getDataPrivateUnlock($params)
+    public function getDataPrivateUnlock($params, $maxPerPage)
     {
         return UserWithdrawal::select(
             'user_withdrawals.id',
@@ -91,6 +91,7 @@ class PrivateUnlockService
             $keyword = '%' . $params['wallet_address'] . '%';
             $q->where('private_user_unlock_balances.wallet_address', 'like', $keyword);
         })
-        ->get();
+        ->get()
+        ->paginate($maxPerPage);
     }
 }
