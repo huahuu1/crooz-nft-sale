@@ -118,6 +118,15 @@ class PrivateUnlockController extends Controller
             $unlockInfo = $this->privateUnlockService->getPrivateUserUnlockBalanceById(
                 $userWithdrawal->private_unlock_id
             );
+            //prevent duplicate execute request
+            if ($userWithdrawal->status != "OPEN") {
+                return response()->json([
+                    'error' => 'The withdrawal request has been executed',
+                ], 400);
+            }
+            //update status of user withdrawal request
+            $userWithdrawal->status = UserWithdrawal::PROCESSING_STATUS;
+            $userWithdrawal->save();
             //call api token transfer
             $result = $this->tokenTransfers(
                 $baseUri,
@@ -145,9 +154,6 @@ class PrivateUnlockController extends Controller
                     $result['txHash'],
                     $this->statusPrivateUnlockHistory($result['status'])
                 );
-                //update status of user withdrawal request
-                $userWithdrawal->status = UserWithdrawal::PROCESSING_STATUS;
-                $userWithdrawal->save();
             }
 
             return response()->json([
