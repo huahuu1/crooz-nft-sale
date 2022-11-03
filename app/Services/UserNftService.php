@@ -44,6 +44,9 @@ class UserNftService
             $keyword = '%' . $params['wallet_address'] . '%';
             $q->where('wallet_address', 'like', $keyword);
         })
+        ->when(!empty($params['upload_date']), function ($q) use ($params) {
+            $q->whereDate('created_at', $params['upload_date']);
+        })
         ->get()
         ->paginate($maxPerPage);
     }
