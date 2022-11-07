@@ -96,9 +96,6 @@ Route::middleware(['language'])->group(function () {
         });
     });
 
-    //display token sale info
-    Route::get('token-sale', [InformationController::class, 'getLatestInfoTokenSale']);
-    Route::get('token-sale/{id}', [InformationController::class, 'getInfoTokenSaleById']);
     //display nft auction info
     Route::get('nft-auction', [InformationController::class, 'getLatestInfoNftAuction']);
     Route::get('nft-auction/{id}', [InformationController::class, 'getInfoNftAuctionById']);
@@ -107,10 +104,6 @@ Route::middleware(['language'])->group(function () {
     Route::group([
         'prefix' => 'purchase-list',
     ], function () {
-        //purchase list of token sale
-        Route::get('token-sale/{wallet_address}/{max_per_page?}', [
-            TransactionController::class, 'getPurchaseListOfTokenSaleByWalletAddress'
-        ]);
         //purchase list of nft auction
         Route::get('nft-auction/{user}/{max_per_page?}', [
             TransactionController::class, 'getPurchaseListOfNftAuctionOfUser'

@@ -8,9 +8,7 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 class Kernel extends ConsoleKernel
 {
     protected $commands = [
-        Commands\CheckStatusTokenSaleCommand::class,
         Commands\CheckStatusNftAuctionCommand::class,
-        Commands\UnlockUserTokenCommand::class,
     ];
 
     /**
@@ -21,9 +19,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('check:token-sale')->everyTwoMinutes();
         $schedule->command('check:nft-auction')->everyThreeMinutes();
-        $schedule->command('unlock:user-balance')->daily();
         $schedule->command('telescope:prune')->daily();
         $schedule->command('sanctum:prune-expired --hours=24')->daily();
     }
