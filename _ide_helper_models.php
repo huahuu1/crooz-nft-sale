@@ -43,6 +43,29 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\AuctionNetwork
+ *
+ * @property int $id
+ * @property int $auction_id
+ * @property int $network_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNetwork newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNetwork newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNetwork query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNetwork whereAuctionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNetwork whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNetwork whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNetwork whereNetworkId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNetwork whereUpdatedAt($value)
+ */
+	class AuctionNetwork extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\AuctionNft
  *
  * @property int $id
@@ -123,6 +146,35 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\NetworkMaster
+ *
+ * @property int $id
+ * @property string $chain_id
+ * @property string $rpc_urls
+ * @property string $block_explorer_urls
+ * @property string $chain_name
+ * @property string $unit
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster query()
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereBlockExplorerUrls($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereChainId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereChainName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereRpcUrls($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereUnit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereUpdatedAt($value)
+ */
+	class NetworkMaster extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Nft
  *
  * @property int $nft_id
@@ -195,6 +247,8 @@ namespace App\Models{
  * @property int $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\NetworkMaster[] $auctionNetwork
+ * @property-read int|null $auction_network_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static \Database\Factories\NftAuctionInfoFactory factory(...$parameters)
@@ -362,15 +416,6 @@ namespace App\Models{
 /**
  * App\Models\TokenSaleHistory
  *
- * @property int $id
- * @property int $user_id
- * @property int $token_id
- * @property int $token_sale_id
- * @property string $amount
- * @property string $status
- * @property string $tx_hash
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\TokenMaster $tokenMaster
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
@@ -378,15 +423,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleHistory newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleHistory newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleHistory query()
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleHistory whereAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleHistory whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleHistory whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleHistory whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleHistory whereTokenId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleHistory whereTokenSaleId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleHistory whereTxHash($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleHistory whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleHistory whereUserId($value)
  */
 	class TokenSaleHistory extends \Eloquent {}
 }
@@ -395,32 +431,12 @@ namespace App\Models{
 /**
  * App\Models\TokenSaleInfo
  *
- * @property int $id
- * @property int $rule_id
- * @property string $start_date
- * @property string $end_date
- * @property int $total
- * @property float|null $total_supply
- * @property string $price
- * @property int $status
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static \Database\Factories\TokenSaleInfoFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleInfo newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleInfo newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleInfo query()
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleInfo whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleInfo whereEndDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleInfo whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleInfo wherePrice($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleInfo whereRuleId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleInfo whereStartDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleInfo whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleInfo whereTotal($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleInfo whereTotalSupply($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenSaleInfo whereUpdatedAt($value)
  */
 	class TokenSaleInfo extends \Eloquent {}
 }
@@ -429,13 +445,6 @@ namespace App\Models{
 /**
  * App\Models\TokenUnlockRule
  *
- * @property int $id
- * @property int $rule_code
- * @property int $period
- * @property string $unit
- * @property string $unlock_percentages
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|TokenUnlockRule[] $ruleCode
  * @property-read int|null $rule_code_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
@@ -443,13 +452,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|TokenUnlockRule newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TokenUnlockRule newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TokenUnlockRule query()
- * @method static \Illuminate\Database\Eloquent\Builder|TokenUnlockRule whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenUnlockRule whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenUnlockRule wherePeriod($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenUnlockRule whereRuleCode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenUnlockRule whereUnit($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenUnlockRule whereUnlockPercentages($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TokenUnlockRule whereUpdatedAt($value)
  */
 	class TokenUnlockRule extends \Eloquent {}
 }
@@ -458,24 +460,12 @@ namespace App\Models{
 /**
  * App\Models\UnlockBalanceHistory
  *
- * @property int $id
- * @property int $unlock_id
- * @property string $amount
- * @property string $release_token_date
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @property-read \App\Models\UnlockUserBalance $unlockUserBalance
  * @method static \Illuminate\Database\Eloquent\Builder|UnlockBalanceHistory newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|UnlockBalanceHistory newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|UnlockBalanceHistory query()
- * @method static \Illuminate\Database\Eloquent\Builder|UnlockBalanceHistory whereAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UnlockBalanceHistory whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UnlockBalanceHistory whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UnlockBalanceHistory whereReleaseTokenDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UnlockBalanceHistory whereUnlockId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UnlockBalanceHistory whereUpdatedAt($value)
  */
 	class UnlockBalanceHistory extends \Eloquent {}
 }
@@ -484,35 +474,13 @@ namespace App\Models{
 /**
  * App\Models\UnlockUserBalance
  *
- * @property int $id
- * @property int $token_id
- * @property int $token_sale_id
- * @property int $user_id
- * @property string $amount_lock
- * @property string $amount_lock_remain
- * @property string|null $next_run_date
- * @property int $current_order_unlock
- * @property int $status
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\TokenMaster $tokenMaster
- * @property-read \App\Models\TokenSaleInfo $tokenSale
+ * @property-read \App\Models\TokenSaleInfo|null $tokenSale
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static \Illuminate\Database\Eloquent\Builder|UnlockUserBalance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|UnlockUserBalance newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|UnlockUserBalance query()
- * @method static \Illuminate\Database\Eloquent\Builder|UnlockUserBalance whereAmountLock($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UnlockUserBalance whereAmountLockRemain($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UnlockUserBalance whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UnlockUserBalance whereCurrentOrderUnlock($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UnlockUserBalance whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UnlockUserBalance whereNextRunDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UnlockUserBalance whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UnlockUserBalance whereTokenId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UnlockUserBalance whereTokenSaleId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UnlockUserBalance whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UnlockUserBalance whereUserId($value)
  */
 	class UnlockUserBalance extends \Eloquent {}
 }
