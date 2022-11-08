@@ -24,7 +24,8 @@ class NetworkMaster extends Model
         'rpc_urls',
         'block_explorer_urls',
         'chain_name',
-        'unit'
+        'unit',
+        'contract_wallet'
     ];
 
     /**
