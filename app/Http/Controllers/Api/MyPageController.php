@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\SwapTokenRequest;
 use App\Http\Requests\WithdrawRequest;
 use App\Models\UserWithdrawal;
 use App\Services\HistoryListService;
@@ -11,7 +10,6 @@ use App\Services\UserBalanceService;
 use App\Services\UserNftService;
 use App\Services\UserService;
 use App\Services\UserWithdrawalService;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -242,57 +240,6 @@ class MyPageController extends Controller
 
             return response()->json([
                 'message' => __('mypage.updateStatusWithdrawRequest.fail'),
-                'error' => $e,
-            ], 400);
-        }
-    }
-
-    /**
-     * Swap token in user balance
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function requestToSwapToken(SwapTokenRequest $request)
-    {
-        try {
-            $user = $this->userService->getUserByWalletAddress($request->wallet_address);
-            if (! $user) {
-                return response()->json([
-                    'message' => __('user.getUser.not_found'),
-                ], 404);
-            }
-
-            $userBalanceTokenFrom = $this->userBalanceService->getUserBalanceByTokenId(
-                $user->id,
-                $request->token_id_from
-            );
-            $userBalanceTokenTo = $this->userBalanceService->getUserBalanceByTokenId(
-                $user->id,
-                $request->token_id_to
-            );
-
-            $amountAvailableFrom = $userBalanceTokenFrom->amount_available;
-
-            if ($request->amount > $amountAvailableFrom) {
-                return response()->json([
-                    'message' => 'The amount must be smaller than or equal to the available amount',
-                ], 400);
-            }
-
-            $userBalanceTokenFrom->amount_total -= $request->amount;
-            $userBalanceTokenTo->amount_total += $request->amount;
-
-            $userBalanceTokenFrom->update();
-            $userBalanceTokenTo->update();
-
-            return response()->json([
-                'message' => 'Swap token successfully',
-            ], 200);
-        } catch (Exception $e) {
-            Log::error($e);
-
-            return response()->json([
-                'message' => 'Swap token failed',
                 'error' => $e,
             ], 400);
         }
