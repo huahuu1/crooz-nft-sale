@@ -18,13 +18,11 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             NftTypeSeeder::class,
             AdminSeeder::class,
-            TokenUnlockRuleSeeder::class,
             NftSeeder::class,
             GxePartnerUserSeeder::class,
             NftDeliverySourceSeeder::class
         ]);
 
-        \App\Models\TokenSaleInfo::factory(1)->create();
         \App\Models\NftAuctionInfo::factory(1)->create();
     }
 }

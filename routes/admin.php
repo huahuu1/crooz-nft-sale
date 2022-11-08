@@ -22,7 +22,10 @@ Route::middleware(['language'])->group(function () {
                 'prefix' => 'import',
             ], function () {
                 //import private user unlock balance excel
-                Route::post('private-user/unlock-balance', [TransactionController::class, 'importPrivateUserUnlockBalance']);
+                Route::post(
+                    'private-user/unlock-balance',
+                    [TransactionController::class, 'importPrivateUserUnlockBalance']
+                );
             });
 
             Route::controller(PrivateUnlockController::class)->group(function () {

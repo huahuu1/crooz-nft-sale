@@ -9,7 +9,6 @@ use App\Models\CashFlow;
 use App\Models\NftAuctionHistory;
 use App\Models\NftAuctionInfo;
 use App\Models\TokenMaster;
-use App\Models\TokenSaleHistory;
 use App\Services\CashFlowService;
 use App\Services\HistoryListService;
 use App\Services\UserService;
@@ -53,62 +52,6 @@ class TransactionController extends Controller
         $this->privateUserUnlockBalanceImport = $privateUserUnlockBalanceImport;
         $this->historyListService = $historyListService;
         $this->cashFlowService = $cashFlowService;
-    }
-
-    /**
-     * Create transaction when a user deposit crypto.
-     *
-     * @param  \App\Http\Requests\TransactionRequest $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function createDepositTokenTransaction(TransactionRequest $request)
-    {
-        try {
-            $depositTransaction = $this->historyListService->getTokenSaleHistoryByTxHash($request->tx_hash);
-
-            //prevent duplicate transactions
-            if ($depositTransaction) {
-                return response()->json([
-                    'message' => __('createDepositTokenTransaction.duplicate'),
-                ], 400);
-            }
-
-            $user = $this->userService->getUserByWalletAddress($request->wallet_address);
-
-            if (! $user) {
-                return response()->json([
-                    'message' => __('createDepositTokenTransaction.connect_metamask'),
-                ], 400);
-            }
-
-            $this->historyListService->createTokenSaleHistory(
-                $user->id,
-                $request->token_id,
-                $request->token_sale_id,
-                $request->amount,
-                TokenSaleHistory::PENDING_STATUS,
-                $request->tx_hash
-            );
-
-            $this->cashFlowService->createCashFlow(
-                $user->id,
-                $request->token_id,
-                $request->amount,
-                CashFlow::TOKEN_DEPOSIT,
-                $request->tx_hash
-            );
-
-            return response()->json([
-                'message' => __('createDepositTokenTransaction.success'),
-            ], 200);
-        } catch (Exception $e) {
-            Log::error($e);
-
-            return response()->json([
-                'message' => __('createDepositTokenTransaction.fail'),
-                'error' => $e,
-            ], 400);
-        }
     }
 
     /**
@@ -246,34 +189,6 @@ class TransactionController extends Controller
                 'error' => $e,
             ], 400);
         }
-    }
-
-    /**
-     * Get purchase list of token sale
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getPurchaseListOfTokenSaleByWalletAddress($walletAddress, $maxPerPage = null)
-    {
-        $maxPerPage = $maxPerPage ?? config('defines.pagination.token_sale');
-
-        $user = $this->userService->getUserByWalletAddress($walletAddress);
-
-        if (! $user) {
-            return response()->json([
-                'message' => __('user.getUser.not_found'),
-            ], 404);
-        }
-
-        $tokeSaleHistory = $this->historyListService->getSuccessTokenSaleHistoryByUserIdHasPagination(
-            $user->id,
-            $maxPerPage
-        );
-
-        return response()->json([
-            'data' => $tokeSaleHistory->values()->all(),
-            'total_pages' => $tokeSaleHistory->lastPage(),
-        ]);
     }
 
     /**

@@ -66,12 +66,9 @@ class MyPageController extends Controller
             ], 404);
         }
 
-        $tokenSaleHistory = $this->historyListService->getTokenSaleHistories($user->id);
-
         $nftAuctionHistory = $this->historyListService->getNftAuctionHistories($user->id);
 
-        $result = collect($tokenSaleHistory)
-                ->merge(collect($nftAuctionHistory))
+        $result = collect($nftAuctionHistory)
                 ->sortByDesc('created_at')
                 ->paginate($maxPerPage);
 

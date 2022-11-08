@@ -8,7 +8,6 @@ use App\Services\UserService;
 use App\Models\User;
 use App\Models\UserBalance;
 use App\Models\UserWithdrawal;
-use App\Services\SaleInfoService;
 use App\Services\UserBalanceService;
 use App\Services\UserWithdrawalService;
 use App\Traits\CalculateNextRunDate;
@@ -30,8 +29,6 @@ class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow, SkipsEm
 
     protected $privateUserUnlockBalance;
 
-    protected $saleInfoService;
-
     protected $userBalanceService;
 
     protected $userService;
@@ -42,7 +39,6 @@ class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow, SkipsEm
     {
         $this->privateUserUnlockBalance = $privateUserUnlockBalance;
         $this->userBalanceService = new UserBalanceService();
-        $this->saleInfoService = new SaleInfoService();
         $this->userService = new UserService();
         $this->userWithdrawalService = new UserWithdrawalService();
     }
