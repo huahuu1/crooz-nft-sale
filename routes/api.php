@@ -97,6 +97,7 @@ Route::middleware(['language'])->group(function () {
     //display nft auction info
     Route::get('nft-auction', [InformationController::class, 'getLatestInfoNftAuction']);
     Route::get('nft-auction/{id}', [InformationController::class, 'getInfoNftAuctionById']);
+    Route::get('token-info', [InformationController::class, 'getTokenMasterInfo']);
 
     //purchase list
     Route::group([

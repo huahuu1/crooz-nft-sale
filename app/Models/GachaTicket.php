@@ -4,15 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Laravel\Sanctum\HasApiTokens;
 
-class AuctionNetwork extends Model
+class GachaTicket extends Model
 {
     use HasApiTokens;
     use HasFactory;
 
-    protected $table = 'auction_networks';
+    protected $table = 'gacha_tickets';
 
     /**
      * The attributes that are mass assignable.
@@ -20,7 +19,9 @@ class AuctionNetwork extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'auction_id',
-        'network_id'
+        'user_id',
+        'ticket_type',
+        'total_ticket',
+        'remain_ticket'
     ];
 }

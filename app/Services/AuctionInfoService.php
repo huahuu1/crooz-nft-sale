@@ -18,12 +18,9 @@ class AuctionInfoService
             'start_date',
             'end_date',
             'min_price',
-            'status'
-        )
-        ->with(
-            [
-                'auctionNetwork:network_masters.id,network_masters.chain_id,network_masters.rpc_urls,network_masters.block_explorer_urls,network_masters.chain_name,network_masters.unit,network_masters.contract_wallet',
-            ]
+            'status',
+            'name',
+            'fixed_price'
         )
         ->orderby('id', 'desc')
         ->first();
@@ -37,11 +34,14 @@ class AuctionInfoService
      */
     public function infoNftAuctionById($id)
     {
-        return NftAuctionInfo::select('id', 'start_date', 'end_date', 'min_price', 'status')
-        ->with(
-            [
-                'auctionNetwork:network_masters.id,network_masters.chain_id,network_masters.rpc_urls,network_masters.block_explorer_urls,network_masters.chain_name,network_masters.unit,network_masters.contract_wallet',
-            ]
+        return NftAuctionInfo::select(
+            'id',
+            'start_date',
+            'end_date',
+            'min_price',
+            'status',
+            'name',
+            'fixed_price'
         )
         ->find($id);
     }

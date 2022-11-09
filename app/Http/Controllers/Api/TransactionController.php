@@ -101,7 +101,8 @@ class TransactionController extends Controller
                 $request->nft_auction_id,
                 $request->amount,
                 NftAuctionHistory::PENDING_STATUS,
-                $request->tx_hash
+                $request->tx_hash,
+                NftAuctionHistory::METHOD_CRYPTO
             );
 
             $this->cashFlowService->createCashFlow(
@@ -109,7 +110,8 @@ class TransactionController extends Controller
                 $request->token_id,
                 $request->amount,
                 CashFlow::NFT_DEPOSIT,
-                $request->tx_hash
+                $request->tx_hash,
+                CashFlow::METHOD_CRYPTO
             );
 
             return response()->json([
@@ -165,7 +167,8 @@ class TransactionController extends Controller
                         $transaction['nft_auction_id'],
                         $transaction['amount'],
                         NftAuctionHistory::PENDING_STATUS,
-                        $transaction['tx_hash']
+                        $transaction['tx_hash'],
+                        NftAuctionHistory::METHOD_CRYPTO
                     );
 
                     $this->cashFlowService->createCashFlow(
@@ -173,7 +176,8 @@ class TransactionController extends Controller
                         $transaction['token_id'],
                         $transaction['amount'],
                         CashFlow::NFT_DEPOSIT,
-                        $transaction['tx_hash']
+                        $transaction['tx_hash'],
+                        CashFlow::METHOD_CRYPTO
                     );
                 }
             }

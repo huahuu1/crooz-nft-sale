@@ -24,6 +24,8 @@ class NftAuctionInfo extends Model
         'end_date',
         'min_price',
         'status',
+        'name',
+        'fixed_price',
     ];
 
     /**
@@ -33,17 +35,16 @@ class NftAuctionInfo extends Model
      */
     public static function getLatestInfoNftAuction()
     {
-        return NftAuctionInfo::select('id', 'start_date', 'end_date', 'min_price', 'status')
-                             ->orderby('id', 'desc')
-                             ->first();
-    }
-
-    /**
-     * Get the network info relate to auction nft.
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
-     */
-    public function auctionNetwork(): HasManyThrough
-    {
-        return $this->hasManyThrough(NetworkMaster::class, AuctionNetwork::class, 'auction_id', 'id');
+        return NftAuctionInfo::select(
+            'id',
+            'start_date',
+            'end_date',
+            'min_price',
+            'status',
+            'name',
+            'fixed_price'
+        )
+        ->orderby('id', 'desc')
+        ->first();
     }
 }

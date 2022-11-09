@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\TokenMaster;
 use App\Services\AuctionInfoService;
 
 class InformationController extends Controller
@@ -41,6 +42,18 @@ class InformationController extends Controller
     {
         return response()->json([
             'data' => $this->auctionInfoService->infoNftAuctionById($id),
+        ]);
+    }
+
+    /**
+     * Get token master info.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getTokenMasterInfo()
+    {
+        return response()->json([
+            'data' => TokenMaster::getTokenMastersWithNetwork(),
         ]);
     }
 }

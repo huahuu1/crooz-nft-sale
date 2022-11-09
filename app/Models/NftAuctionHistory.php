@@ -27,6 +27,7 @@ class NftAuctionHistory extends Model
         'amount',
         'status',
         'tx_hash',
+        'payment_method'
     ];
 
     public const PENDING_STATUS = 1;
@@ -34,6 +35,10 @@ class NftAuctionHistory extends Model
     public const SUCCESS_STATUS = 2;
 
     public const FAILED_STATUS = 3;
+
+    public const METHOD_CRYPTO = 1;
+
+    public const METHOD_FIAT = 2;
 
     /**
      * Get ALl Pending Transactions

@@ -81,7 +81,7 @@ class HistoryListService
      *
      * @param $userId, $tokenId, $tokenSaleId, $amount, $status, $txHash
      */
-    public function createNftAuctionHistory($userId, $tokenId, $nftAuctionId, $amount, $status, $txHash)
+    public function createNftAuctionHistory($userId, $tokenId, $nftAuctionId, $amount, $status, $txHash, $paymentMethod)
     {
         DB::beginTransaction();
         try {
@@ -92,6 +92,7 @@ class HistoryListService
                 'amount' => $amount,
                 'status' => $status,
                 'tx_hash' => $txHash,
+                'payment_method' => $paymentMethod,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);

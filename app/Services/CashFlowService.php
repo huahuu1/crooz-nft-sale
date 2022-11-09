@@ -13,7 +13,7 @@ class CashFlowService
      *
      * @param $userId, $tokenId, $amount, $transactionType, $txHash
      */
-    public function createCashFlow($userId, $tokenId, $amount, $transactionType, $txHash)
+    public function createCashFlow($userId, $tokenId, $amount, $transactionType, $txHash, $paymentMethod)
     {
         DB::beginTransaction();
         try {
@@ -23,6 +23,7 @@ class CashFlowService
                 'amount' => $amount,
                 'transaction_type' => $transactionType,
                 'tx_hash' => $txHash,
+                'payment_method' => $paymentMethod,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
