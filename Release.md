@@ -8,11 +8,11 @@ You need to use Amazon Cloud and Aurora MYSQL to the database, S3 to upload file
 
 > `git clone git@github.com:Kozocom-Lab/kz-crooz-backend.git`
 
-### 2. Change branch depending on usage environment.
+### 2. Change branch depending on usage environment
 
--   Develop environment:
+- Develop environment:
     > `git checkout -b develop`
--   Production environment:
+- Production environment:
     > `git checkout master`
 
 ## II. Setting env file
@@ -97,7 +97,16 @@ You need to use Amazon Cloud and Aurora MYSQL to the database, S3 to upload file
     > `API_KEY = YOUR_API_KEY`
 11. Change api url transfer
     > `URI_UNLOCK_TOKEN=YOUR_API_URL`
-12. Save env file
+
+12. Config websocket serve
+    - change pusher config
+        >`PUSHER_APP_ID= YOUR_PUSHER_APP_ID`</br>
+        `PUSHER_APP_KEY=YOUR_PUSHER_APP_KEY` </br>
+        `PUSHER_APP_SECRET=YOUR_PUSHER_APP_SECRET`</br>
+        `PUSHER_HOST=YOUR_PUSHER_HOST`</br>
+        `PUSHER_PORT=YOUR_PUSHER_PORT`</br>
+        `PUSHER_SCHEME=YOUR_PUSHER_SCHEME`</br>
+13. Save env file
     > `:wq`
 
 ## III. Setup website
@@ -175,6 +184,21 @@ You need to use Amazon Cloud and Aurora MYSQL to the database, S3 to upload file
             > `numprocs=1`<br/>
             > `redirect_stderr=true`<br/>
             > `stdout_logfile=/var/www/crooz/kz-crooz-backend/storage/logs/worker.log`
+    3. Worker run Socket server
+        - Create file
+            >`vi kz-crooz-backend-websocket-worker.conf`
+
+         - Insert content file
+            > `[program: kz-crooz-backend-websocket-worker]`<br/>
+            > `process_name=%(program_name)s_%(process_num)02d`<br/>
+            > `directory=/var/www/crooz/kz-crooz-backend`<br/>
+            > `command=php artisan websockets:serve`<br/>
+            > `autostart=true`<br/>
+            > `autorestart=true`<br/>
+            > `user=root`<br/>
+            > `numprocs=1`<br/>
+            > `redirect_stderr=true`<br/>
+            > `stdout_logfile=/var/www/crooz/kz-crooz-backend/storage/logs/worker.log`
 
 5. Restart supervisor and run queue.
 
@@ -187,3 +211,5 @@ You need to use Amazon Cloud and Aurora MYSQL to the database, S3 to upload file
     > `sudo supervisorctl start kz-crooz-backend-worker:*`
 
     > `sudo supervisorctl start kz-crooz-backend-check-status-worker.conf:*`
+
+    > `sudo supervisorctl start kz-crooz-backend-websocket-worker.conf:*`
