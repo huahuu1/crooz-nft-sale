@@ -45,4 +45,25 @@ class AuctionInfoService
         )
         ->find($id);
     }
+
+    /**
+     * get all information of NFT auction.
+     *
+     * @param $id
+     * @return NftAuctionInfo
+     */
+    public function infoAllNftAuction()
+    {
+        return NftAuctionInfo::select(
+            'id',
+            'start_date',
+            'end_date',
+            'min_price',
+            'status',
+            'name',
+            'fixed_price'
+        )
+        ->where('status', 1)
+        ->get();
+    }
 }

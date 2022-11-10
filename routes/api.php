@@ -55,6 +55,7 @@ Route::middleware(['language'])->group(function () {
             //send transaction
             Route::post('buy-token-transaction', 'createDepositTokenTransaction');
             Route::post('buy-nft-transaction', 'createDepositNftTransaction');
+            Route::post('buy-nft-transaction/credit', 'createDepositNftTransactionByCredit');
             Route::post('insert-missed-transaction', 'insertMissedTransaction');
         });
 
@@ -96,8 +97,11 @@ Route::middleware(['language'])->group(function () {
 
     //display nft auction info
     Route::get('nft-auction', [InformationController::class, 'getLatestInfoNftAuction']);
+    Route::get('all-nft-auction', [InformationController::class, 'getAllInfoNftAuction']);
     Route::get('nft-auction/{id}', [InformationController::class, 'getInfoNftAuctionById']);
     Route::get('token-info', [InformationController::class, 'getTokenMasterInfo']);
+    //get exchange rate
+    Route::get('exchange-rate/{symbol}', [InformationController::class, 'getExchangeRateBySymbol']);
 
     //purchase list
     Route::group([

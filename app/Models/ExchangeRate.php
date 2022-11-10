@@ -22,4 +22,20 @@ class ExchangeRate extends Model
         'symbol',
         'rate'
     ];
+
+    /**
+     * Get exchange rate by symbol.
+     *
+     * @return \App\Models\ExchangeRate
+     */
+    public static function getExchangeRateBySymbol($symbol)
+    {
+        return ExchangeRate::select(
+            'id',
+            'symbol',
+            'rate',
+        )
+        ->where('symbol', $symbol)
+        ->get();
+    }
 }
