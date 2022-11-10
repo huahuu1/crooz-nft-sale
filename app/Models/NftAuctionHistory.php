@@ -54,6 +54,17 @@ class NftAuctionHistory extends Model
     }
 
     /**
+     * Get ALl Pending Credit Transactions
+     *
+     * @return mixed
+     */
+    public function pendingNftAuctionCreditTransactions()
+    {
+        return $this->where('status', $this::PENDING_STATUS)
+                    ->where('payment_method', $this::METHOD_FIAT);
+    }
+
+    /**
      * Get the user that owns the transaction.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

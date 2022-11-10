@@ -24,4 +24,8 @@ class GachaTicket extends Model
         'total_ticket',
         'remain_ticket'
     ];
+
+    public const FREE_TICKET = 0;
+
+    public const PAID_TICKET = 1;
 }
