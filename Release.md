@@ -192,7 +192,7 @@ You need to use Amazon Cloud and Aurora MYSQL to the database, S3 to upload file
             > `[program: kz-crooz-backend-websocket-worker]`<br/>
             > `process_name=%(program_name)s_%(process_num)02d`<br/>
             > `directory=/var/www/crooz/kz-crooz-backend`<br/>
-            > `command=php artisan websockets:serve  --sleep=1 --tries=1 --timeout=120`<br/>
+            > `command=php artisan websockets:serve`<br/>
             > `autostart=true`<br/>
             > `autorestart=true`<br/>
             > `user=root`<br/>
