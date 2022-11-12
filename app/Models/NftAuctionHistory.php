@@ -27,6 +27,7 @@ class NftAuctionHistory extends Model
         'amount',
         'status',
         'tx_hash',
+        'payment_method'
     ];
 
     public const PENDING_STATUS = 1;
@@ -34,6 +35,10 @@ class NftAuctionHistory extends Model
     public const SUCCESS_STATUS = 2;
 
     public const FAILED_STATUS = 3;
+
+    public const METHOD_CRYPTO = 1;
+
+    public const METHOD_CREDIT = 2;
 
     /**
      * Get ALl Pending Transactions
@@ -46,6 +51,17 @@ class NftAuctionHistory extends Model
                     ->where('created_at', '<', Carbon::now()
                     ->subMinutes(1)
                     ->toDateTimeString());
+    }
+
+    /**
+     * Get ALl Pending Credit Transactions
+     *
+     * @return mixed
+     */
+    public function pendingNftAuctionCreditTransactions()
+    {
+        return $this->where('status', $this::PENDING_STATUS)
+                    ->where('payment_method', $this::METHOD_CREDIT);
     }
 
     /**
@@ -64,5 +80,10 @@ class NftAuctionHistory extends Model
     public function tokenMaster(): BelongsTo
     {
         return $this->belongsTo(TokenMaster::class, 'token_id');
+    }
+
+    public function nftAuctionInfo(): BelongsTo
+    {
+        return $this->belongsTo(NftAuctionInfo::class, 'nft_auction_id');
     }
 }

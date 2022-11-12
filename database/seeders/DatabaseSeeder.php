@@ -14,17 +14,17 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
+            NetworkMasterSeeder::class,
             TokenMasterSeeder::class,
             UserSeeder::class,
             NftTypeSeeder::class,
             AdminSeeder::class,
-            TokenUnlockRuleSeeder::class,
             NftSeeder::class,
             GxePartnerUserSeeder::class,
-            NftDeliverySourceSeeder::class
+            NftDeliverySourceSeeder::class,
+            ExChangeRateSeeder::class
         ]);
 
-        \App\Models\TokenSaleInfo::factory(1)->create();
         \App\Models\NftAuctionInfo::factory(1)->create();
     }
 }

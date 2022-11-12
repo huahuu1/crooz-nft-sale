@@ -25,6 +25,7 @@ class CashFlow extends Model
         'type',
         'transaction_type',
         'tx_hash',
+        'payment_method'
     ];
 
     public const TOKEN_WITHDRAWAL = 1;
@@ -32,4 +33,8 @@ class CashFlow extends Model
     public const TOKEN_DEPOSIT = 2;
 
     public const NFT_DEPOSIT = 3;
+
+    public const METHOD_CRYPTO = 1;
+
+    public const METHOD_CREDIT = 2;
 }

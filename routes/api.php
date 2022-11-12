@@ -55,6 +55,7 @@ Route::middleware(['language'])->group(function () {
             //send transaction
             Route::post('buy-token-transaction', 'createDepositTokenTransaction');
             Route::post('buy-nft-transaction', 'createDepositNftTransaction');
+            Route::post('buy-nft-transaction/credit', 'createDepositNftTransactionByCredit');
             Route::post('insert-missed-transaction', 'insertMissedTransaction');
         });
 
@@ -73,8 +74,6 @@ Route::middleware(['language'])->group(function () {
                 Route::post('withdraw-token', 'requestToWithdrawToken');
                 //update status of user_withdrawals
                 Route::put('withdraw-token/update-status', 'updateStatusWithdrawRequest');
-                //swap between token
-                Route::put('swap-token', 'requestToSwapToken');
                 // count nfts group by type id
                 Route::get('count-nft-type/{user}', 'countNftGroupByTypeId');
                 // get user profile
@@ -96,21 +95,18 @@ Route::middleware(['language'])->group(function () {
         });
     });
 
-    //display token sale info
-    Route::get('token-sale', [InformationController::class, 'getLatestInfoTokenSale']);
-    Route::get('token-sale/{id}', [InformationController::class, 'getInfoTokenSaleById']);
     //display nft auction info
     Route::get('nft-auction', [InformationController::class, 'getLatestInfoNftAuction']);
+    Route::get('all-nft-auction', [InformationController::class, 'getAllInfoNftAuction']);
     Route::get('nft-auction/{id}', [InformationController::class, 'getInfoNftAuctionById']);
+    Route::get('token-info', [InformationController::class, 'getTokenMasterInfo']);
+    //get exchange rate
+    Route::get('exchange-rate/{symbol}', [InformationController::class, 'getExchangeRateBySymbol']);
 
     //purchase list
     Route::group([
         'prefix' => 'purchase-list',
     ], function () {
-        //purchase list of token sale
-        Route::get('token-sale/{wallet_address}/{max_per_page?}', [
-            TransactionController::class, 'getPurchaseListOfTokenSaleByWalletAddress'
-        ]);
         //purchase list of nft auction
         Route::get('nft-auction/{user}/{max_per_page?}', [
             TransactionController::class, 'getPurchaseListOfNftAuctionOfUser'

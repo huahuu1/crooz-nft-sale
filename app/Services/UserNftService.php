@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\AuctionNft;
-use App\Models\Nft;
 use App\Models\NftType;
 
 class UserNftService
