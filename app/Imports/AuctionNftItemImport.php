@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\AuctionNft;
 use App\Models\User;
+use App\Services\AuctionNftService;
 use App\Services\UserService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
@@ -18,13 +19,14 @@ class AuctionNftItemImport implements ToModel, WithStartRow, WithChunkReading, S
 {
     use RemembersRowNumber;
 
-    protected $auctionNft;
+    protected $auctionNftService;
 
     protected $userService;
 
-    public function __construct(AuctionNft $auctionNft)
+
+    public function __construct(AuctionNftService $auctionNftService)
     {
-        $this->auctionNft = $auctionNft;
+        $this->auctionNftService = $auctionNftService;
         $this->userService = new UserService();
     }
 
@@ -50,16 +52,17 @@ class AuctionNftItemImport implements ToModel, WithStartRow, WithChunkReading, S
         $currentRowNumber = $this->getRowNumber();
         Log::info('[SUCCESS] Insert excel row: ' . $currentRowNumber);
         $user = $this->userService->getUserByWalletAddress($row[0]);
-        if (! $user) {
+        if (!$user) {
             $user = User::create([
                 'wallet_address' => $row[0],
             ]);
         }
-        return new AuctionNft([
-            'wallet_address' => $row[0],
-            'nft_id' => $row[1],
-            'nft_delivery_source_id' => $row[2],
-        ]);
+        return $this->auctionNftService->createNftAuction(
+            $row[0],
+            $row[1],
+            $row[2],
+            1
+        );
     }
 
     public function importNft()

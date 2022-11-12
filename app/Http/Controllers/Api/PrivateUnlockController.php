@@ -225,7 +225,8 @@ class PrivateUnlockController extends Controller
                         $userWithdrawal->token_id,
                         $userWithdrawal->amount,
                         CashFlow::TOKEN_WITHDRAWAL,
-                        $unlockHistory->tx_hash
+                        $unlockHistory->tx_hash,
+                        CashFlow::METHOD_CRYPTO
                     );
                     $userBalance->amount_total -= $userWithdrawal->amount;
                     $userBalance->save();

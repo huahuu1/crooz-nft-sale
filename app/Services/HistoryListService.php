@@ -48,14 +48,16 @@ class HistoryListService
     public function getSuccessNftAuctionHistoryByUserIdHasPagination($userId, $maxPerPage)
     {
         return NftAuctionHistory::where('status', NftAuctionHistory::SUCCESS_STATUS)
-                                ->where('user_id', $userId)
-                                ->orderby('created_at', 'desc')
-                                ->with(
-                                    ['user:id,email,wallet_address,token_validate,status',
-                                    'tokenMaster:id,name,code,description,status']
-                                )
-                                ->get()
-                                ->paginate($maxPerPage);
+            ->where('user_id', $userId)
+            ->orderby('created_at', 'desc')
+            ->with(
+                [
+                    'user:id,email,wallet_address,token_validate,status',
+                    'tokenMaster:id,name,code,description,status'
+                ]
+            )
+            ->get()
+            ->paginate($maxPerPage);
     }
 
     /**
@@ -80,25 +82,24 @@ class HistoryListService
      * Create nft auction history data
      *
      * @param $userId, $tokenId, $tokenSaleId, $amount, $status, $txHash
+     * @return \App\Models\NftAuctionHistory | null
      */
-    public function createNftAuctionHistory($userId, $tokenId, $nftAuctionId, $amount, $status, $txHash)
+    public function createNftAuctionHistory($userId, $tokenId, $nftAuctionId, $amount, $status, $txHash, $paymentMethod)
     {
-        DB::beginTransaction();
         try {
-            DB::table('nft_auction_histories')->insert([
+            $auctionHistory = NftAuctionHistory::create([
                 'user_id' => $userId,
                 'token_id' => $tokenId,
                 'nft_auction_id' => $nftAuctionId,
                 'amount' => $amount,
                 'status' => $status,
                 'tx_hash' => $txHash,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
+                'payment_method' => $paymentMethod,
             ]);
-            DB::commit();
+            return $auctionHistory;
         } catch (Exception $e) {
-            DB::rollBack();
             throw new Exception($e->getMessage());
+            return null;
         }
     }
 }

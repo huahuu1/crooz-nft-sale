@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\SwapTokenRequest;
 use App\Http\Requests\WithdrawRequest;
 use App\Models\UserWithdrawal;
 use App\Services\HistoryListService;
@@ -11,7 +10,6 @@ use App\Services\UserBalanceService;
 use App\Services\UserNftService;
 use App\Services\UserService;
 use App\Services\UserWithdrawalService;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;

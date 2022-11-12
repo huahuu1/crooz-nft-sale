@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TransactionRequest;
 use App\Imports\PrivateUserUnlockBalanceImport;
+use App\Jobs\DistributeTicketJob;
 use App\Models\CashFlow;
 use App\Models\NftAuctionHistory;
 use App\Models\NftAuctionInfo;
 use App\Models\TokenMaster;
+use App\Services\AuctionInfoService;
 use App\Services\CashFlowService;
 use App\Services\HistoryListService;
 use App\Services\UserService;
@@ -34,6 +36,8 @@ class TransactionController extends Controller
 
     protected $cashFlowService;
 
+    protected $auctionInfoService;
+
     /**
      * TransactionController constructor.
      *
@@ -41,17 +45,20 @@ class TransactionController extends Controller
      * @param PrivateUserUnlockBalanceImport $privateUserUnlockBalanceImport
      * @param HistoryListService $historyListService
      * @param CashFlowService $cashFlowService
+     * @param AuctionInfoService $auctionInfoService
      */
     public function __construct(
         UserService $userService,
         PrivateUserUnlockBalanceImport $privateUserUnlockBalanceImport,
         HistoryListService $historyListService,
-        CashFlowService $cashFlowService
+        CashFlowService $cashFlowService,
+        AuctionInfoService $auctionInfoService
     ) {
         $this->userService = $userService;
         $this->privateUserUnlockBalanceImport = $privateUserUnlockBalanceImport;
         $this->historyListService = $historyListService;
         $this->cashFlowService = $cashFlowService;
+        $this->auctionInfoService = $auctionInfoService;
     }
 
     /**
@@ -64,7 +71,7 @@ class TransactionController extends Controller
     {
         try {
             $depositTransaction = $this->historyListService->getNftAuctionHistoryByTxHash($request->tx_hash);
-            $minPrice = (int) NftAuctionInfo::getLatestInfoNftAuction()->min_price;
+            $minPrice = $this->auctionInfoService->infoNftAuctionById($request->nft_auction_id)->min_price;
             $tokenName = TokenMaster::getTokenMasterById($request->token_id)->code;
 
             //prevent duplicate transactions
@@ -80,8 +87,8 @@ class TransactionController extends Controller
                     'message' => __(
                         'transaction.createDepositNftTransaction.min_price',
                         [
-                        'tokenName' => $tokenName,
-                        'minPrice' => $minPrice
+                            'tokenName' => $tokenName,
+                            'minPrice' => $minPrice
                         ]
                     ),
                 ], 400);
@@ -89,7 +96,7 @@ class TransactionController extends Controller
 
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
 
-            if (! $user) {
+            if (!$user) {
                 return response()->json([
                     'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
                 ], 400);
@@ -101,7 +108,8 @@ class TransactionController extends Controller
                 $request->nft_auction_id,
                 $request->amount,
                 NftAuctionHistory::PENDING_STATUS,
-                $request->tx_hash
+                $request->tx_hash,
+                NftAuctionHistory::METHOD_CRYPTO
             );
 
             $this->cashFlowService->createCashFlow(
@@ -109,8 +117,88 @@ class TransactionController extends Controller
                 $request->token_id,
                 $request->amount,
                 CashFlow::NFT_DEPOSIT,
-                $request->tx_hash
+                $request->tx_hash,
+                CashFlow::METHOD_CRYPTO
             );
+
+            return response()->json([
+                'message' => __('transaction.createDepositNftTransaction.success'),
+            ], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'message' => __('transaction.createDepositNftTransaction.fail'),
+                'error' => $e,
+            ], 400);
+        }
+    }
+
+    /**
+     * Create transaction when a user deposit crypto.
+     *
+     * @param  \App\Http\Requests\TransactionRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function createDepositNftTransactionByCredit(TransactionRequest $request)
+    {
+        try {
+            $depositTransaction = $this->historyListService->getNftAuctionHistoryByTxHash($request->tx_hash);
+            $fixedPrice = $this->auctionInfoService->infoNftAuctionById($request->nft_auction_id)->fixed_price;
+            $tokenName = TokenMaster::getTokenMasterById($request->token_id)->code;
+
+            //prevent duplicate transactions
+            if ($depositTransaction) {
+                return response()->json([
+                    'message' => __('transaction.createDepositNftTransaction.duplicate'),
+                ], 400);
+            }
+
+            //prevent amount smaller than min price
+            if ($request->amount < $fixedPrice) {
+                return response()->json([
+                    'message' => __(
+                        'transaction.createDepositNftTransaction.min_price',
+                        [
+                            'tokenName' => $tokenName,
+                            'minPrice' => $fixedPrice
+                        ]
+                    ),
+                ], 400);
+            }
+
+            $user = $this->userService->getUserByWalletAddress($request->wallet_address);
+
+            if (!$user) {
+                return response()->json([
+                    'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
+                ], 400);
+            }
+            // insert record in auction History
+            $auctionFiat = $this->historyListService->createNftAuctionHistory(
+                $user->id,
+                $request->token_id,
+                $request->nft_auction_id,
+                $request->amount,
+                NftAuctionHistory::SUCCESS_STATUS,
+                $request->tx_hash,
+                NftAuctionHistory::METHOD_FIAT
+            );
+            // AuctionFiat is not empty
+            if (!empty($auctionFiat)) {
+                // Call Job Distribute Ticket
+                DistributeTicketJob::dispatch($auctionFiat)->onQueue(config('defines.queue.general'))->delay(now()->addSeconds(1));
+
+                // Insert record in cash flow
+                $this->cashFlowService->createCashFlow(
+                    $user->id,
+                    $request->token_id,
+                    $request->amount,
+                    CashFlow::NFT_DEPOSIT,
+                    $request->tx_hash,
+                    CashFlow::METHOD_FIAT
+                );
+            }
 
             return response()->json([
                 'message' => __('transaction.createDepositNftTransaction.success'),
@@ -165,7 +253,8 @@ class TransactionController extends Controller
                         $transaction['nft_auction_id'],
                         $transaction['amount'],
                         NftAuctionHistory::PENDING_STATUS,
-                        $transaction['tx_hash']
+                        $transaction['tx_hash'],
+                        NftAuctionHistory::METHOD_CRYPTO
                     );
 
                     $this->cashFlowService->createCashFlow(
@@ -173,7 +262,8 @@ class TransactionController extends Controller
                         $transaction['token_id'],
                         $transaction['amount'],
                         CashFlow::NFT_DEPOSIT,
-                        $transaction['tx_hash']
+                        $transaction['tx_hash'],
+                        CashFlow::METHOD_CRYPTO
                     );
                 }
             }
@@ -201,7 +291,7 @@ class TransactionController extends Controller
         $maxPerPage = $maxPerPage ?? config('defines.pagination.nft_auction');
         $user = $this->userService->getUserByWalletAddressOrByUserId($user);
 
-        if (! $user) {
+        if (!$user) {
             return response()->json([
                 'message' => 'User not found',
             ], 404);
@@ -251,7 +341,7 @@ class TransactionController extends Controller
                 'extension' => 'required|in:csv,xlsx,xls',
             ]
         );
-        if (! $validator->fails()) {
+        if (!$validator->fails()) {
             try {
                 $this->privateUserUnlockBalanceImport->importPrivateUserUnlockBalance();
 

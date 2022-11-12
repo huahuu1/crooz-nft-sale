@@ -36,4 +36,5 @@ return [
     'password_decrypte' => env('PASSWORD_DECRYPTE', 'XENOPROJECT'),
     'language_default' => 'en',
     'api_key' => env('API_KEY', '314199DC-D666-465F-A8F9-781842380900'),
+    'amount_ticket' => env('AMOUNT_TICKET', 200)
 ];

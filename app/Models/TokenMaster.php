@@ -23,6 +23,7 @@ class TokenMaster extends Model
         'code',
         'description',
         'status',
+        'network_id'
     ];
 
     public const USDT = 1;
@@ -40,7 +41,7 @@ class TokenMaster extends Model
      */
     public static function getTokenMasters()
     {
-        return TokenMaster::select('id', 'name', 'code', 'description', 'status')->get();
+        return TokenMaster::select('id', 'name', 'code', 'description', 'status')->where('status', 1)->get();
     }
 
     /**
@@ -50,6 +51,41 @@ class TokenMaster extends Model
      */
     public static function getTokenMasterById($id)
     {
-        return TokenMaster::select('id', 'name', 'code', 'description', 'status')->find($id);
+        return TokenMaster::select(
+            'id',
+            'name',
+            'code',
+            'description',
+            'status',
+            'network_id'
+        )
+        ->find($id);
+    }
+
+    /**
+     * Display information of the token master by id.
+     *
+     * @return \App\Models\TokenMaster
+     */
+    public static function getTokenMastersWithNetwork()
+    {
+        return TokenMaster::select(
+            'id',
+            'name',
+            'code',
+            'description',
+            'status',
+            'network_id'
+        )
+        ->with('networkMaster:id,chain_id,rpc_urls,block_explorer_urls,chain_name,unit,contract_wallet')
+        ->get();
+    }
+
+    /**
+     * Get the network master relates to token master.
+     */
+    public function networkMaster()
+    {
+        return $this->belongsTo(NetworkMaster::class, 'network_id');
     }
 }

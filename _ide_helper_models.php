@@ -80,6 +80,7 @@ namespace App\Models{
  * @property int $type
  * @property string $transaction_type
  * @property string $tx_hash
+ * @property string|null $payment_method
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
@@ -90,6 +91,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlow whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlow whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlow whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashFlow wherePaymentMethod($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlow whereTokenId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlow whereTransactionType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlow whereTxHash($value)
@@ -98,6 +100,56 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CashFlow whereUserId($value)
  */
 	class CashFlow extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\ExchangeRate
+ *
+ * @property int $id
+ * @property string $symbol
+ * @property string $rate
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|ExchangeRate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ExchangeRate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ExchangeRate query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ExchangeRate whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ExchangeRate whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ExchangeRate whereRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ExchangeRate whereSymbol($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ExchangeRate whereUpdatedAt($value)
+ */
+	class ExchangeRate extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\GachaTicket
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property int $ticket_type
+ * @property int $total_ticket
+ * @property int $remain_ticket
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicket newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicket newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicket query()
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicket whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicket whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicket whereRemainTicket($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicket whereTicketType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicket whereTotalTicket($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicket whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicket whereUserId($value)
+ */
+	class GachaTicket extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -119,6 +171,37 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|GxePartnerUsers whereUserId($value)
  */
 	class GxePartnerUsers extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\NetworkMaster
+ *
+ * @property int $id
+ * @property string $chain_id
+ * @property string $rpc_urls
+ * @property string $block_explorer_urls
+ * @property string $chain_name
+ * @property string $unit
+ * @property string|null $contract_wallet
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster query()
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereBlockExplorerUrls($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereChainId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereChainName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereContractWallet($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereRpcUrls($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereUnit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereUpdatedAt($value)
+ */
+	class NetworkMaster extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -162,8 +245,10 @@ namespace App\Models{
  * @property string $amount
  * @property string $status
  * @property string $tx_hash
+ * @property string|null $payment_method
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\NftAuctionInfo $nftAuctionInfo
  * @property-read \App\Models\TokenMaster $tokenMaster
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
@@ -175,6 +260,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory whereNftAuctionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory wherePaymentMethod($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory whereTokenId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory whereTxHash($value)
@@ -193,6 +279,8 @@ namespace App\Models{
  * @property string $end_date
  * @property string $min_price
  * @property int $status
+ * @property string|null $name
+ * @property string|null $fixed_price
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
@@ -203,8 +291,10 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo query()
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo whereEndDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo whereFixedPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo whereMinPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo whereStartDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo whereUpdatedAt($value)
@@ -333,6 +423,31 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\TicketUsedHistory
+ *
+ * @property int $id
+ * @property int $gacha_ticket_id
+ * @property int $used_quantity
+ * @property string $used_time
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|TicketUsedHistory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TicketUsedHistory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TicketUsedHistory query()
+ * @method static \Illuminate\Database\Eloquent\Builder|TicketUsedHistory whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TicketUsedHistory whereGachaTicketId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TicketUsedHistory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TicketUsedHistory whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TicketUsedHistory whereUsedQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TicketUsedHistory whereUsedTime($value)
+ */
+	class TicketUsedHistory extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\TokenMaster
  *
  * @property int $id
@@ -340,8 +455,10 @@ namespace App\Models{
  * @property string $code
  * @property string|null $description
  * @property int $status
+ * @property int|null $network_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\NetworkMaster|null $networkMaster
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static \Illuminate\Database\Eloquent\Builder|TokenMaster newModelQuery()
@@ -352,6 +469,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|TokenMaster whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TokenMaster whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TokenMaster whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TokenMaster whereNetworkId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TokenMaster whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TokenMaster whereUpdatedAt($value)
  */
@@ -454,5 +572,28 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|UserWithdrawal whereUserId($value)
  */
 	class UserWithdrawal extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\WhitelistUser
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property int $nft_auction_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|WhitelistUser newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|WhitelistUser newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|WhitelistUser query()
+ * @method static \Illuminate\Database\Eloquent\Builder|WhitelistUser whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WhitelistUser whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WhitelistUser whereNftAuctionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WhitelistUser whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WhitelistUser whereUserId($value)
+ */
+	class WhitelistUser extends \Eloquent {}
 }
 

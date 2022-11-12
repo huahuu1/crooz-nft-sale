@@ -18,10 +18,12 @@ class AuctionInfoService
             'start_date',
             'end_date',
             'min_price',
-            'status'
+            'status',
+            'name',
+            'fixed_price'
         )
-            ->orderby('id', 'desc')
-            ->first();
+        ->orderby('id', 'desc')
+        ->first();
     }
 
     /**
@@ -32,6 +34,36 @@ class AuctionInfoService
      */
     public function infoNftAuctionById($id)
     {
-        return NftAuctionInfo::select('id', 'start_date', 'end_date', 'min_price', 'status')->find($id);
+        return NftAuctionInfo::select(
+            'id',
+            'start_date',
+            'end_date',
+            'min_price',
+            'status',
+            'name',
+            'fixed_price'
+        )
+        ->find($id);
+    }
+
+    /**
+     * get all information of NFT auction.
+     *
+     * @param $id
+     * @return NftAuctionInfo
+     */
+    public function infoAllNftAuction()
+    {
+        return NftAuctionInfo::select(
+            'id',
+            'start_date',
+            'end_date',
+            'min_price',
+            'status',
+            'name',
+            'fixed_price'
+        )
+        ->where('status', 1)
+        ->get();
     }
 }
