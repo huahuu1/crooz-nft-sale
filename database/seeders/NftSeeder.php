@@ -36,7 +36,7 @@ class NftSeeder extends Seeder
                 'nft_type' => 1,
                 'name' => 'GENESIS SECOND',
                 'image_url' => 'https://d1aevkh4jc7ik5.cloudfront.net/nft/chara_tier3_auction1_en.png',
-                'created_at' => date('-m-d H:i:s'),
+                'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
@@ -77,7 +77,7 @@ class NftSeeder extends Seeder
                 'nft_type' => 3,
                 'name' => 'RARE WEAPON',
                 'image_url' => 'https://d1aevkh4jc7ik5.cloudfront.net/nft/tier9_weapon.png',
-                'created_at' => date('-m-d H:i:s'),
+                'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
@@ -117,7 +117,7 @@ class NftSeeder extends Seeder
                 'nft_type' => 1,
                 'name' => 'PSYCHIC',
                 'image_url' => 'https://d1aevkh4jc7ik5.cloudfront.net/nft/chara_psychic_tgs_en.png',
-                'created_at' => date('-m-d H:i:s'),
+                'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
@@ -157,7 +157,7 @@ class NftSeeder extends Seeder
                 'nft_type' => 4,
                 'name' => 'CHARM',
                 'image_url' => 'https://d1aevkh4jc7ik5.cloudfront.net/nft/charm_003_tgs_en.png',
-                'created_at' => date('-m-d H:i:s'),
+                'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
@@ -205,7 +205,7 @@ class NftSeeder extends Seeder
                 'nft_type' => 1,
                 'name' => 'GUARDIAN',
                 'image_url' => 'https://d1aevkh4jc7ik5.cloudfront.net/nft/chara_guardian_tw1_en.png',
-                'created_at' => date('-m-d H:i:s'),
+                'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
