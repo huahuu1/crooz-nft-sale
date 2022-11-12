@@ -67,8 +67,8 @@ class TokenMasterSeeder extends Seeder
             ],
             [
                 'id' => 6,
-                'name' => 'FIAT MONEY',
-                'code' => 'FIAT',
+                'name' => 'JPY MONEY',
+                'code' => 'JPY',
                 'description' => null,
                 'status' => 0,
                 'network_id' => null,

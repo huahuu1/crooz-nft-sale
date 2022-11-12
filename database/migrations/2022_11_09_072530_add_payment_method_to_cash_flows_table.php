@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('cash_flows', function (Blueprint $table) {
-            $table->enum('payment_method', ['CRYPTO', 'FIAT'])->after('tx_hash')->nullable();
+            $table->enum('payment_method', ['CRYPTO', 'CREDIT'])->after('tx_hash')->nullable();
         });
     }
 

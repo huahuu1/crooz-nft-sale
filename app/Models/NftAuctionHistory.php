@@ -38,7 +38,7 @@ class NftAuctionHistory extends Model
 
     public const METHOD_CRYPTO = 1;
 
-    public const METHOD_FIAT = 2;
+    public const METHOD_CREDIT = 2;
 
     /**
      * Get ALl Pending Transactions
@@ -61,7 +61,7 @@ class NftAuctionHistory extends Model
     public function pendingNftAuctionCreditTransactions()
     {
         return $this->where('status', $this::PENDING_STATUS)
-                    ->where('payment_method', $this::METHOD_FIAT);
+                    ->where('payment_method', $this::METHOD_CREDIT);
     }
 
     /**
