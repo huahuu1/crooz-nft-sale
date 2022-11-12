@@ -12,28 +12,34 @@ class TicketService
     /**
      * Create gacha ticket data
      *
-     * @param $userId, $ticketNumber
+     * @param int $userId
+     * @param int $ticketNumber
+     * @param \App\Models\GachaTicket::ticket_type $ticketType
      */
     public function createGachaTicketData(
         $userId,
-        $ticketNumber
+        $ticketNumber,
+        $ticketType
     ) {
         $ticketTypes = [GachaTicket::PAID_TICKET, GachaTicket::FREE_TICKET];
-        DB::beginTransaction();
         try {
-            foreach ($ticketTypes as $ticketType) {
-                DB::table('gacha_tickets')->insert([
-                    'user_id' => $userId,
-                    'ticket_type' => $ticketType,
-                    'total_ticket' => $ticketNumber,
-                    'remain_ticket' => $ticketNumber,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ]);
+            // set default value
+            $gaChaTicket = [
+                'user_id' => $userId,
+                'total_ticket' => $ticketNumber,
+                'remain_ticket' => $ticketNumber,
+            ];
+            foreach ($ticketTypes as $type) {
+                $gaChaTicket['ticket_type'] = $ticketType;
+                // set total_ticket  remain_ticket by ticket type
+                if ($ticketType != $type) {
+                    $gaChaTicket['total_ticket'] = 0;
+                    $gaChaTicket['remain_ticket'] = 0;
+                }
+
+                GachaTicket::create($gaChaTicket);
             }
-            DB::commit();
         } catch (Exception $e) {
-            DB::rollBack();
             throw new Exception($e->getMessage());
         }
     }
@@ -53,12 +59,12 @@ class TicketService
      * Get gacha ticket info by user id and ticket type.
      *
      * @param $userId, $ticketType
-     * @return int
+     * @return array|object
      */
-    public function getGachaTicketByUserIdAndType($userId, $ticketType)
+    public function getGachaTicketByUserIdAndType($userId, $ticketType): array|object
     {
         return GachaTicket::where('user_id', $userId)
-                          ->where('ticket_type', $ticketType)
-                          ->first();
+            ->where('ticket_type', $ticketType)
+            ->first();
     }
 }

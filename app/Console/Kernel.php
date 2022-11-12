@@ -20,7 +20,6 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('check:nft-auction')->everyThreeMinutes();
-        $schedule->command('distribute:ticket')->everyTwoMinutes();
         $schedule->command('telescope:prune')->daily();
         $schedule->command('sanctum:prune-expired --hours=24')->daily();
     }

@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\GachaTicket;
 use App\Models\NftAuctionHistory;
+use App\Services\AuctionNftService;
 use App\Services\TicketService;
 use App\Traits\ApiScanTransaction;
 use App\Traits\CheckTransactionWithApiScan;
@@ -27,6 +28,8 @@ class DistributeTicketJob implements ShouldQueue
 
     protected $ticketService;
 
+    protected $auctionInfoService;
+
     /**
      * Create a new job instance.
      *
@@ -36,6 +39,7 @@ class DistributeTicketJob implements ShouldQueue
     {
         $this->transaction = $transaction;
         $this->ticketService = new TicketService();
+        $this->auctionInfoService = new AuctionNftService();
     }
 
     /**
@@ -46,17 +50,20 @@ class DistributeTicketJob implements ShouldQueue
     public function handle()
     {
         try {
-            $ticketNumber = floor($this->transaction->amount / 200);
+            // convert total ticket
+            $ticketNumber = floor($this->transaction->amount / config('defines.amount_ticket'));
             if ($ticketNumber > 0) {
+                // get gaChaTicket our current user
                 $isGachaTicket = $this->ticketService->hasGachaInfoByUserId($this->transaction->user_id);
                 if (!$isGachaTicket) {
+                    // create gachaTicket
                     $this->ticketService->createGachaTicketData(
                         $this->transaction->user_id,
-                        $ticketNumber
+                        $ticketNumber,
+                        GachaTicket::PAID_TICKET
                     );
-                    $this->transaction->status = NftAuctionHistory::SUCCESS_STATUS;
-                    $this->transaction->update();
                 } else {
+                    // update gaChaTicket form user_id and paid ticket
                     $userTicket = $this->ticketService->getGachaTicketByUserIdAndType(
                         $this->transaction->user_id,
                         GachaTicket::PAID_TICKET
@@ -64,16 +71,22 @@ class DistributeTicketJob implements ShouldQueue
                     $userTicket->total_ticket += $ticketNumber;
                     $userTicket->remain_ticket += $ticketNumber;
                     $userTicket->update();
-
-                    $this->transaction->status = NftAuctionHistory::SUCCESS_STATUS;
-                    $this->transaction->update();
+                }
+                // create nft auction of user by ticket number
+                for ($i = 0; $i < $ticketNumber; $i++) {
+                    $this->auctionInfoService->createNftAuction(
+                        $this->transaction->user->wallet_address,
+                        7,
+                        7,
+                        1
+                    );
                 }
             }
             Log::info(
                 '[SUCCESS] Check Status Nft Auction for: '
-                . $this->transaction->id . ' ('
-                . substr($this->transaction->tx_hash, 0, 10)
-                . ')'
+                    . $this->transaction->id . ' ('
+                    . substr($this->transaction->tx_hash, 0, 10)
+                    . ')'
             );
         } catch (Exception $e) {
             Log::error($e);

@@ -81,4 +81,9 @@ class NftAuctionHistory extends Model
     {
         return $this->belongsTo(TokenMaster::class, 'token_id');
     }
+
+    public function nftAuctionInfo(): BelongsTo
+    {
+        return $this->belongsTo(NftAuctionInfo::class, 'nft_auction_id');
+    }
 }

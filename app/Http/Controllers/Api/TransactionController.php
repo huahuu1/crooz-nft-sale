@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TransactionRequest;
 use App\Imports\PrivateUserUnlockBalanceImport;
+use App\Jobs\DistributeTicketJob;
 use App\Models\CashFlow;
 use App\Models\NftAuctionHistory;
 use App\Models\NftAuctionInfo;
@@ -95,7 +96,7 @@ class TransactionController extends Controller
 
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
 
-            if (! $user) {
+            if (!$user) {
                 return response()->json([
                     'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
                 ], 400);
@@ -168,30 +169,36 @@ class TransactionController extends Controller
 
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
 
-            if (! $user) {
+            if (!$user) {
                 return response()->json([
                     'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
                 ], 400);
             }
-
-            $this->historyListService->createNftAuctionHistory(
+            // insert record in auction History
+            $auctionFiat = $this->historyListService->createNftAuctionHistory(
                 $user->id,
                 $request->token_id,
                 $request->nft_auction_id,
                 $request->amount,
-                NftAuctionHistory::PENDING_STATUS,
+                NftAuctionHistory::SUCCESS_STATUS,
                 $request->tx_hash,
                 NftAuctionHistory::METHOD_FIAT
             );
+            // AuctionFiat is not empty
+            if (!empty($auctionFiat)) {
+                // Call Job Distribute Ticket
+                DistributeTicketJob::dispatch($auctionFiat)->onQueue(config('defines.queue.general'))->delay(now()->addSeconds(1));
 
-            $this->cashFlowService->createCashFlow(
-                $user->id,
-                $request->token_id,
-                $request->amount,
-                CashFlow::NFT_DEPOSIT,
-                $request->tx_hash,
-                CashFlow::METHOD_FIAT
-            );
+                // Insert record in cash flow
+                $this->cashFlowService->createCashFlow(
+                    $user->id,
+                    $request->token_id,
+                    $request->amount,
+                    CashFlow::NFT_DEPOSIT,
+                    $request->tx_hash,
+                    CashFlow::METHOD_FIAT
+                );
+            }
 
             return response()->json([
                 'message' => __('transaction.createDepositNftTransaction.success'),
@@ -284,7 +291,7 @@ class TransactionController extends Controller
         $maxPerPage = $maxPerPage ?? config('defines.pagination.nft_auction');
         $user = $this->userService->getUserByWalletAddressOrByUserId($user);
 
-        if (! $user) {
+        if (!$user) {
             return response()->json([
                 'message' => 'User not found',
             ], 404);
@@ -334,7 +341,7 @@ class TransactionController extends Controller
                 'extension' => 'required|in:csv,xlsx,xls',
             ]
         );
-        if (! $validator->fails()) {
+        if (!$validator->fails()) {
             try {
                 $this->privateUserUnlockBalanceImport->importPrivateUserUnlockBalance();
 

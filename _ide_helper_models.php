@@ -248,6 +248,7 @@ namespace App\Models{
  * @property string|null $payment_method
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\NftAuctionInfo $nftAuctionInfo
  * @property-read \App\Models\TokenMaster $tokenMaster
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count

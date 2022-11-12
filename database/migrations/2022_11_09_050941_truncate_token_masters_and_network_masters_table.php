@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::disableForeignKeyConstraints();
         DB::table('token_masters')->truncate();
         DB::table('network_masters')->truncate();
+        DB::table('nft_delivery_sources')->truncate();
         Schema::enableForeignKeyConstraints();
     }
 
