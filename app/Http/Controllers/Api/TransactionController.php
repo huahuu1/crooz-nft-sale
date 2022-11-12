@@ -182,7 +182,7 @@ class TransactionController extends Controller
                 $request->amount,
                 NftAuctionHistory::SUCCESS_STATUS,
                 $request->tx_hash,
-                NftAuctionHistory::METHOD_FIAT
+                NftAuctionHistory::METHOD_CREDIT
             );
             // AuctionFiat is not empty
             if (!empty($auctionFiat)) {
@@ -196,7 +196,7 @@ class TransactionController extends Controller
                     $request->amount,
                     CashFlow::NFT_DEPOSIT,
                     $request->tx_hash,
-                    CashFlow::METHOD_FIAT
+                    CashFlow::METHOD_CREDIT
                 );
             }
 
