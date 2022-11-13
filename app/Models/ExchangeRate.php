@@ -53,6 +53,7 @@ class ExchangeRate extends Model
             'rate',
         )
             ->where('status', 1)
+            ->latest('created_at')
             ->first();
     }
 }
