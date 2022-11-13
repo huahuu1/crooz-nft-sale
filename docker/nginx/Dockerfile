@@ -12,8 +12,5 @@ RUN rm -f /etc/nginx/conf.d/default.conf
 COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./docker/nginx/conf.d/*.conf /etc/nginx/conf.d/
 
-COPY ./docker/nginx/set_url.sh /set_url.sh
-RUN chmod +x /set_url.sh
-
 # Launch NGINX
-CMD /set_url.sh ${ENV_NAME} && nginx -g 'daemon off;'
+CMD nginx -g 'daemon off;'

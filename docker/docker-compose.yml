@@ -11,19 +11,18 @@ services:
       - ../:/var/www/backend
     networks:
       - xeno_portal
-  nginx:
-    container_name: nginx
+  php-nginx:
+    container_name: backend-nginx
     build:
       context: ../
       dockerfile: ./docker/nginx/Dockerfile
-    image: xeno-nginx
+    image: backend-nginx
     environment:
       - ENV_NAME=${ENV_NAME}
     volumes:
       - ../public:/var/www/backend/public
     ports:
-      - "80:80"
-      - "8081:8081"
+      - "8081:80"
     depends_on:
       - php
     networks:
