@@ -59,7 +59,7 @@ class TokenMaster extends Model
             'status',
             'network_id'
         )
-        ->find($id);
+            ->find($id);
     }
 
     /**
@@ -69,7 +69,7 @@ class TokenMaster extends Model
      */
     public static function getTokenMastersWithNetwork()
     {
-        return TokenMaster::select(
+        $data = collect(TokenMaster::select(
             'id',
             'name',
             'code',
@@ -77,8 +77,11 @@ class TokenMaster extends Model
             'status',
             'network_id'
         )
-        ->with('networkMaster:id,chain_id,rpc_urls,block_explorer_urls,chain_name,unit,contract_wallet')
-        ->get();
+            ->with('networkMaster:id,chain_id,rpc_urls,block_explorer_urls,chain_name,unit,contract_wallet')
+            ->get());
+        // group data by network master chain id
+        $result = $data->groupBy('networkMaster.chain_id');
+        return $result->all();
     }
 
     /**

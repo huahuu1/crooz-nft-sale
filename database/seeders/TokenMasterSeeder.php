@@ -75,6 +75,16 @@ class TokenMasterSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
+            [
+                'id' => 1,
+                'name' => 'Binance-Peg BSC-USD',
+                'code' => 'USDT (BEP-20)',
+                'description' => null,
+                'status' => 1,
+                'network_id' => 5,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
         ]);
     }
 }
