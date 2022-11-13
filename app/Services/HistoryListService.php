@@ -53,7 +53,8 @@ class HistoryListService
             ->with(
                 [
                     'user:id,email,wallet_address,token_validate,status',
-                    'tokenMaster:id,name,code,description,status'
+                    'tokenMaster:id,name,code,description,status',
+                    'nftAuctionInfo:id,name'
                 ]
             )
             ->get()

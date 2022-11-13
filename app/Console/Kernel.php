@@ -9,6 +9,7 @@ class Kernel extends ConsoleKernel
 {
     protected $commands = [
         Commands\CheckStatusNftAuctionCommand::class,
+        Commands\UpdateExchangeRateCommand::class
     ];
 
     /**
@@ -22,6 +23,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('check:nft-auction')->everyThreeMinutes();
         $schedule->command('telescope:prune')->daily();
         $schedule->command('sanctum:prune-expired --hours=24')->daily();
+        $schedule->command('update:exchange-rate')->cron(config('defines.exchange_rate.cron'));
     }
 
     /**

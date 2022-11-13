@@ -21,6 +21,11 @@ return [
         'company_token_sale' => env('COMPANY_WALLET', '0x1B73dA81086D6BF763e0f3b7622740F335B04927'),
         'company_nft' => env('NFT_COMPANY_WALLET', '0x3e91A94484f04e7b8B5a0156e2373D4788F8Cc8d'),
     ],
+    'exchange_rate' => [
+        'cron' => env('EXCHANGE_RATES_CRON_VALUE', '*/30 * * * *'),
+        'api_key' => env('EXCHANGE_RATES_API_KEY', 'm43yUcLasiNRTcOj8koulizfhAEKSF0A'),
+        'url' => env('EXCHANGE_RATES_API_URL', 'https://api.apilayer.com/exchangerates_data/latest')
+    ],
     'network' => env('NETWORK_BLOCKCHAIN', 'ETHERS'),
     'uri_unlock_token' => env('URI_UNLOCK_TOKEN', 'http://ec2-54-150-255-124.ap-northeast-1.compute.amazonaws.com:3000'),
     'pagination' => [

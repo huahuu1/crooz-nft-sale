@@ -68,6 +68,17 @@ class NetworkMasterSeeder extends Seeder
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s'),
                     ],
+                    [
+                        'id' => 5,
+                        'chain_id' => '97',
+                        'rpc_urls' => 'https://data-seed-prebsc-1-s1.binance.org:8545/',
+                        'block_explorer_urls' => 'https://testnet.bscscan.com/',
+                        'chain_name' => 'Binance Smart Chain Testnet',
+                        'unit' => 'BUSD',
+                        'contract_wallet' => '0x337610d27c682E347C9cD60BD4b3b107C9d34dDd',
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s'),
+                    ],
                 ];
             case 'production':
                 return [
@@ -112,6 +123,17 @@ class NetworkMasterSeeder extends Seeder
                         'chain_name' => 'Binance Smart Chain',
                         'unit' => 'BUSD',
                         'contract_wallet' => '0xe9e7cea3dedca5984780bafc599bd69add087d56',
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s'),
+                    ],
+                    [
+                        'id' => 4,
+                        'chain_id' => '56',
+                        'rpc_urls' => 'https://bsc-dataseed.binance.org/',
+                        'block_explorer_urls' => 'https://bscscan.com/',
+                        'chain_name' => 'Binance Smart Chain',
+                        'unit' => 'BUSD',
+                        'contract_wallet' => '0x55d398326f99059fF775485246999027B3197955',
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s'),
                     ],
