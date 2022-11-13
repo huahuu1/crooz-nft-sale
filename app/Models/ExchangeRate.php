@@ -20,7 +20,9 @@ class ExchangeRate extends Model
      */
     protected $fillable = [
         'symbol',
-        'rate'
+        'rate',
+        'status',
+        'rate_timestamp',
     ];
 
     /**
@@ -31,11 +33,11 @@ class ExchangeRate extends Model
     public static function getExchangeRateBySymbol($symbol)
     {
         return ExchangeRate::select(
-            'id',
             'symbol',
             'rate',
         )
         ->where('symbol', $symbol)
+        ->where('status', 1)
         ->get();
     }
 }
