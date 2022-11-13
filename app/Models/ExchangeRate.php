@@ -36,8 +36,23 @@ class ExchangeRate extends Model
             'symbol',
             'rate',
         )
-        ->where('symbol', $symbol)
-        ->where('status', 1)
-        ->get();
+            ->where('symbol', $symbol)
+            ->where('status', 1)
+            ->get();
+    }
+
+    /**
+     * Get exchange rate.
+     *
+     * @return \App\Models\ExchangeRate
+     */
+    public static function getLastExchangeRate()
+    {
+        return ExchangeRate::select(
+            'symbol',
+            'rate',
+        )
+            ->where('status', 1)
+            ->first();
     }
 }
