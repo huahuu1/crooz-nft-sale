@@ -71,7 +71,7 @@ class InformationController extends Controller
     }
 
     /**
-     * Get exchange rate info.
+     * Get exchange rate info by symbol.
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -79,6 +79,18 @@ class InformationController extends Controller
     {
         return response()->json([
             'data' => ExchangeRate::getExchangeRateBySymbol($symbol),
+        ]);
+    }
+
+    /**
+     * Get exchange rate info
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getLastExchangeRate()
+    {
+        return  response()->json([
+            'data' => [ExchangeRate::getLastExchangeRate()],
         ]);
     }
 }

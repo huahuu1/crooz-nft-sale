@@ -102,6 +102,7 @@ Route::middleware(['language'])->group(function () {
     Route::get('token-info', [InformationController::class, 'getTokenMasterInfo']);
     //get exchange rate
     Route::get('exchange-rate/{symbol}', [InformationController::class, 'getExchangeRateBySymbol']);
+    Route::get('exchange-rate', [InformationController::class, 'getLastExchangeRate']);
 
     //purchase list
     Route::group([
