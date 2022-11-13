@@ -127,7 +127,7 @@ class NetworkMasterSeeder extends Seeder
                         'updated_at' => date('Y-m-d H:i:s'),
                     ],
                     [
-                        'id' => 4,
+                        'id' => 5,
                         'chain_id' => '56',
                         'rpc_urls' => 'https://bsc-dataseed.binance.org/',
                         'block_explorer_urls' => 'https://bscscan.com/',
