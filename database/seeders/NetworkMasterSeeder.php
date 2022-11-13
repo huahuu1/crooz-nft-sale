@@ -49,7 +49,7 @@ class NetworkMasterSeeder extends Seeder
                     [
                         'id' => 3,
                         'chain_id' => '97',
-                        'rpc_urls' => 'https://data-seed-prebsc-1-s1.binance.org:8545/',
+                        'rpc_urls' => 'https://bsc-testnet.public.blastapi.io/',
                         'block_explorer_urls' => 'https://testnet.bscscan.com/',
                         'chain_name' => 'Binance Smart Chain Testnet',
                         'unit' => 'BNB',
@@ -60,7 +60,7 @@ class NetworkMasterSeeder extends Seeder
                     [
                         'id' => 4,
                         'chain_id' => '97',
-                        'rpc_urls' => 'https://data-seed-prebsc-1-s1.binance.org:8545/',
+                        'rpc_urls' => 'https://bsc-testnet.public.blastapi/.io/',
                         'block_explorer_urls' => 'https://testnet.bscscan.com/',
                         'chain_name' => 'Binance Smart Chain Testnet',
                         'unit' => 'BUSD',
@@ -71,7 +71,7 @@ class NetworkMasterSeeder extends Seeder
                     [
                         'id' => 5,
                         'chain_id' => '97',
-                        'rpc_urls' => 'https://data-seed-prebsc-1-s1.binance.org:8545/',
+                        'rpc_urls' => 'https://bsc-testnet.public.blastapi.io/',
                         'block_explorer_urls' => 'https://testnet.bscscan.com/',
                         'chain_name' => 'Binance Smart Chain Testnet',
                         'unit' => 'BUSD',
