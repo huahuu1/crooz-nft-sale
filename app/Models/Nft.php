@@ -46,4 +46,14 @@ class Nft extends Model
     {
         return $this->hasMany(AuctionNft::class, 'nft_id', 'nft_id');
     }
+
+    /**
+     * Get random nfts.
+     *
+     * @return \App\Models\Nft
+     */
+    public static function getRandomNfts()
+    {
+        return Nft::select('nft_id')->pluck('nft_id')->random(3)->toArray();
+    }
 }

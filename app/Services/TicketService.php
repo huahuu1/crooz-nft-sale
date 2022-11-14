@@ -30,7 +30,7 @@ class TicketService
                 'remain_ticket' => $ticketNumber,
             ];
             foreach ($ticketTypes as $type) {
-                $gaChaTicket['ticket_type'] = $ticketType;
+                $gaChaTicket['ticket_type'] = $type;
                 // set total_ticket  remain_ticket by ticket type
                 if ($ticketType != $type) {
                     $gaChaTicket['total_ticket'] = 0;
@@ -67,5 +67,18 @@ class TicketService
             ->where('ticket_type', $ticketType)
             ->lockForUpdate()
             ->first();
+    }
+
+    /**
+     * Get user's tickets number.
+     *
+     * @param $userId, $ticketType
+     * @return array|object
+     */
+    public function getUserTicketsNumber($userId): array|object
+    {
+        return GachaTicket::select('ticket_type', 'remain_ticket')
+            ->where('user_id', $userId)
+            ->get();
     }
 }
