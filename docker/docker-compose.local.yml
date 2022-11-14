@@ -1,22 +1,22 @@
 version: "3"
 
 services:
-  php:
-    container_name: backend
+  backend-app:
+    container_name: backend-app
     build:
       context: ../
       dockerfile: ./docker/php/Dockerfile
-    image: xeno-backend
+    image: backend-app
     volumes:
       - ../:/var/www/backend
     networks:
       - xeno_portal
-  php-nginx:
-    container_name: backend-nginx
+  backend-web:
+    container_name: backend-web
     build:
       context: ../
       dockerfile: ./docker/nginx/Dockerfile
-    image: backend-nginx
+    image: backend-web
     environment:
       - ENV_NAME=${ENV_NAME}
     volumes:
@@ -24,19 +24,19 @@ services:
     ports:
       - "8081:80"
     depends_on:
-      - php
+      - backend-app
     networks:
       - xeno_portal
   worker:
-    container_name: worker
+    container_name: backend-worker
     build:
       context: ../
       dockerfile: ./docker/worker/Dockerfile
-    image: xeno-worker
+    image: backend-worker
     volumes:
       - ../:/var/www/backend
     depends_on:
-      - php
+      - backend-app
     networks:
       - xeno_portal
 networks:

@@ -1,0 +1,66 @@
+version: "3"
+
+services:
+  backend-app:
+    container_name: backend-app
+    build:
+      context: ../
+      dockerfile: ./docker/php/Dockerfile
+    image: backend-app
+    volumes:
+      - ../:/var/www/backend
+    networks:
+      - xeno_portal
+    logging:
+      driver: awslogs
+      options:
+        mode: non-blocking
+        awslogs-region: ${LOGS_REGION}
+        awslogs-group: ${LOGS_GROUP}
+        tag: "{{.Name}}"
+  backend-web:
+    container_name: backend-web
+    build:
+      context: ../
+      dockerfile: ./docker/nginx/Dockerfile
+    image: backend-web
+    environment:
+      - ENV_NAME=${ENV_NAME}
+    volumes:
+      - ../public:/var/www/backend/public
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend-app
+    networks:
+      - xeno_portal
+    logging:
+      driver: awslogs
+      options:
+        mode: non-blocking
+        awslogs-region: ${LOGS_REGION}
+        awslogs-group: ${LOGS_GROUP}
+        tag: "{{.Name}}"
+  worker:
+    container_name: backend-worker
+    build:
+      context: ../
+      dockerfile: ./docker/worker/Dockerfile
+    image: backend-worker
+    volumes:
+      - ../:/var/www/backend
+    depends_on:
+      - backend-app
+    networks:
+      - xeno_portal
+    logging:
+      driver: awslogs
+      options:
+        mode: non-blocking
+        awslogs-region: ${LOGS_REGION}
+        awslogs-group: ${LOGS_GROUP}
+        tag: "{{.Name}}"
+networks:
+  xeno_portal:
+    name: xeno_portal
+    driver: bridge
