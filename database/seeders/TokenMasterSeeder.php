@@ -78,7 +78,7 @@ class TokenMasterSeeder extends Seeder
             [
                 'id' => 7,
                 'name' => 'Binance-Peg BSC-USD',
-                'code' => 'USDT (BEP-20)',
+                'code' => 'USDT',
                 'description' => null,
                 'status' => 1,
                 'network_id' => 5,
