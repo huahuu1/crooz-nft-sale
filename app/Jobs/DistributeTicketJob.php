@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use App\Models\GachaTicket;
 use App\Models\NftAuctionHistory;
+use App\Models\NftAuctionInfo;
+use App\Services\AuctionInfoService;
 use App\Services\AuctionNftService;
 use App\Services\TicketService;
 use App\Traits\ApiScanTransaction;
@@ -28,6 +30,8 @@ class DistributeTicketJob implements ShouldQueue
 
     protected $ticketService;
 
+    protected $auctionNftService;
+
     protected $auctionInfoService;
 
     /**
@@ -39,7 +43,8 @@ class DistributeTicketJob implements ShouldQueue
     {
         $this->transaction = $transaction;
         $this->ticketService = new TicketService();
-        $this->auctionInfoService = new AuctionNftService();
+        $this->auctionNftService = new AuctionNftService();
+        $this->auctionInfoService = new AuctionInfoService();
     }
 
     /**
@@ -50,8 +55,9 @@ class DistributeTicketJob implements ShouldQueue
     public function handle()
     {
         try {
+            $fixedPrice = $this->auctionInfoService->infoNftAuctionById($this->transaction->nft_auction_id)->fixed_price;
             // convert total ticket
-            $ticketNumber = floor($this->transaction->amount / config('defines.amount_ticket'));
+            $ticketNumber = floor($this->transaction->amount / $fixedPrice);
             if ($ticketNumber > 0) {
                 // get gaChaTicket our current user
                 $isGachaTicket = $this->ticketService->hasGachaInfoByUserId($this->transaction->user_id);
@@ -74,7 +80,7 @@ class DistributeTicketJob implements ShouldQueue
                 }
                 // create nft auction of user by ticket number
                 for ($i = 0; $i < $ticketNumber; $i++) {
-                    $this->auctionInfoService->createNftAuction(
+                    $this->auctionNftService->createNftAuction(
                         $this->transaction->user->wallet_address,
                         7,
                         7,
