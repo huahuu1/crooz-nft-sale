@@ -41,5 +41,7 @@ return [
     'password_decrypte' => env('PASSWORD_DECRYPTE', 'XENOPROJECT'),
     'language_default' => 'en',
     'api_key' => env('API_KEY', '314199DC-D666-465F-A8F9-781842380900'),
-    'amount_ticket' => env('AMOUNT_TICKET', 200)
+    'amount_ticket' => env('AMOUNT_TICKET', 200),
+    'fincode_api_url' => env('FINCODE_API_URL', 'https://api.test.fincode.jp/v1'),
+    'fincode_authorization_token' => env('FINCODE_AUTHORIZATION_TOKEN', 'm_test_NWViZWE0ODgtZmQ4NS00NjNiLWJhNWQtZTNiZjI4M2ZjNTBhZmIzMDZlMzYtZjdhNi00NmJkLWExMmEtODE2M2Y3M2E3OTc2c18yMjEwMzE3MDQxMA')
 ];

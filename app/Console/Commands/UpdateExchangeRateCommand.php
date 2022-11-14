@@ -64,9 +64,9 @@ class UpdateExchangeRateCommand extends Command
             ])->json();
 
             if (isset($response['success'])) {
-                $symbol = $base.$symbols;
+                $symbol = $base . $symbols;
                 $rate = $response['rates'][$symbols];
-                $rateTimestamp = date('Y-m-d H:i:s',$response['timestamp']);
+                $rateTimestamp = date('Y-m-d H:i:s', $response['timestamp']);
                 $this->exchangeRateService->createExchangeRate($symbol, $rate, $rateTimestamp);
 
                 Log::info('Get exchange rate was successful');
