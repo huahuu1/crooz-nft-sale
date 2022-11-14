@@ -14,7 +14,7 @@ class ExChangeRateSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('gxe_partner_users')->insert([
+        DB::table('exchange_rates')->insert([
             [
                 'id' => 1,
                 'symbol' => 'JPY',
