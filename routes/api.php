@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\InformationController;
 use App\Http\Controllers\Api\MyPageController;
+use App\Http\Controllers\Api\TicketController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Auth\AuthController;
@@ -94,6 +95,12 @@ Route::middleware(['language'])->group(function () {
                 Route::post('change-password/{user}', 'changePassword');
             });
         });
+
+        //ticket routes
+        Route::controller(TicketController::class)->group(function () {
+            //use gacha ticket
+            Route::post('gacha-ticket', 'useGachaTicket');
+        });
     });
 
     //display nft auction info
@@ -114,6 +121,10 @@ Route::middleware(['language'])->group(function () {
             TransactionController::class, 'getPurchaseListOfNftAuctionOfUser'
         ]);
     });
+
+    Route::post('gacha-ticket-api', [
+        TransactionController::class, 'gachaTicketApi'
+    ]);
 });
 // health check
 Route::get('health_check', static function () {

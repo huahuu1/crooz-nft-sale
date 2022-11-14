@@ -8,6 +8,7 @@ use App\Http\Requests\TransactionRequest;
 use App\Imports\PrivateUserUnlockBalanceImport;
 use App\Jobs\DistributeTicketJob;
 use App\Models\CashFlow;
+use App\Models\Nft;
 use App\Models\NftAuctionHistory;
 use App\Models\TokenMaster;
 use App\Services\AuctionInfoService;
@@ -340,7 +341,7 @@ class TransactionController extends Controller
                 $request->token,
             );
             //case error with call api payment
-            if ($result['statusCode'] === 400) {
+            if ($result['statusCode'] !== 200) {
                 //update status and tx hash nft auction history
                 $auctionFiat->status = NftAuctionHistory::FAILED_STATUS;
                 $auctionFiat->update();
@@ -348,7 +349,7 @@ class TransactionController extends Controller
                     'message' => $result,
                 ], $result['statusCode']);
             }
-            //case error with call api payment
+            //case success with call api payment
             if ($result['statusCode'] === 200) {
                 // AuctionFiat is not empty
                 if (!empty($auctionFiat)) {
@@ -377,6 +378,35 @@ class TransactionController extends Controller
 
             return response()->json([
                 'message' => __('transaction.createDepositNftTransaction.fail'),
+                'error' => $e,
+            ], 400);
+        }
+    }
+
+    public function gachaTicketApi(Request $request)
+    {
+        try {
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'wallet_id' => 'required',
+                    'gacha_id' => 'required',
+                ]
+            );
+            if (!$validator->fails()) {
+                return response()->json([
+                    'data' => Nft::getRandomNfts(),
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => $validator->errors()
+                ], 400);
+            }
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'message' => 'failed',
                 'error' => $e,
             ], 400);
         }
