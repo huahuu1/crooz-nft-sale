@@ -109,6 +109,8 @@ namespace App\Models{
  * @property int $id
  * @property string $symbol
  * @property string $rate
+ * @property int $status
+ * @property string $rate_timestamp
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
@@ -119,6 +121,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ExchangeRate whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ExchangeRate whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ExchangeRate whereRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ExchangeRate whereRateTimestamp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ExchangeRate whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ExchangeRate whereSymbol($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ExchangeRate whereUpdatedAt($value)
  */
@@ -244,7 +248,7 @@ namespace App\Models{
  * @property int $nft_auction_id
  * @property string $amount
  * @property string $status
- * @property string $tx_hash
+ * @property string|null $tx_hash
  * @property string|null $payment_method
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at

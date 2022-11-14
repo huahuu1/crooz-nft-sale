@@ -65,6 +65,7 @@ class TicketService
     {
         return GachaTicket::where('user_id', $userId)
             ->where('ticket_type', $ticketType)
+            ->lockForUpdate()
             ->first();
     }
 }
