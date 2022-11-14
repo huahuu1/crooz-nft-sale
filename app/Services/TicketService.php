@@ -31,7 +31,7 @@ class TicketService
             ];
             foreach ($ticketTypes as $type) {
                 $gaChaTicket['ticket_type'] = $type;
-                // set total_ticket remain_ticket by ticket type
+                // set total_ticket  remain_ticket by ticket type
                 if ($ticketType != $type) {
                     $gaChaTicket['total_ticket'] = 0;
                     $gaChaTicket['remain_ticket'] = 0;
