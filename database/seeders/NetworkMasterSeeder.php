@@ -21,7 +21,7 @@ class NetworkMasterSeeder extends Seeder
 
     public function getArrayData()
     {
-        switch (env('APP_ENV')) {
+        switch (config('app.env')) {
             case 'local':
                 return [
                     [
