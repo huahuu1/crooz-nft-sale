@@ -16,6 +16,7 @@ use App\Services\AuctionInfoService;
 use App\Services\AuctionNftService;
 use App\Services\CashFlowService;
 use App\Services\HistoryListService;
+use App\Services\TicketService;
 use App\Services\UserService;
 use App\Traits\ApiFincodePayment;
 use App\Traits\ApiGachaTicket;
@@ -35,18 +36,23 @@ class TicketController extends Controller
 
     protected $auctionNftService;
 
+    protected $ticketService;
+
     /**
      * TransactionController constructor.
      *
      * @param UserService $userService
      * @param AuctionNftService $auctionNftService
+     * @param TicketService $ticketService
      */
     public function __construct(
         UserService $userService,
-        AuctionNftService $auctionNftService
+        AuctionNftService $auctionNftService,
+        TicketService $ticketService
     ) {
         $this->userService = $userService;
         $this->auctionNftService = $auctionNftService;
+        $this->ticketService = $ticketService;
     }
 
     /**
@@ -75,6 +81,8 @@ class TicketController extends Controller
             }
             //case success with call api gacha
             if ($result['statusCode'] === 200) {
+                //tru di so ticket
+
                 // create nft auction of user by ticket number
                 foreach ($result['response']['data'] as $nftId) {
                     $this->auctionNftService->createNftAuction(
@@ -97,4 +105,25 @@ class TicketController extends Controller
             ], 400);
         }
     }
+
+    /**
+     * Get user's tickets number.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getTicketsNumber($user)
+    {
+        $user = $this->userService->getUserByWalletAddressOrByUserId($user);
+
+        if (! $user) {
+            return response()->json([
+                'message' => __('user.getUser.not_found'),
+            ], 404);
+        }
+
+        return response()->json([
+            'data' => $this->ticketService->getUserTicketsNumber($user->id)->all(),
+        ]);
+    }
+
 }

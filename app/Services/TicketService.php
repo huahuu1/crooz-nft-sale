@@ -68,4 +68,17 @@ class TicketService
             ->lockForUpdate()
             ->first();
     }
+
+    /**
+     * Get user's tickets number.
+     *
+     * @param $userId, $ticketType
+     * @return array|object
+     */
+    public function getUserTicketsNumber($userId): array|object
+    {
+        return GachaTicket::select('ticket_type', 'remain_ticket')
+            ->where('user_id', $userId)
+            ->get();
+    }
 }

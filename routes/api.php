@@ -98,6 +98,8 @@ Route::middleware(['language'])->group(function () {
 
         //ticket routes
         Route::controller(TicketController::class)->group(function () {
+            //get user's tickets number
+            Route::get('tickets-number/{user}', 'getTicketsNumber');
             //use gacha ticket
             Route::post('gacha-ticket', 'useGachaTicket');
         });
