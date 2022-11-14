@@ -345,7 +345,7 @@ class TransactionController extends Controller
                 $auctionFiat->status = NftAuctionHistory::FAILED_STATUS;
                 $auctionFiat->update();
                 return response()->json([
-                    'data' => $result,
+                    'message' => $result,
                 ], $result['statusCode']);
             }
             //case error with call api payment
