@@ -370,7 +370,7 @@ class TransactionController extends Controller
                 }
             }
             return response()->json([
-                'data' => __('transaction.createDepositNftTransaction.success'),
+                'message' => __('transaction.createDepositNftTransaction.success'),
             ], $result['statusCode']);
         } catch (Exception $e) {
             Log::error($e);
