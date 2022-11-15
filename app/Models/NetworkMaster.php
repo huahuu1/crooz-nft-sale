@@ -27,4 +27,13 @@ class NetworkMaster extends Model
         'unit',
         'contract_wallet'
     ];
+
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'laravel_through_key'
+    ];
 }

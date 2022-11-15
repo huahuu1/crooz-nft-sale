@@ -22,6 +22,11 @@ class AuctionInfoService
             'name',
             'fixed_price'
         )
+        ->with(
+            [
+                'auctionNetwork:network_masters.id,network_masters.chain_id,network_masters.rpc_urls,network_masters.block_explorer_urls,network_masters.chain_name,network_masters.unit,network_masters.contract_wallet',
+            ]
+        )
         ->orderby('id', 'desc')
         ->first();
     }
@@ -43,6 +48,11 @@ class AuctionInfoService
             'name',
             'fixed_price'
         )
+        ->with(
+            [
+                'auctionNetwork:network_masters.id,network_masters.chain_id,network_masters.rpc_urls,network_masters.block_explorer_urls,network_masters.chain_name,network_masters.unit,network_masters.contract_wallet',
+            ]
+        )
         ->find($id);
     }
 
@@ -62,6 +72,11 @@ class AuctionInfoService
             'status',
             'name',
             'fixed_price'
+        )
+        ->with(
+            [
+                'auctionNetwork:network_masters.id,network_masters.chain_id,network_masters.rpc_urls,network_masters.block_explorer_urls,network_masters.chain_name,network_masters.unit,network_masters.contract_wallet',
+            ]
         )
         ->where('status', 1)
         ->get();
