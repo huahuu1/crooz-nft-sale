@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('auction_id')->constrained('nft_auction_infos');
             $table->foreignId('network_id')->constrained('network_masters');
-            $table->timestamps();
         });
     }
 
