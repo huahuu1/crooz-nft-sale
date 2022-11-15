@@ -50,10 +50,9 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
     public function handle()
     {
         try {
-            $network = $this->historyListService->getNftAuctionHistoryByTxHash($this->transaction->tx_hash)->networkMaster->chain_id;
+            $network = $this->historyListService->getNftAuctionHistoryByTxHash($this->transaction->tx_hash)->networkMaster;
             //get transaction information from bscscan
-            $result = $this->checkWithApiScan($this->transaction->tx_hash, $network);
-            $contractWallet = $this->configContractWallet($network);
+            $result = $this->checkWithApiScan($this->transaction->tx_hash, $network->chain_id);
             $response = $result['response'];
             $blockNumberCount = $result['block_count'];
             //checking time of pending transaction
@@ -79,7 +78,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                     //Validate transaction destination with our account
                     if (
                         (strtolower($result['to']) == strtolower($this->company_wallet)
-                            || strtolower($result['to']) == strtolower($contractWallet))
+                            || strtolower($result['to']) == strtolower($network->contract_wallet))
                         && $blockNumberCount >= $successBlockCount
                         && $transactionStatus
                     ) {

@@ -8,26 +8,6 @@ trait CheckTransactionWithApiScan
      * @param $network
      * @return mixed|\Illuminate\Config\Repository
      */
-    public function configContractWallet($network)
-    {
-        $networkEthIds = config('defines.api.eth.ids');
-        $networkBscIds = config('defines.api.bsc.ids');
-
-        if (in_array($network, $networkEthIds)) {
-            $contractWallet = config('defines.api.eth.contract_wallet_usdt');
-        }
-
-        if (in_array($network, $networkBscIds)) {
-            $contractWallet = config('defines.api.bsc.contract_wallet_usdt');
-        }
-
-        return $contractWallet;
-    }
-
-    /**
-     * @param $network
-     * @return mixed|\Illuminate\Config\Repository
-     */
     public function configSuccessBlockCount($network)
     {
         switch ($network) {
