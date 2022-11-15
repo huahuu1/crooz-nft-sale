@@ -10,12 +10,18 @@ trait CheckTransactionWithApiScan
      */
     public function configContractWallet($network)
     {
-        switch ($network) {
-            case 'ETHERS':
-                return config('defines.api.eth.contract_wallet_usdt');
-            case 'BSC':
-                return config('defines.api.bsc.contract_wallet_usdt');
+        $networkEthIds = config('defines.api.eth.ids');
+        $networkBscIds = config('defines.api.bsc.ids');
+
+        if (in_array($network, $networkEthIds)) {
+            $contractWallet = config('defines.api.eth.contract_wallet_usdt');
         }
+
+        if (in_array($network, $networkBscIds)) {
+            $contractWallet = config('defines.api.bsc.contract_wallet_usdt');
+        }
+
+        return $contractWallet;
     }
 
     /**
@@ -38,20 +44,22 @@ trait CheckTransactionWithApiScan
      */
     public function configNetWork($network)
     {
-        $apiKey = config('defines.api.bsc.api_key');
-        $baseUri = config('defines.api.bsc.url');
-        switch ($network) {
-            case 'ETHERS':
-                $baseUri = config('defines.api.eth.url');
-                $apiKey = config('defines.api.eth.api_key');
-                break;
-            case 'BSC':
-                $baseUri = config('defines.api.bsc.url');
-                break;
+        $networkEthIds = config('defines.api.eth.ids');
+        $networkBscIds = config('defines.api.bsc.ids');
+
+        if (in_array($network, $networkEthIds)) {
+            $baseUri = config('defines.api.eth.url');
+            $apiKey = config('defines.api.eth.api_key');
         }
+
+        if (in_array($network, $networkBscIds)) {
+            $baseUri = config('defines.api.bsc.url');
+            $apiKey = config('defines.api.bsc.api_key');
+        }
+
         return collect([
             'api_key' => $apiKey,
-            'base_uri' => $baseUri,
+            'base_uri' => $baseUri
         ]);
     }
 
@@ -61,10 +69,10 @@ trait CheckTransactionWithApiScan
      * @param $transaction_hash
      * @return \Illuminate\Support\Collection
      */
-    public function checkWithApiScan($transaction_hash)
+    public function checkWithApiScan($transaction_hash, $network)
     {
         //get config network
-        $configNetwork = $this->configNetWork(config('defines.network'));
+        $configNetwork = $this->configNetWork($network);
         //get block of the transaction
         $responseData = $this->getTransactionByHash(
             $transaction_hash,

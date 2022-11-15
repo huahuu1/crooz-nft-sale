@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\NftAuctionHistory;
+use App\Services\HistoryListService;
 use App\Traits\ApiScanTransaction;
 use App\Traits\CheckTransactionWithApiScan;
 use Carbon\Carbon;
@@ -27,18 +28,18 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
 
     protected $company_wallet;
 
-    protected $contract_wallet;
+    protected $historyListService;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($transaction, $company_wallet, $contract_wallet)
+    public function __construct($transaction, $company_wallet)
     {
         $this->transaction = $transaction;
         $this->company_wallet = $company_wallet;
-        $this->contract_wallet = $contract_wallet;
+        $this->historyListService = new HistoryListService();
     }
 
     /**
@@ -49,8 +50,10 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
     public function handle()
     {
         try {
+            $network = $this->historyListService->getNftAuctionHistoryByTxHash($this->transaction->tx_hash)->networkMaster->chain_id;
             //get transaction information from bscscan
-            $result = $this->checkWithApiScan($this->transaction->tx_hash);
+            $result = $this->checkWithApiScan($this->transaction->tx_hash, $network);
+            $contractWallet = $this->configContractWallet($network);
             $response = $result['response'];
             $blockNumberCount = $result['block_count'];
             //checking time of pending transaction
@@ -76,7 +79,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                     //Validate transaction destination with our account
                     if (
                         (strtolower($result['to']) == strtolower($this->company_wallet)
-                            || strtolower($result['to']) == strtolower($this->contract_wallet))
+                            || strtolower($result['to']) == strtolower($contractWallet))
                         && $blockNumberCount >= $successBlockCount
                         && $transactionStatus
                     ) {

@@ -4,15 +4,17 @@ return [
     'api' => [
         'bsc' => [
             'name' => 'BSC',
+            'ids' => [56, 97],
             'url' => env('BSCSCAN_API_URL', 'https://api-testnet.bscscan.com/api'),
-            'contract_wallet_usdt' => env('CONTRACT_WALLET_BUSD', '0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee'),
+            'contract_wallet_usdt' => env('CONTRACT_WALLET_BUSD', '0x337610d27c682E347C9cD60BD4b3b107C9d34dDd'),
             'api_key' => env('BSCSCAN_API_KEY', 'G7HAM1MRFHGKUQV5QIH5VJJ28E52YZYNVM'),
             'block_count' => env('SUCCESS_TRANSACTION_BNB_BLOCK_COUNT', 25),
         ],
         'eth' => [
             'name' => 'ETH',
+            'ids' => [1, 5],
             'url' => env('ETHERSSCAN_API_URL', 'https://api-goerli.etherscan.io/api'),
-            'contract_wallet_usdt' => env('CONTRACT_WALLET_USDT', '0xc2c527c0cacf457746bd31b2a698fe89de2b6d49'),
+            'contract_wallet_usdt' => env('CONTRACT_WALLET_USDT', '0x50c4c585912B0B9EB2E382a1a8c96bcA9b112441'),
             'api_key' => env('ETHERSCAN_API_KEY', 'ENBK5HBW1JFGY2INMUN28UDA88VM1Y6GJS'),
             'block_count' => env('SUCCESS_TRANSACTION_BNB_BLOCK_COUNT', 24),
         ],
