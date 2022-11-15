@@ -110,10 +110,10 @@ trait CheckTransactionWithApiScan
      * @param $txHash
      * @return bool
      */
-    public function isTransactionExisted($txHash)
+    public function isTransactionExisted($txHash, $network)
     {
         //get config network
-        $configNetwork = $this->configNetWork(config('defines.network'));
+        $configNetwork = $this->configNetWork($network);
         //get block of the transaction
         $responseData = $this->getTransactionByHash(
             $txHash,
