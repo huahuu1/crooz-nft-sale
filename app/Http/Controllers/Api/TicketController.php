@@ -66,10 +66,17 @@ class TicketController extends Controller
         try {
             $baseUri = config('defines.gacha_api_url');
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
+            $remainTicket = $this->ticketService->getGachaTicketByUserIdAndType($user->id, GachaTicket::PAID_TICKET);
             //case not found user
             if (!$user) {
                 return response()->json([
                     'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
+                ], 400);
+            }
+            //check the number of remain ticket
+            if ($remainTicket->remain_ticket == 0) {
+                return response()->json([
+                    'message' => 'Out of tickets',
                 ], 400);
             }
             $result = $this->gachaTicket($baseUri, $request->wallet_address, GachaTicket::PAID_TICKET);
@@ -81,8 +88,9 @@ class TicketController extends Controller
             }
             //case success with call api gacha
             if ($result['statusCode'] === 200) {
-                //tru di so ticket
-
+                //minus the number of tickets used
+                $remainTicket->remain_ticket -= 1;
+                $remainTicket->update();
                 // create nft auction of user by ticket number
                 foreach ($result['response']['data'] as $nftId) {
                     $this->auctionNftService->createNftAuction(
