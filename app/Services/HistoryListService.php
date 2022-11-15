@@ -3,9 +3,7 @@
 namespace App\Services;
 
 use App\Models\NftAuctionHistory;
-use Carbon\Carbon;
 use Exception;
-use Illuminate\Support\Facades\DB;
 
 class HistoryListService
 {
@@ -36,7 +34,9 @@ class HistoryListService
     public function getNftAuctionHistoryByTxHash($txHash)
     {
         return NftAuctionHistory::select('id', 'user_id', 'token_id', 'nft_auction_id', 'amount', 'status', 'tx_hash')
-            ->where('tx_hash', $txHash)->first();
+            ->with('networkMaster:chain_id,contract_wallet')
+            ->where('tx_hash', $txHash)
+            ->first();
     }
 
     /**

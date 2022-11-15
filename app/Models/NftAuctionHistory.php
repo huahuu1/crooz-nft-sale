@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Laravel\Sanctum\HasApiTokens;
 
 class NftAuctionHistory extends Model
@@ -88,5 +89,15 @@ class NftAuctionHistory extends Model
     public function nftAuctionInfo(): BelongsTo
     {
         return $this->belongsTo(NftAuctionInfo::class, 'nft_auction_id');
+    }
+
+    /**
+     * Get the Network relate to Nft auction history through Token master
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOneThrough
+     */
+    public function networkMaster(): HasOneThrough
+    {
+        return $this->hasOneThrough(NetworkMaster::class, TokenMaster::class, 'id', 'id', 'token_id', 'network_id');
     }
 }
