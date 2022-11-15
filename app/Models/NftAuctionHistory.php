@@ -49,6 +49,7 @@ class NftAuctionHistory extends Model
     public function pendingNftAuctionTransactions()
     {
         return $this->where('status', $this::PENDING_STATUS)
+                    ->where('payment_method', $this::METHOD_CRYPTO)
                     ->where('created_at', '<', Carbon::now()
                     ->subMinutes(1)
                     ->toDateTimeString());
