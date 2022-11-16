@@ -23,9 +23,11 @@ class DatabaseSeeder extends Seeder
             GxePartnerUserSeeder::class,
             NftDeliverySourceSeeder::class,
             ExChangeRateSeeder::class,
-            AuctionNetworkSeeder::class
+            NftAuctionInfoSeeder::class,
+            NftAuctionPackageSeeder::class,
+            NftAuctionRewardSeeder::class,
+            NftAuctionPackageStockSeeder::class,
+            AuctionNetworkSeeder::class,
         ]);
-
-        \App\Models\NftAuctionInfo::factory(1)->create();
     }
 }
