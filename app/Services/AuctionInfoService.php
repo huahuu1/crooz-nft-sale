@@ -20,7 +20,6 @@ class AuctionInfoService
             'min_price',
             'status',
             'name',
-            'fixed_price'
         )
         ->with(
             [
@@ -46,7 +45,6 @@ class AuctionInfoService
             'min_price',
             'status',
             'name',
-            'fixed_price'
         )
         ->with(
             [
@@ -71,7 +69,6 @@ class AuctionInfoService
             'min_price',
             'status',
             'name',
-            'fixed_price'
         )
         ->with(
             [
