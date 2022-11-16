@@ -43,6 +43,25 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\AuctionNetwork
+ *
+ * @property int $id
+ * @property int $auction_id
+ * @property int $network_id
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNetwork newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNetwork newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNetwork query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNetwork whereAuctionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNetwork whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AuctionNetwork whereNetworkId($value)
+ */
+	class AuctionNetwork extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\AuctionNft
  *
  * @property int $id
@@ -246,12 +265,15 @@ namespace App\Models{
  * @property int $user_id
  * @property int $token_id
  * @property int $nft_auction_id
+ * @property int|null $package_id
  * @property string $amount
  * @property string $status
  * @property string|null $tx_hash
  * @property string|null $payment_method
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\NftAuctionPackage|null $Package
+ * @property-read \App\Models\NetworkMaster|null $networkMaster
  * @property-read \App\Models\NftAuctionInfo $nftAuctionInfo
  * @property-read \App\Models\TokenMaster $tokenMaster
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
@@ -264,6 +286,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory whereNftAuctionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory wherePackageId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory wherePaymentMethod($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory whereTokenId($value)
@@ -284,9 +307,12 @@ namespace App\Models{
  * @property string $min_price
  * @property int $status
  * @property string|null $name
- * @property string|null $fixed_price
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\NftAuctionPackage[] $Packages
+ * @property-read int|null $packages_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\NetworkMaster[] $auctionNetwork
+ * @property-read int|null $auction_network_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static \Database\Factories\NftAuctionInfoFactory factory(...$parameters)
@@ -295,7 +321,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo query()
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo whereEndDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo whereFixedPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo whereMinPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo whereName($value)
@@ -304,6 +329,88 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo whereUpdatedAt($value)
  */
 	class NftAuctionInfo extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\NftAuctionPackage
+ *
+ * @property int $id
+ * @property int $auction_id
+ * @property string|null $price
+ * @property string|null $unit_price
+ * @property string $destination_address
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\NftAuctionPackageStock|null $PackageStock
+ * @property-read \App\Models\NftAuctionReward|null $Reward
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackage newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackage newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackage query()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackage whereAuctionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackage whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackage whereDestinationAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackage whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackage wherePrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackage whereUnitPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackage whereUpdatedAt($value)
+ */
+	class NftAuctionPackage extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\NftAuctionPackageStock
+ *
+ * @property int $id
+ * @property int $package_id
+ * @property int $total
+ * @property int $remain
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackageStock newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackageStock newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackageStock query()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackageStock whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackageStock whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackageStock wherePackageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackageStock whereRemain($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackageStock whereTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionPackageStock whereUpdatedAt($value)
+ */
+	class NftAuctionPackageStock extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\NftAuctionReward
+ *
+ * @property int $id
+ * @property int $package_id
+ * @property int $nft_id
+ * @property int $ticket_quantity
+ * @property int $nft_quantity
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Nft|null $Nft
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward query()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward whereNftId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward whereNftQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward wherePackageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward whereTicketQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward whereUpdatedAt($value)
+ */
+	class NftAuctionReward extends \Eloquent {}
 }
 
 namespace App\Models{

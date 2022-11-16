@@ -28,8 +28,16 @@ class NftAuctionHistory extends Model
         'amount',
         'status',
         'tx_hash',
-        'payment_method'
+        'payment_method',
+        'package_id'
     ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $with = ['package'];
 
     public const PENDING_STATUS = 1;
 
@@ -49,10 +57,10 @@ class NftAuctionHistory extends Model
     public function pendingNftAuctionTransactions()
     {
         return $this->where('status', $this::PENDING_STATUS)
-                    ->where('payment_method', $this::METHOD_CRYPTO)
-                    ->where('created_at', '<', Carbon::now()
-                    ->subMinutes(1)
-                    ->toDateTimeString());
+            ->where('payment_method', $this::METHOD_CRYPTO)
+            ->where('created_at', '<', Carbon::now()
+                ->subMinutes(1)
+                ->toDateTimeString());
     }
 
     /**
@@ -63,7 +71,7 @@ class NftAuctionHistory extends Model
     public function pendingNftAuctionCreditTransactions()
     {
         return $this->where('status', $this::PENDING_STATUS)
-                    ->where('payment_method', $this::METHOD_CREDIT);
+            ->where('payment_method', $this::METHOD_CREDIT);
     }
 
     /**
@@ -100,5 +108,14 @@ class NftAuctionHistory extends Model
     public function networkMaster(): HasOneThrough
     {
         return $this->hasOneThrough(NetworkMaster::class, TokenMaster::class, 'id', 'id', 'token_id', 'network_id');
+    }
+
+    /**
+     * Get the package that owns the nft auction.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function Package(): BelongsTo
+    {
+        return $this->belongsTo(NftAuctionPackage::class, 'id', 'package_id');
     }
 }

@@ -133,5 +133,4 @@ class TicketController extends Controller
             'data' => $this->ticketService->getUserTicketsNumber($user->id)->all(),
         ]);
     }
-
 }

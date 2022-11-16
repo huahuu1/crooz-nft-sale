@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -25,8 +26,14 @@ class NftAuctionInfo extends Model
         'min_price',
         'status',
         'name',
-        'fixed_price',
     ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $with = ['packages'];
 
     /**
      * Display information of the latest nft auction follow Id.
@@ -42,10 +49,9 @@ class NftAuctionInfo extends Model
             'min_price',
             'status',
             'name',
-            'fixed_price'
         )
-        ->orderby('id', 'desc')
-        ->first();
+            ->orderby('id', 'desc')
+            ->first();
     }
 
     /**
@@ -55,5 +61,14 @@ class NftAuctionInfo extends Model
     public function auctionNetwork(): HasManyThrough
     {
         return $this->hasManyThrough(NetworkMaster::class, AuctionNetwork::class, 'auction_id', 'id', 'id', 'network_id');
+    }
+    /**
+     * Get all Packages into auction
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function Packages(): HasMany
+    {
+        return $this->hasMany(NftAuctionPackage::class, 'auction_id', 'id');
     }
 }
