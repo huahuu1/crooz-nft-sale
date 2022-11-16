@@ -20,7 +20,7 @@ class NftAuctionRewardSeeder extends Seeder
                 'package_id' => 1,
                 'nft_id' => 7,
                 'ticket_quantity' => 1,
-                'nft_quantity' => 7,
+                'nft_quantity' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ],

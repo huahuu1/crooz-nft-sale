@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('nft_auction_rewards', function (Blueprint $table) {
             $table->id();
             $table->foreignId('package_id')->constrained('nft_auction_packages');
-            $table->foreignId('nft_id')->constrained('nfts','nft_id');
+            $table->foreignId('nft_id')->constrained('nfts', 'nft_id');
             $table->integer('ticket_quantity');
             $table->integer('nft_quantity');
             $table->timestamps();

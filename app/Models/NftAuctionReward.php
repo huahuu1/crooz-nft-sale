@@ -43,8 +43,8 @@ class NftAuctionReward extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function Nft() : BelongsTo
+    public function Nft(): BelongsTo
     {
-        return $this->belongsTo(Nft::class, 'id', 'nft_id');
+        return $this->belongsTo(Nft::class, 'nft_id', 'nft_id');
     }
 }
