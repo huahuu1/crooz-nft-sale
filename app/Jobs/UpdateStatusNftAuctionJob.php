@@ -86,7 +86,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                         //Update Transaction As Success
                         $this->transaction->status = NftAuctionHistory::SUCCESS_STATUS;
                         $this->transaction->update();
-                        //in case package is 3
+                        //subtract ticket when transaction is success
                         $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($this->transaction->package_id);
                         if (!empty($packageStock)) {
                             $packageStock->remain -= 1;
