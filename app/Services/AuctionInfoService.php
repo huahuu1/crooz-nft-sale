@@ -44,7 +44,7 @@ class AuctionInfoService
             'end_date',
             'min_price',
             'status',
-            'name',
+            'name'
         )
         ->with(
             [
@@ -79,3 +79,6 @@ class AuctionInfoService
         ->get();
     }
 }
+
+
+

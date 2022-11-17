@@ -29,6 +29,13 @@ class Nft extends Model
     ];
 
     /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = ['created_at','updated_at'];
+
+    /**
      * Get the nft type relates to the nft.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

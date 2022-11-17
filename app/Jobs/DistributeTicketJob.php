@@ -55,11 +55,22 @@ class DistributeTicketJob implements ShouldQueue
     public function handle()
     {
         try {
-            $fixedPrice = $this->auctionInfoService->infoNftAuctionById($this->transaction->nft_auction_id)->fixed_price;
-            // convert total ticket
-            $ticketNumber = floor($this->transaction->amount / $fixedPrice);
+            $packageInfo = $this->transaction->package;
+            $nftQuantity = $this->transaction->package->reward->nft_quantity;
+            //case user deposits amount not equal with package price
+            if ($this->transaction->amount != $packageInfo->price) {
+                // convert total ticket
+                $ticketNumber = floor($this->transaction->amount / $packageInfo->unit_price);
+                $nftQuantity = $ticketNumber;
+            }
+            //case user deposits amount equal with package price
+            if ($this->transaction->amount === $packageInfo->price) {
+                // convert total ticket
+                $ticketNumber = $this->transaction->package->reward->ticket_quantity;
+            }
+
             if ($ticketNumber > 0) {
-                // get gaChaTicket our current user
+                // get gachaTicket our current user
                 $isGachaTicket = $this->ticketService->hasGachaInfoByUserId($this->transaction->user_id);
                 if (!$isGachaTicket) {
                     // create gachaTicket
@@ -79,11 +90,11 @@ class DistributeTicketJob implements ShouldQueue
                     $userTicket->update();
                 }
                 // create nft auction of user by ticket number
-                for ($i = 0; $i < $ticketNumber; $i++) {
+                for ($i = 0; $i < $nftQuantity; $i++) {
                     $this->auctionNftService->createNftAuction(
                         $this->transaction->user->wallet_address,
-                        7,
-                        7,
+                        $this->transaction->package->reward->nft_id,
+                        $this->transaction->package->reward->nft_delivery_id,
                         1
                     );
                 }

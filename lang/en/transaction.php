@@ -12,6 +12,7 @@
             'connect_metamask' => 'Please connect to metamask',
             'success' => 'Deposit transaction successfully',
             'fail' => 'Deposit failed',
+            'out_of_stock' => 'The package is out of stock',
         ],
         'importUnlockUserBalance' => [
             'success' => 'Import unlock user balance successfully',

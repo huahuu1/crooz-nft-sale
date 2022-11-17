@@ -28,4 +28,24 @@ class NftAuctionPackageStock extends Model
         'total',
         'remain'
     ];
+
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = ['created_at','updated_at'];
+
+    /**
+     * Display information of the package stock by package id.
+     *
+     * @return \App\Models\NftAuctionPackageStock
+     */
+    public static function getPackageStockByPackageId($packageId)
+    {
+        return NftAuctionPackageStock::select()
+        ->where('package_id', $packageId)
+        ->lockForUpdate()
+        ->first();
+    }
 }
