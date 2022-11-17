@@ -33,7 +33,7 @@ class NftAuctionInfo extends Model
      *
      * @var array
      */
-    protected $with = ['packages'];
+    protected $with = ['packages:id,auction_id,price,unit_price,destination_address'];
 
     /**
      * Display information of the latest nft auction follow Id.
@@ -72,3 +72,4 @@ class NftAuctionInfo extends Model
         return $this->hasMany(NftAuctionPackage::class, 'auction_id', 'id');
     }
 }
+

@@ -59,8 +59,8 @@ class NftAuctionHistory extends Model
         return $this->where('status', $this::PENDING_STATUS)
             ->where('payment_method', $this::METHOD_CRYPTO)
             ->where('created_at', '<', Carbon::now()
-                ->subMinutes(1)
-                ->toDateTimeString());
+            ->subMinutes(1)
+            ->toDateTimeString());
     }
 
     /**
@@ -116,6 +116,6 @@ class NftAuctionHistory extends Model
      */
     public function Package(): BelongsTo
     {
-        return $this->belongsTo(NftAuctionPackage::class, 'id', 'package_id');
+        return $this->belongsTo(NftAuctionPackage::class, 'package_id');
     }
 }

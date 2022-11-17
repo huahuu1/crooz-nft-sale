@@ -33,7 +33,7 @@ class HistoryListService
      */
     public function getNftAuctionHistoryByTxHash($txHash)
     {
-        return NftAuctionHistory::select('id', 'user_id', 'token_id', 'nft_auction_id', 'amount', 'status', 'tx_hash')
+        return NftAuctionHistory::select('id', 'user_id', 'token_id', 'nft_auction_id', 'amount', 'status', 'tx_hash', 'package_id')
             ->with('networkMaster:chain_id,contract_wallet')
             ->where('tx_hash', $txHash)
             ->first();
@@ -108,7 +108,7 @@ class HistoryListService
      * @param $userId, $tokenId, $tokenSaleId, $amount, $status, $txHash
      * @return \App\Models\NftAuctionHistory | null
      */
-    public function createNftAuctionHistory($userId, $tokenId, $nftAuctionId, $amount, $status, $txHash, $paymentMethod)
+    public function createNftAuctionHistory($userId, $tokenId, $nftAuctionId, $amount, $status, $txHash, $paymentMethod, $packageID)
     {
         try {
             $auctionHistory = NftAuctionHistory::create([
@@ -119,6 +119,7 @@ class HistoryListService
                 'status' => $status,
                 'tx_hash' => $txHash,
                 'payment_method' => $paymentMethod,
+                'package_id' => $packageID,
             ]);
             return $auctionHistory;
         } catch (Exception $e) {

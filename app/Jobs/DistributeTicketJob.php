@@ -55,9 +55,9 @@ class DistributeTicketJob implements ShouldQueue
     public function handle()
     {
         try {
-            $fixedPrice = $this->auctionInfoService->infoNftAuctionById($this->transaction->nft_auction_id)->fixed_price;
+            $price = $this->auctionInfoService->infoNftAuctionByIdWithPackageId($this->transaction->nft_auction_id, $this->transaction->package_id)->packages[0]->price;
             // convert total ticket
-            $ticketNumber = floor($this->transaction->amount / $fixedPrice);
+            $ticketNumber = floor($this->transaction->amount / $price);
             if ($ticketNumber > 0) {
                 // get gaChaTicket our current user
                 $isGachaTicket = $this->ticketService->hasGachaInfoByUserId($this->transaction->user_id);

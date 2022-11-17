@@ -23,6 +23,7 @@ class PaymentRequest extends FormRequest
             'method' => 'required',
             'token' => 'required',
             'nft_auction_id' => 'required',
+            'package_id' => 'required',
         ];
     }
 

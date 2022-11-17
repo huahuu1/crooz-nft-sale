@@ -31,7 +31,7 @@ class NftAuctionPackage extends Model
      *
      * @var array
      */
-    protected $with = ['Reward', 'PackageStock'];
+    // protected $with = ['Reward', 'PackageStock'];
 
     /**
      * Get Reward into Package Auction
