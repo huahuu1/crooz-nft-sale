@@ -29,6 +29,7 @@ class NftAuctionReward extends Model
         'nft_id',
         'ticket_quantity',
         'nft_quantity',
+        'nft_delivery_id',
     ];
 
     /**
@@ -36,7 +37,7 @@ class NftAuctionReward extends Model
      *
      * @var array
      */
-    protected $with = ['Nft'];
+    protected $with = ['Nft', 'Delivery'];
 
     /**
      * Get Nft into Reward Auction
@@ -46,5 +47,15 @@ class NftAuctionReward extends Model
     public function Nft(): BelongsTo
     {
         return $this->belongsTo(Nft::class, 'nft_id', 'nft_id');
+    }
+
+    /**
+     * Get Nft Delivery Source into Reward Auction
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function Delivery(): BelongsTo
+    {
+        return $this->belongsTo(NftDeliverySource::class, 'nft_id', 'id');
     }
 }
