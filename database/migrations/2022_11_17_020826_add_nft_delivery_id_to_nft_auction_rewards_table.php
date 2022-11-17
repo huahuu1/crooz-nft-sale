@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('nft_auction_histories', function (Blueprint $table) {
-            $table->foreignId('package_id')->nullable()->after('nft_auction_id')->constrained('nft_auction_packages');
+        Schema::table('nft_auction_rewards', function (Blueprint $table) {
+            $table->foreignId('nft_delivery_id')->nullable()->after('nft_id')->constrained('nft_delivery_sources');
         });
     }
 
@@ -25,9 +25,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('nft_auction_histories', function (Blueprint $table) {
-            $table->dropForeign(['package_id']);
-            $table->dropColumn('package_id');
+        Schema::table('nft_auction_rewards', function (Blueprint $table) {
+            $table->dropForeign(['nft_delivery_id']);
+            $table->dropColumn('nft_delivery_id');
         });
     }
 };

@@ -392,11 +392,13 @@ namespace App\Models{
  * @property int $id
  * @property int $package_id
  * @property int $nft_id
+ * @property int|null $nft_delivery_id
  * @property int $ticket_quantity
  * @property int $nft_quantity
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Nft|null $Nft
+ * @property-read \App\Models\NftDeliverySource $Delivery
+ * @property-read \App\Models\Nft $Nft
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward newModelQuery()
@@ -404,6 +406,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward query()
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward whereNftDeliveryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward whereNftId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward whereNftQuantity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward wherePackageId($value)
@@ -411,6 +414,27 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward whereUpdatedAt($value)
  */
 	class NftAuctionReward extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\NftDeliverySource
+ *
+ * @property int $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|NftDeliverySource newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftDeliverySource newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftDeliverySource query()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftDeliverySource whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftDeliverySource whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftDeliverySource whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftDeliverySource whereUpdatedAt($value)
+ */
+	class NftDeliverySource extends \Eloquent {}
 }
 
 namespace App\Models{
