@@ -28,4 +28,17 @@ class NftAuctionPackageStock extends Model
         'total',
         'remain'
     ];
+
+    /**
+     * Display information of the package stock by package id.
+     *
+     * @return \App\Models\NftAuctionPackageStock
+     */
+    public static function getPackageStockByPackageId($packageId)
+    {
+        return NftAuctionPackageStock::select()
+        ->where('package_id', $packageId)
+        ->lockForUpdate()
+        ->first();
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\NftAuctionHistory;
+use App\Models\NftAuctionPackageStock;
 use App\Services\HistoryListService;
 use App\Traits\ApiScanTransaction;
 use App\Traits\CheckTransactionWithApiScan;
@@ -85,7 +86,12 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                         //Update Transaction As Success
                         $this->transaction->status = NftAuctionHistory::SUCCESS_STATUS;
                         $this->transaction->update();
-
+                        //in case package is 3
+                        $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($this->transaction->package_id);
+                        if (!empty($packageStock) && $packageStock->package_id === 3) {
+                            $packageStock->remain -= 1;
+                            $packageStock->update();
+                        }
                         // Call Job Distribute Ticket
                         DistributeTicketJob::dispatch($this->transaction)->onQueue(config('defines.queue.general'))->delay(now()->addSecond(1));
                     }

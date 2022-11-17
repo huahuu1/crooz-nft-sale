@@ -12,6 +12,7 @@ return [
         'connect_metamask' => 'Please connect to metamask',
         'success' => '入金成功しました。',
         'fail' => '入金失敗しました。',
+        'out_of_stock' => 'パッケージは在庫切れです',
     ],
     'importUnlockUserBalance' => [
         'success' => 'アンロック ユーザー残高のインポートに成功しました。',

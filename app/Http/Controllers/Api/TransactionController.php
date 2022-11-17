@@ -10,6 +10,7 @@ use App\Jobs\DistributeTicketJob;
 use App\Models\CashFlow;
 use App\Models\Nft;
 use App\Models\NftAuctionHistory;
+use App\Models\NftAuctionPackageStock;
 use App\Models\TokenMaster;
 use App\Services\AuctionInfoService;
 use App\Services\CashFlowService;
@@ -75,26 +76,18 @@ class TransactionController extends Controller
     {
         try {
             $depositTransaction = $this->historyListService->getNftAuctionHistoryByTxHash($request->tx_hash);
-            $minPrice = $this->auctionInfoService->infoNftAuctionById($request->nft_auction_id)->min_price;
-            $tokenName = TokenMaster::getTokenMasterById($request->token_id)->code;
+            $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($request->package_id);
+            //prevent out of stock package
+            if (!empty($packageStock) && $packageStock->package_id === 3 && $packageStock->remain <= 0) {
+                return response()->json([
+                    'message' => __('transaction.createDepositNftTransaction.out_of_stock'),
+                ], 400);
+            }
 
             //prevent duplicate transactions
             if ($depositTransaction) {
                 return response()->json([
                     'message' => __('transaction.createDepositNftTransaction.duplicate'),
-                ], 400);
-            }
-
-            //prevent amount smaller than min price
-            if ($request->amount < $minPrice) {
-                return response()->json([
-                    'message' => __(
-                        'transaction.createDepositNftTransaction.min_price',
-                        [
-                            'tokenName' => $tokenName,
-                            'minPrice' => $minPrice
-                        ]
-                    ),
                 ], 400);
             }
 
@@ -182,7 +175,7 @@ class TransactionController extends Controller
                         NftAuctionHistory::PENDING_STATUS,
                         $transaction['tx_hash'],
                         NftAuctionHistory::METHOD_CRYPTO,
-                        $request->package_id
+                        $transaction['package_id']
                     );
 
                     $this->cashFlowService->createCashFlow(
@@ -221,7 +214,7 @@ class TransactionController extends Controller
 
         if (!$user) {
             return response()->json([
-                'message' => 'User not found',
+                'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
             ], 404);
         }
 
@@ -303,24 +296,17 @@ class TransactionController extends Controller
             $bearerToken = config('defines.fincode_authorization_token');
             $baseUri = config('defines.fincode_api_url');
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
-            $price = $this->auctionInfoService->infoNftAuctionByIdWithPackageId($request->nft_auction_id, $request->package_id)->packages[0]->price;
-            $tokenName = TokenMaster::getTokenMasterById($request->token_id)->code;
-            //prevent amount smaller than min price
-            if ($request->amount < $price) {
-                return response()->json([
-                    'message' => __(
-                        'transaction.createDepositNftTransaction.min_price',
-                        [
-                            'tokenName' => $tokenName,
-                            'minPrice' => $price
-                        ]
-                    ),
-                ], 400);
-            }
             //case not found user
             if (!$user) {
                 return response()->json([
                     'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
+                ], 400);
+            }
+            $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($request->package_id);
+            //prevent out of stock package
+            if (!empty($packageStock) && $packageStock->package_id === 3 && $packageStock->remain <= 0) {
+                return response()->json([
+                    'message' => __('transaction.createDepositNftTransaction.out_of_stock'),
                 ], 400);
             }
             //create data in nft auction history with status pending
