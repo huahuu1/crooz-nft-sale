@@ -341,6 +341,10 @@ class TransactionController extends Controller
             }
             //case success with call api payment
             if ($result['statusCode'] === 200) {
+                if (!empty($packageStock)) {
+                    $packageStock->remain -= 1;
+                    $packageStock->update();
+                }
                 // AuctionFiat is not empty
                 if (!empty($auctionFiat)) {
                     //update status and tx hash nft auction history
