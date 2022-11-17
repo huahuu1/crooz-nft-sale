@@ -78,7 +78,7 @@ class TransactionController extends Controller
             $depositTransaction = $this->historyListService->getNftAuctionHistoryByTxHash($request->tx_hash);
             $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($request->package_id);
             //prevent out of stock package
-            if (!empty($packageStock) && $packageStock->package_id === 3 && $packageStock->remain <= 0) {
+            if (!empty($packageStock) && $packageStock->remain <= 0) {
                 return response()->json([
                     'message' => __('transaction.createDepositNftTransaction.out_of_stock'),
                 ], 400);
@@ -304,7 +304,7 @@ class TransactionController extends Controller
             }
             $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($request->package_id);
             //prevent out of stock package
-            if (!empty($packageStock) && $packageStock->package_id === 3 && $packageStock->remain <= 0) {
+            if (!empty($packageStock) && $packageStock->remain <= 0) {
                 return response()->json([
                     'message' => __('transaction.createDepositNftTransaction.out_of_stock'),
                 ], 400);

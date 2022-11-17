@@ -30,6 +30,13 @@ class NftAuctionPackageStock extends Model
     ];
 
     /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = ['created_at','updated_at'];
+
+    /**
      * Display information of the package stock by package id.
      *
      * @return \App\Models\NftAuctionPackageStock

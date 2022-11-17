@@ -88,7 +88,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                         $this->transaction->update();
                         //in case package is 3
                         $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($this->transaction->package_id);
-                        if (!empty($packageStock) && $packageStock->package_id === 3) {
+                        if (!empty($packageStock)) {
                             $packageStock->remain -= 1;
                             $packageStock->update();
                         }
