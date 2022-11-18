@@ -124,7 +124,7 @@ Route::middleware(['language'])->group(function () {
         ]);
     });
 
-    Route::post('gacha-ticket-api', [
+    Route::post('gacha', [
         TransactionController::class, 'gachaTicketApi'
     ]);
 });
