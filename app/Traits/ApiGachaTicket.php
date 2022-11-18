@@ -21,7 +21,7 @@ trait ApiGachaTicket
 
             $response = Http::withHeaders(['accept' => 'application/json'])
             ->withBody(json_encode($params), 'application/json')
-            ->post($baseUri . '/gacha-ticket-api');
+            ->post($baseUri . '/gacha');
 
             return [
                 'response' => $response->json(),
