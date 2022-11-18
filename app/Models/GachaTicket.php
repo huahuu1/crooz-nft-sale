@@ -25,7 +25,7 @@ class GachaTicket extends Model
         'remain_ticket'
     ];
 
-    public const FREE_TICKET = 0;
-
     public const PAID_TICKET = 1;
+
+    public const FREE_TICKET = 2;
 }

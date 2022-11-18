@@ -81,9 +81,9 @@ class TicketController extends Controller
             }
             $result = $this->gachaTicket($baseUri, $request->wallet_address, $request->ticket_type);
             //case error with call api gacha
-            if ($result['statusCode'] !== 200) {
+            if ($result['response']['status'] != 0) {
                 return response()->json([
-                    'message' => $result,
+                    'message' => 'This is error gacha ticket',
                 ], $result['statusCode']);
             }
             //case success with call api gacha
@@ -92,7 +92,7 @@ class TicketController extends Controller
                 $remainTicket->remain_ticket -= 1;
                 $remainTicket->update();
                 // create nft auction of user by ticket number
-                foreach ($result['response']['data'] as $nftId) {
+                foreach ($result['response']['result'] as $nftId) {
                     $this->auctionNftService->createNftAuction(
                         $request->wallet_address,
                         $nftId,
