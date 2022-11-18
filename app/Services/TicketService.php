@@ -45,6 +45,32 @@ class TicketService
     }
 
     /**
+     * Create gacha ticket history used data
+     *
+     * @param int $gachaTicketId
+     * @param int $usedQuantity
+     */
+    public function createGachaTicketHistory(
+        $gachaTicketId,
+        $usedQuantity
+    ) {
+        DB::beginTransaction();
+        try {
+            DB::table('ticket_used_histories')->insert([
+                'gacha_ticket_id' => $gachaTicketId,
+                'used_quantity' => $usedQuantity,
+                'used_time' => Carbon::now(),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    /**
      * Checking user has gacha ticket info or not by user id.
      *
      * @param $userId
