@@ -23,7 +23,8 @@ class TokenMaster extends Model
         'code',
         'description',
         'status',
-        'network_id'
+        'network_id',
+        'contract_wallet'
     ];
 
     public const USDT = 1;
@@ -77,7 +78,7 @@ class TokenMaster extends Model
             'status',
             'network_id'
         )
-            ->with('networkMaster:id,chain_id,rpc_urls,block_explorer_urls,chain_name,unit,contract_wallet')
+            ->with('networkMaster:id,chain_id,rpc_urls,block_explorer_urls,chain_name,unit')
             ->get());
         // group data by network master chain id
         $result = $data->groupBy('networkMaster.chain_id');

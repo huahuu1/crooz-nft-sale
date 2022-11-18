@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\NetworkMaster;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Schema;
 
 class NetworkMasterSeeder extends Seeder
 {
@@ -14,9 +16,10 @@ class NetworkMasterSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('network_masters')->insert(
-            $this->getArrayData()
-        );
+        Schema::disableForeignKeyConstraints();
+        NetworkMaster::truncate();
+        NetworkMaster::insert($this->getArrayData());
+        Schema::enableForeignKeyConstraints();
     }
 
     public function getArrayData()
@@ -30,55 +33,20 @@ class NetworkMasterSeeder extends Seeder
                         'rpc_urls' => 'https://goerli.infura.io/v3/',
                         'block_explorer_urls' => 'https://goerli.etherscan.io/',
                         'chain_name' => 'Goerli Test Network',
-                        'unit' => 'USDT',
-                        'contract_wallet' => '0x50c4c585912B0B9EB2E382a1a8c96bcA9b112441',
+                        'unit' => 'ETH',
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s'),
                     ],
                     [
                         'id' => 2,
-                        'chain_id' => '5',
-                        'rpc_urls' => 'https://goerli.infura.io/v3/',
-                        'block_explorer_urls' => 'https://goerli.etherscan.io/',
-                        'chain_name' => 'Goerli Test Network',
-                        'unit' => 'ETH',
-                        'contract_wallet' => null,
-                        'created_at' => date('Y-m-d H:i:s'),
-                        'updated_at' => date('Y-m-d H:i:s'),
-                    ],
-                    [
-                        'id' => 3,
                         'chain_id' => '97',
                         'rpc_urls' => 'https://bsc-testnet.public.blastapi.io/',
                         'block_explorer_urls' => 'https://testnet.bscscan.com/',
                         'chain_name' => 'Binance Smart Chain Testnet',
                         'unit' => 'BNB',
-                        'contract_wallet' => null,
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s'),
-                    ],
-                    [
-                        'id' => 4,
-                        'chain_id' => '97',
-                        'rpc_urls' => 'https://bsc-testnet.public.blastapi.io/',
-                        'block_explorer_urls' => 'https://testnet.bscscan.com/',
-                        'chain_name' => 'Binance Smart Chain Testnet',
-                        'unit' => 'BUSD',
-                        'contract_wallet' => '0xed24fc36d5ee211ea25a80239fb8c4cfd80f12ee',
-                        'created_at' => date('Y-m-d H:i:s'),
-                        'updated_at' => date('Y-m-d H:i:s'),
-                    ],
-                    [
-                        'id' => 5,
-                        'chain_id' => '97',
-                        'rpc_urls' => 'https://bsc-testnet.public.blastapi.io/',
-                        'block_explorer_urls' => 'https://testnet.bscscan.com/',
-                        'chain_name' => 'Binance Smart Chain Testnet',
-                        'unit' => 'USDT',
-                        'contract_wallet' => '0x337610d27c682E347C9cD60BD4b3b107C9d34dDd',
-                        'created_at' => date('Y-m-d H:i:s'),
-                        'updated_at' => date('Y-m-d H:i:s'),
-                    ],
+                    ]
                 ];
             case 'production':
                 return [
@@ -88,55 +56,20 @@ class NetworkMasterSeeder extends Seeder
                         'rpc_urls' => 'https://mainnet.infura.io/v3/',
                         'block_explorer_urls' => 'https://etherscan.io/',
                         'chain_name' => 'Ethereum Mainnet',
-                        'unit' => 'USDT',
-                        'contract_wallet' => '0xdac17f958d2ee523a2206206994597c13d831ec7',
+                        'unit' => 'ETH',
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s'),
                     ],
                     [
                         'id' => 2,
-                        'chain_id' => '1',
-                        'rpc_urls' => 'https://mainnet.infura.io/v3/',
-                        'block_explorer_urls' => 'https://etherscan.io/',
-                        'chain_name' => 'Ethereum Mainnet',
-                        'unit' => 'ETH',
-                        'contract_wallet' => null,
-                        'created_at' => date('Y-m-d H:i:s'),
-                        'updated_at' => date('Y-m-d H:i:s'),
-                    ],
-                    [
-                        'id' => 3,
                         'chain_id' => '56',
                         'rpc_urls' => 'https://bsc-dataseed.binance.org/',
                         'block_explorer_urls' => 'https://bscscan.com/',
                         'chain_name' => 'Binance Smart Chain',
                         'unit' => 'BNB',
-                        'contract_wallet' => null,
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s'),
-                    ],
-                    [
-                        'id' => 4,
-                        'chain_id' => '56',
-                        'rpc_urls' => 'https://bsc-dataseed.binance.org/',
-                        'block_explorer_urls' => 'https://bscscan.com/',
-                        'chain_name' => 'Binance Smart Chain',
-                        'unit' => 'BUSD',
-                        'contract_wallet' => '0xe9e7cea3dedca5984780bafc599bd69add087d56',
-                        'created_at' => date('Y-m-d H:i:s'),
-                        'updated_at' => date('Y-m-d H:i:s'),
-                    ],
-                    [
-                        'id' => 5,
-                        'chain_id' => '56',
-                        'rpc_urls' => 'https://bsc-dataseed.binance.org/',
-                        'block_explorer_urls' => 'https://bscscan.com/',
-                        'chain_name' => 'Binance Smart Chain',
-                        'unit' => 'USDT',
-                        'contract_wallet' => '0x55d398326f99059fF775485246999027B3197955',
-                        'created_at' => date('Y-m-d H:i:s'),
-                        'updated_at' => date('Y-m-d H:i:s'),
-                    ],
+                    ]
                 ];
         }
     }
