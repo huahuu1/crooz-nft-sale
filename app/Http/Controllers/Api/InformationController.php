@@ -59,18 +59,6 @@ class InformationController extends Controller
     }
 
     /**
-     * Get token master info.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getTokenMasterInfo()
-    {
-        return response()->json([
-            'data' => TokenMaster::getTokenMastersWithNetwork(),
-        ]);
-    }
-
-    /**
      * Get exchange rate info by symbol.
      *
      * @return \Illuminate\Http\JsonResponse

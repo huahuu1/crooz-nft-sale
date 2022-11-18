@@ -64,28 +64,6 @@ class TokenMaster extends Model
     }
 
     /**
-     * Display information of the token master by id.
-     *
-     * @return \App\Models\TokenMaster
-     */
-    public static function getTokenMastersWithNetwork()
-    {
-        $data = collect(TokenMaster::select(
-            'id',
-            'name',
-            'code',
-            'description',
-            'status',
-            'network_id'
-        )
-            ->with('networkMaster:id,chain_id,rpc_urls,block_explorer_urls,chain_name,unit')
-            ->get());
-        // group data by network master chain id
-        $result = $data->groupBy('networkMaster.chain_id');
-        return $result->all();
-    }
-
-    /**
      * Get the network master relates to token master.
      */
     public function networkMaster()
