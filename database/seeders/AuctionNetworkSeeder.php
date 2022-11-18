@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\AuctionNetwork;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Schema;
 
 class AuctionNetworkSeeder extends Seeder
 {
@@ -14,6 +16,9 @@ class AuctionNetworkSeeder extends Seeder
      */
     public function run()
     {
+        Schema::disableForeignKeyConstraints();
+        AuctionNetwork::truncate();
+
         DB::table('auction_networks')->insert([
             [
                 'id' => 1,
@@ -23,13 +28,9 @@ class AuctionNetworkSeeder extends Seeder
             [
                 'id' => 2,
                 'auction_id' => 2,
-                'network_id' => 4,
-            ],
-            [
-                'id' => 3,
-                'auction_id' => 2,
-                'network_id' => 5,
+                'network_id' => 2,
             ]
         ]);
+        Schema::enableForeignKeyConstraints();
     }
 }
