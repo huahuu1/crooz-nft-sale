@@ -109,7 +109,6 @@ Route::middleware(['language'])->group(function () {
     Route::get('nft-auction', [InformationController::class, 'getLatestInfoNftAuction']);
     Route::get('all-nft-auction', [InformationController::class, 'getAllInfoNftAuction']);
     Route::get('nft-auction/{id}', [InformationController::class, 'getInfoNftAuctionById']);
-    Route::get('token-info', [InformationController::class, 'getTokenMasterInfo']);
     //get exchange rate
     Route::get('exchange-rate/{symbol}', [InformationController::class, 'getExchangeRateBySymbol']);
     Route::get('exchange-rate', [InformationController::class, 'getLastExchangeRate']);

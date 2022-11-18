@@ -34,7 +34,7 @@ class HistoryListService
     public function getNftAuctionHistoryByTxHash($txHash)
     {
         return NftAuctionHistory::select('id', 'user_id', 'token_id', 'nft_auction_id', 'amount', 'status', 'tx_hash', 'package_id')
-            ->with('networkMaster:chain_id,contract_wallet')
+            ->with(['tokenMaster', 'networkMaster'])
             ->where('tx_hash', $txHash)
             ->first();
     }

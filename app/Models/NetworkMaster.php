@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 
 class NetworkMaster extends Model
@@ -24,9 +25,15 @@ class NetworkMaster extends Model
         'rpc_urls',
         'block_explorer_urls',
         'chain_name',
-        'unit',
-        'contract_wallet'
+        'unit'
     ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $with = ['type:id,network_id,code,contract_wallet'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -36,4 +43,14 @@ class NetworkMaster extends Model
     protected $hidden = [
         'laravel_through_key'
     ];
+
+    /**
+     * Get the token master relates to network master.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function type(): HasMany
+    {
+        return $this->hasMany(TokenMaster::class, 'network_id', 'id');
+    }
 }
