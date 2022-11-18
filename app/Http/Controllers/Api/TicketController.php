@@ -3,30 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PaymentRequest;
-use App\Http\Requests\TransactionRequest;
-use App\Imports\PrivateUserUnlockBalanceImport;
-use App\Jobs\DistributeTicketJob;
-use App\Models\CashFlow;
-use App\Models\GachaTicket;
-use App\Models\Nft;
-use App\Models\NftAuctionHistory;
-use App\Models\TokenMaster;
-use App\Services\AuctionInfoService;
 use App\Services\AuctionNftService;
-use App\Services\CashFlowService;
-use App\Services\HistoryListService;
 use App\Services\TicketService;
 use App\Services\UserService;
-use App\Traits\ApiFincodePayment;
 use App\Traits\ApiGachaTicket;
-use App\Traits\CheckTransactionWithApiScan;
-use App\Traits\ApiScanTransaction;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
-use Nullix\CryptoJsAes\CryptoJsAes;
 
 class TicketController extends Controller
 {
@@ -72,9 +55,9 @@ class TicketController extends Controller
                     'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
                 ], 400);
             }
-            $remainTicket = $this->ticketService->getGachaTicketByUserIdAndType($user->id, $request->ticket_type);
+            $gachaTicket = $this->ticketService->getGachaTicketByUserIdAndType($user->id, $request->ticket_type);
             //check the number of remain ticket
-            if ($remainTicket->remain_ticket == 0) {
+            if ($gachaTicket->remain_ticket == 0) {
                 return response()->json([
                     'message' => 'Out of tickets',
                 ], 400);
@@ -89,8 +72,10 @@ class TicketController extends Controller
             //case success with call api gacha
             if ($result['statusCode'] === 200) {
                 //minus the number of tickets used
-                $remainTicket->remain_ticket -= 1;
-                $remainTicket->update();
+                $gachaTicket->remain_ticket -= 1;
+                $gachaTicket->update();
+                //create gacha ticket history used
+                $this->ticketService->createGachaTicketHistory($gachaTicket->id, 1);
                 // create nft auction of user by ticket number
                 foreach ($result['response']['result'] as $nftId) {
                     $this->auctionNftService->createNftAuction(
