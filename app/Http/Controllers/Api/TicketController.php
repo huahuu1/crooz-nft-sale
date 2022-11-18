@@ -57,7 +57,7 @@ class TicketController extends Controller
             }
             $gachaTicket = $this->ticketService->getGachaTicketByUserIdAndType($user->id, $request->ticket_type);
             //check the number of remain ticket
-            if ($gachaTicket->remain_ticket == 0) {
+            if ($gachaTicket->remain_ticket <= 0) {
                 return response()->json([
                     'message' => 'Out of tickets',
                 ], 400);
