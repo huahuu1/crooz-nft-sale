@@ -389,13 +389,14 @@ class TransactionController extends Controller
                 ]
             );
             if (!$validator->fails()) {
-                return response()->json([
-                    'data' => Nft::getRandomNfts(),
-                ], 200);
+                return Response([
+                    'result' => Nft::getRandomNfts(),
+                    'status' => 0,
+                ]);
             } else {
-                return response()->json([
-                    'message' => $validator->errors()
-                ], 400);
+                return Response([
+                    'status' => 1,
+                ]);
             }
         } catch (Exception $e) {
             Log::error($e);
