@@ -43,6 +43,30 @@ class TicketService
             throw new Exception($e->getMessage());
         }
     }
+    /**
+     * Create Paid gaCha ticket
+     *
+     * @param int $userId
+     * @param int $ticketNumber
+     * @return \App\Models\GachaTicket::PAID_TICKET
+     */
+    public function createPaidGachaTicketData(
+        $userId,
+        $ticketNumber
+    ) {
+        try {
+            // set default value
+            $gaChaTicket = [
+                'user_id' => $userId,
+                'total_ticket' => $ticketNumber,
+                'remain_ticket' => $ticketNumber,
+                'ticket_type' => GachaTicket::PAID_TICKET
+            ];
+            GachaTicket::create($gaChaTicket);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
 
     /**
      * Create gacha ticket history used data
