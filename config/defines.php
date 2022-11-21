@@ -46,5 +46,6 @@ return [
     'amount_ticket' => env('AMOUNT_TICKET', 200),
     'fincode_api_url' => env('FINCODE_API_URL', 'https://api.test.fincode.jp/v1'),
     'fincode_authorization_token' => env('FINCODE_AUTHORIZATION_TOKEN', 'm_test_NWViZWE0ODgtZmQ4NS00NjNiLWJhNWQtZTNiZjI4M2ZjNTBhZmIzMDZlMzYtZjdhNi00NmJkLWExMmEtODE2M2Y3M2E3OTc2c18yMjEwMzE3MDQxMA'),
-    'gacha_api_url' => env('GACHA_API_URL', 'http://127.0.0.1:8001')
+    'gacha_api_url' => env('GACHA_API_URL', 'http://127.0.0.1:8001'),
+    'day_ticket_exchange_end' => env('DAY_TICKET_EXCHANGE_END', '2022/12/02 11:00:00')
 ];

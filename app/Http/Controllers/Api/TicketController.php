@@ -7,6 +7,7 @@ use App\Services\AuctionNftService;
 use App\Services\TicketService;
 use App\Services\UserService;
 use App\Traits\ApiGachaTicket;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -48,6 +49,15 @@ class TicketController extends Controller
     {
         try {
             $baseUri = config('defines.gacha_api_url');
+            $endDay = Carbon::parse(config('defines.day_ticket_exchange_end'), 'UTC')->getTimestamp();
+
+            // Ticket can't exchange after sale finished.
+            if (Carbon::now('UTC')->getTimestamp() >= $endDay) {
+                return response()->json([
+                    'message' => __('transaction.createDepositNftTransaction.out_day'),
+                ], 400);
+            }
+
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
             //case not found user
             if (!$user) {
@@ -55,6 +65,7 @@ class TicketController extends Controller
                     'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
                 ], 400);
             }
+
             $gachaTicket = $this->ticketService->getGachaTicketByUserIdAndType($user->id, $request->ticket_type);
             //check the number of remain ticket
             if ($gachaTicket->remain_ticket <= 0) {
@@ -62,6 +73,7 @@ class TicketController extends Controller
                     'message' => 'Out of tickets',
                 ], 400);
             }
+
             $result = $this->gachaTicket($baseUri, $request->wallet_address, $request->ticket_type);
             //case error with call api gacha
             if ($result['response']['status'] != 0) {
@@ -108,7 +120,7 @@ class TicketController extends Controller
     {
         $user = $this->userService->getUserByWalletAddressOrByUserId($user);
 
-        if (! $user) {
+        if (!$user) {
             return response()->json([
                 'message' => __('user.getUser.not_found'),
             ], 404);

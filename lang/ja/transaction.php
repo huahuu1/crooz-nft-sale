@@ -13,6 +13,7 @@ return [
         'success' => '入金成功しました。',
         'fail' => '入金失敗しました。',
         'out_of_stock' => 'パッケージは在庫切れです',
+        'out_day' => "Ticket can't exchange after sale finished."
     ],
     'importUnlockUserBalance' => [
         'success' => 'アンロック ユーザー残高のインポートに成功しました。',
