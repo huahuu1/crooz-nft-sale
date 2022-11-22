@@ -13,7 +13,8 @@ return [
         'success' => 'Deposit transaction successfully',
         'fail' => 'Deposit failed',
         'out_of_stock' => 'The package is out of stock',
-        'out_day' => "Ticket can't exchange after sale finished."
+        'out_day' => "Ticket can't exchange after sale finished.",
+        'package_owned' => "You can purchase only one Hikaru Bundle per wallet address."
     ],
     'importUnlockUserBalance' => [
         'success' => 'Import unlock user balance successfully',
