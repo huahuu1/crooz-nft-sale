@@ -413,7 +413,7 @@ class TransactionController extends Controller
                     $auctionFiat->status = NftAuctionHistory::SUCCESS_STATUS;
                     $auctionFiat->update();
                     // Call Job Distribute Ticket
-                    DistributeTicketJob::dispatch($auctionFiat)->onQueue(config('defines.queue.general'))->delay(now()->addSeconds(1));
+                    DistributeTicketJob::dispatch($auctionFiat)->onQueue(config('defines.queue.general'));
                     // Insert record in cash flow
                     $this->cashFlowService->createCashFlow(
                         $user->id,

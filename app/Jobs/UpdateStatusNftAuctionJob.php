@@ -92,7 +92,7 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                         //Update Transaction As Success
                         $this->updateStatusTransaction($this->transaction, NftAuctionHistory::SUCCESS_STATUS);
                         // Call Job Distribute Ticket
-                        DistributeTicketJob::dispatch($this->transaction)->onQueue(config('defines.queue.general'))->delay(now()->addSecond(1));
+                        DistributeTicketJob::dispatch($this->transaction)->onQueue(config('defines.queue.general'));
                     }
                     //transaction is failed if failed three times
                     if ((!$transactionStatus || is_null($transactionStatus))&& $this->transaction->number_of_failed >= 3) {
