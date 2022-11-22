@@ -69,6 +69,12 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
             if (!empty($response['error']) && $timeCheckingStatus >= 6) {
                 //Update Transaction As Fail
                 $this->updateStatusTransaction($this->transaction, NftAuctionHistory::FAILED_STATUS);
+                //refund ticket when transaction is fail
+                $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($this->transaction->package_id);
+                if (!empty($packageStock)) {
+                    $packageStock->remain += 1;
+                    $packageStock->update();
+                }
             }
             //validate response
             if (!empty($result['transaction_status']['result'])) {
@@ -85,12 +91,6 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                     ) {
                         //Update Transaction As Success
                         $this->updateStatusTransaction($this->transaction, NftAuctionHistory::SUCCESS_STATUS);
-                        //subtract ticket when transaction is success
-                        $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($this->transaction->package_id);
-                        if (!empty($packageStock)) {
-                            $packageStock->remain -= 1;
-                            $packageStock->update();
-                        }
                         // Call Job Distribute Ticket
                         DistributeTicketJob::dispatch($this->transaction)->onQueue(config('defines.queue.general'))->delay(now()->addSecond(1));
                     }
@@ -105,6 +105,12 @@ class UpdateStatusNftAuctionJob implements ShouldQueue
                         );
                         //Update Transaction As Fail
                         $this->updateStatusTransaction($this->transaction, NftAuctionHistory::FAILED_STATUS);
+                        //refund ticket when transaction is fail
+                        $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($this->transaction->package_id);
+                        if (!empty($packageStock)) {
+                            $packageStock->remain += 1;
+                            $packageStock->update();
+                        }
                     }
                     //in case transaction failed < 3 times
                     if (!$transactionStatus) {
