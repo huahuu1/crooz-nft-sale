@@ -136,12 +136,12 @@ class HistoryListService
      * @param int $package_id
      * @return NftAuctionHistory
      */
-    public function getNftAuctionHistoriesByPackage($auction_id, $user_id, $package_id)
+    public function getNftAuctionHistoriesByPackage($userId, $packageId, $auctionId)
     {
-        return NftAuctionHistory::where('user_id', $user_id)
-            ->where('nft_auction_id', $auction_id)
-            ->where('package_id', $package_id)
+        return NftAuctionHistory::where('user_id', $userId)
+            ->where('nft_auction_id', $auctionId)
+            ->where('package_id', $packageId)
             ->whereIn('status', [NftAuctionHistory::SUCCESS_STATUS, NftAuctionHistory::PENDING_STATUS])
-            ->get();
+            ->count();
     }
 }
