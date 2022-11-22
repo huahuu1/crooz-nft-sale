@@ -290,6 +290,46 @@ class TransactionController extends Controller
     }
 
     /**
+     * Register payment with credit card.
+     *
+     * @param  \App\Http\Requests\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function registerPaymentWithCreditCard(Request $request)
+    {
+        try {
+            $bearerToken = config('defines.fincode_authorization_token');
+            $baseUri = config('defines.fincode_api_url');
+            //call api register payment fincode
+            $result = $this->registerPaymentCredit(
+                $baseUri,
+                $bearerToken,
+                "Card",
+                "CAPTURE",
+                $request->amount
+            );
+            //case error with call api payment
+            if ($result['statusCode'] !== 200) {
+                return response()->json([
+                    'message' => $result,
+                ], $result['statusCode']);
+            }
+            return response()->json([
+                'message' => 'Registered credit successfully',
+                'id' => $result['response']['id'],
+                'access_id' => $result['response']['access_id']
+            ], $result['statusCode']);
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'message' => __('transaction.createDepositNftTransaction.fail'),
+                'error' => $e,
+            ], 400);
+        }
+    }
+
+    /**
      * Create transaction with credit card.
      *
      * @param  \App\Http\Requests\PaymentRequest $request
@@ -326,14 +366,17 @@ class TransactionController extends Controller
                 $request->package_id
             );
             //call api payment fincode
-            $result = $this->payment(
+            $result = $this->completePaymentCredit(
                 $baseUri,
                 $bearerToken,
                 $request->id,
                 $request->pay_type,
                 $request->access_id,
                 $request->method,
-                $request->token,
+                $request->card_no,
+                $request->expire,
+                $request->holder_name,
+                $request->security_code,
             );
             //case error with call api payment
             if ($result['statusCode'] !== 200) {

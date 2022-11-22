@@ -14,14 +14,17 @@ class PaymentRequest extends FormRequest
     public function rules()
     {
         return [
-            'amount' => 'required|numeric|gt:0',
-            'wallet_address' => 'required|regex:' . config('regex.wallet_address'),
-            'token_id' => 'required',
             'id' => 'required',
             'pay_type' => 'required',
             'access_id' => 'required',
             'method' => 'required',
-            'token' => 'required',
+            'card_no' => 'required',
+            'expire' => 'required',
+            'holder_name' => 'required',
+            'security_code' => 'required',
+            'wallet_address' => 'required|regex:' . config('regex.wallet_address'),
+            'amount' => 'required|numeric|gt:0',
+            'token_id' => 'required',
             'nft_auction_id' => 'required',
             'package_id' => 'required',
         ];

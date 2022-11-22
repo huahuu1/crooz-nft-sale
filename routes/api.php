@@ -57,7 +57,9 @@ Route::middleware(['language'])->group(function () {
             Route::post('buy-token-transaction', 'createDepositTokenTransaction');
             Route::post('buy-nft-transaction', 'createDepositNftTransaction');
             Route::post('insert-missed-transaction', 'insertMissedTransaction');
-            //payment with credit card
+            //register payment with credit card
+            Route::post('register-payment/credit', 'registerPaymentWithCreditCard');
+            //complete payment with credit card
             Route::put('payment/credit', 'paymentWithCreditCard');
         });
 

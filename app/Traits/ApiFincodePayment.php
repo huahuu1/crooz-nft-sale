@@ -8,10 +8,36 @@ use Illuminate\Support\Facades\Log;
 trait ApiFincodePayment
 {
     /**
-     * @param $baseUri, $apiKey, $networkId, $to, $amount, $tokenType
+     * @param $baseUri, $bearerToken, $payType, $jobCode, $amount
      * @return $response
      */
-    public function payment($baseUri, $bearerToken, $id, $payType, $accessId, $method, $paymentToken)
+    public function registerPaymentCredit($baseUri, $bearerToken, $payType, $jobCode, $amount)
+    {
+        try {
+            $params = [
+                'pay_type' => $payType,
+                'job_code' => $jobCode,
+                'amount' => $amount
+            ];
+
+            $response = Http::withToken($bearerToken)
+            ->withBody(json_encode($params), 'application/json')
+            ->post($baseUri . '/payments');
+
+            return [
+                'response' => $response->json(),
+                'statusCode' => $response->getStatusCode()
+            ];
+        } catch (\Exception $e) {
+            Log::error($e);
+        }
+    }
+
+    /**
+     * @param $baseUri, $bearerToken, $id, $payType, $accessId, $method, $cardNo, $expire, $holderName, $securityCode
+     * @return $response
+     */
+    public function completePaymentCredit($baseUri, $bearerToken, $id, $payType, $accessId, $method, $cardNo, $expire, $holderName, $securityCode)
     {
         try {
             $params = [
@@ -19,7 +45,10 @@ trait ApiFincodePayment
                 'pay_type' => $payType,
                 'access_id' => $accessId,
                 'method' => $method,
-                'token' => (string) $paymentToken
+                'card_no' => $cardNo,
+                'expire' => $expire,
+                'holder_name' => $holderName,
+                'security_code' => $securityCode,
             ];
 
             $response = Http::withToken($bearerToken)
