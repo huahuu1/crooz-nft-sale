@@ -102,7 +102,9 @@ class TicketService
      */
     public function hasGachaInfoByUserId($userId)
     {
-        return GachaTicket::where('user_id', $userId)->count();
+        return GachaTicket::where('user_id', $userId)
+            ->where('ticket_type', GachaTicket::PAID_TICKET)
+            ->count();
     }
 
     /**
