@@ -377,6 +377,12 @@ class TransactionController extends Controller
         }
     }
 
+    /**
+     * gaCha Ticket Api
+     *
+     * @param Request $request
+     * @return Response
+     */
     public function gachaTicketApi(Request $request)
     {
         try {
@@ -405,5 +411,33 @@ class TransactionController extends Controller
                 'error' => $e,
             ], 400);
         }
+    }
+
+    /**
+     * get history Nft Auction By Package of user
+     *
+     * @param Request $request
+     * @return response
+     */
+    public function historyNftAuctionByPackage(Request $request)
+    {
+        // require all request
+        if (empty($request->auction_id) || empty($request->user_id) || empty($request->package_id)) {
+            return response()->json([
+                'message' => 'failed',
+                'error' => __('Not found'),
+            ], 400);
+        }
+
+        // get nft auction history by user id, auction id and package id
+        $auctionHistory =  $this->historyListService->getNftAuctionHistoriesByPackage(
+            $request->auction_id,
+            $request->user_id,
+            $request->package_id
+        );
+
+        return response()->json([
+            'status' => !empty($auctionHistory) ? true : false,
+        ], 200);
     }
 }
