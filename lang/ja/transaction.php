@@ -13,7 +13,8 @@ return [
         'success' => '入金成功しました。',
         'fail' => '入金失敗しました。',
         'out_of_stock' => 'パッケージは在庫切れです',
-        'out_day' => "Ticket can't exchange after sale finished."
+        'out_day' => "Ticket can't exchange after sale finished.",
+        'package_owned' => "ヒカルパックのご購入に使用される1ウォレットアドレスにつき1個まで購入できます"
     ],
     'importUnlockUserBalance' => [
         'success' => 'アンロック ユーザー残高のインポートに成功しました。',

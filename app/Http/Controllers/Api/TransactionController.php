@@ -75,7 +75,19 @@ class TransactionController extends Controller
     {
         try {
             $depositTransaction = $this->historyListService->getNftAuctionHistoryByTxHash($request->tx_hash);
+            $user = $this->userService->getUserByWalletAddress($request->wallet_address);
             $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($request->package_id);
+            $auctionHistory = $this->historyListService->getNftAuctionHistoriesByPackage(
+                $user->id,
+                $request->package_id,
+                $request->nft_auction_id
+            );
+            //in case 1 user can buy 1 package
+            if ($auctionHistory) {
+                return response()->json([
+                    'message' => __('transaction.createDepositNftTransaction.package_owned'),
+                ], 400);
+            }
             //prevent out of stock package
             if (!empty($packageStock) && $packageStock->remain <= 0) {
                 return response()->json([
@@ -89,8 +101,6 @@ class TransactionController extends Controller
                     'message' => __('transaction.createDepositNftTransaction.duplicate'),
                 ], 400);
             }
-
-            $user = $this->userService->getUserByWalletAddress($request->wallet_address);
 
             if (!$user) {
                 return response()->json([
