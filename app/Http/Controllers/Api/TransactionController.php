@@ -109,6 +109,12 @@ class TransactionController extends Controller
                 $request->package_id
             );
 
+            //subtract ticket when transaction is pending
+            if (!empty($packageStock)) {
+                $packageStock->remain -= 1;
+                $packageStock->update();
+            }
+
             $this->cashFlowService->createCashFlow(
                 $user->id,
                 $request->token_id,
