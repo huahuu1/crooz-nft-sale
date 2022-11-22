@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\NftAuctionHistory;
+use App\Models\NftAuctionInfo;
 use Exception;
 
 class HistoryListService
@@ -126,5 +127,21 @@ class HistoryListService
             throw new Exception($e->getMessage());
             return null;
         }
+    }
+    /**
+     * get Nft Auction Histories By Package
+     *
+     * @param int $auction_id
+     * @param int $user_id
+     * @param int $package_id
+     * @return NftAuctionHistory
+     */
+    public function getNftAuctionHistoriesByPackage($auction_id, $user_id, $package_id)
+    {
+        return NftAuctionHistory::where('user_id', $user_id)
+            ->where('nft_auction_id', $auction_id)
+            ->where('package_id', $package_id)
+            ->whereIn('status', [NftAuctionHistory::SUCCESS_STATUS, NftAuctionHistory::PENDING_STATUS])
+            ->get();
     }
 }
