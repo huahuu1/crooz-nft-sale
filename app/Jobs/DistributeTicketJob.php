@@ -73,13 +73,13 @@ class DistributeTicketJob implements ShouldQueue
                 // get gachaTicket our current user
                 $isGachaTicket = $this->ticketService->hasGachaInfoByUserId($this->transaction->user_id);
                 if (!$isGachaTicket) {
-                    // create gachaTicket
+                    // create gacha paid ticket
                     $this->ticketService->createPaidGachaTicketData(
                         $this->transaction->user_id,
                         $ticketNumber,
                     );
                 } else {
-                    // update gaChaTicket form user_id and paid ticket
+                    // update gacha ticket form user_id and paid ticket
                     $userTicket = $this->ticketService->getGachaTicketByUserIdAndType(
                         $this->transaction->user_id,
                         GachaTicket::PAID_TICKET
