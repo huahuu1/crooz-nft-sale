@@ -455,4 +455,23 @@ class TransactionController extends Controller
             ], 400);
         }
     }
+
+    public function historyNftAuctionByPackage(Request $request)
+    {
+        if(empty($request->user_id) || empty($request->package_id) || empty($request->auction_id)){
+            return response()->json([
+                'message' => 'Not Found'
+            ], 400);
+        }
+
+        $auctionHistory = $this->historyListService->getNftAuctionHistoriesByPackage(
+            $request->user_id,
+            $request->package_id,
+            $request->auction_id
+        );
+
+        return response()->json([
+            'status' => !empty($auctionHistory) ? true : false
+        ], 200);
+    }
 }

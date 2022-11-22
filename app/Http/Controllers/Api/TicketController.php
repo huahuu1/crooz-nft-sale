@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\AuctionNftService;
+use App\Services\NftService;
 use App\Services\TicketService;
 use App\Services\UserService;
 use App\Traits\ApiGachaTicket;
@@ -22,6 +23,9 @@ class TicketController extends Controller
 
     protected $ticketService;
 
+    protected $nftService;
+
+
     /**
      * TransactionController constructor.
      *
@@ -32,11 +36,13 @@ class TicketController extends Controller
     public function __construct(
         UserService $userService,
         AuctionNftService $auctionNftService,
-        TicketService $ticketService
+        TicketService $ticketService,
+        NftService $nftService
     ) {
         $this->userService = $userService;
         $this->auctionNftService = $auctionNftService;
         $this->ticketService = $ticketService;
+        $this->nftService = $nftService;
     }
 
     /**
@@ -97,9 +103,13 @@ class TicketController extends Controller
                         1
                     );
                 }
+                // get all nft of gaCha result
+                $nfts = $this->nftService->getNftByIds($result['response']['result']);
             }
+
             return response()->json([
                 'message' => "Use ticket successfully",
+                'data' => $nfts ?? []
             ], 200);
         } catch (Exception $e) {
             Log::error($e);

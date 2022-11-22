@@ -61,6 +61,8 @@ Route::middleware(['language'])->group(function () {
             Route::post('register-payment/credit', 'registerPaymentWithCreditCard');
             //complete payment with credit card
             Route::put('payment/credit', 'paymentWithCreditCard');
+            // get history purchase nft auction list
+            Route::get('package-history-nft-auction', 'historyNftAuctionByPackage');
         });
 
         //my page routes
