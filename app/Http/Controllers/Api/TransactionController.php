@@ -12,12 +12,15 @@ use App\Models\Nft;
 use App\Models\NftAuctionHistory;
 use App\Models\NftAuctionPackageStock;
 use App\Services\AuctionInfoService;
+use App\Services\AuctionNftService;
 use App\Services\CashFlowService;
 use App\Services\HistoryListService;
+use App\Services\TicketService;
 use App\Services\UserService;
 use App\Traits\ApiFincodePayment;
 use App\Traits\CheckTransactionWithApiScan;
 use App\Traits\ApiScanTransaction;
+use App\Traits\DistributeTicket;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -32,6 +35,8 @@ class TransactionController extends Controller
 
     use ApiFincodePayment;
 
+    use DistributeTicket;
+
     protected $userService;
 
     protected $privateUserUnlockBalanceImport;
@@ -42,6 +47,10 @@ class TransactionController extends Controller
 
     protected $auctionInfoService;
 
+    protected $ticketService;
+
+    protected $auctionNftService;
+
     /**
      * TransactionController constructor.
      *
@@ -50,19 +59,25 @@ class TransactionController extends Controller
      * @param HistoryListService $historyListService
      * @param CashFlowService $cashFlowService
      * @param AuctionInfoService $auctionInfoService
+     * @param TicketService $ticketService
+     * @param AuctionNftService $auctionNftService
      */
     public function __construct(
         UserService $userService,
         PrivateUserUnlockBalanceImport $privateUserUnlockBalanceImport,
         HistoryListService $historyListService,
         CashFlowService $cashFlowService,
-        AuctionInfoService $auctionInfoService
+        AuctionInfoService $auctionInfoService,
+        TicketService $ticketService,
+        AuctionNftService $auctionNftService,
     ) {
         $this->userService = $userService;
         $this->privateUserUnlockBalanceImport = $privateUserUnlockBalanceImport;
         $this->historyListService = $historyListService;
         $this->cashFlowService = $cashFlowService;
         $this->auctionInfoService = $auctionInfoService;
+        $this->ticketService = $ticketService;
+        $this->auctionNftService = $auctionNftService;
     }
 
     /**
@@ -413,7 +428,7 @@ class TransactionController extends Controller
                     $auctionFiat->status = NftAuctionHistory::SUCCESS_STATUS;
                     $auctionFiat->update();
                     // Call Job Distribute Ticket
-                    DistributeTicketJob::dispatch($auctionFiat)->onQueue(config('defines.queue.general'));
+                    $this->distributeTicket($auctionFiat, $this->ticketService, $this->auctionNftService);
                     // Insert record in cash flow
                     $this->cashFlowService->createCashFlow(
                         $user->id,

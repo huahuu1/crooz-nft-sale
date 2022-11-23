@@ -3,14 +3,8 @@
 namespace App\Jobs;
 
 use App\Models\GachaTicket;
-use App\Models\NftAuctionHistory;
-use App\Models\NftAuctionInfo;
-use App\Services\AuctionInfoService;
 use App\Services\AuctionNftService;
 use App\Services\TicketService;
-use App\Traits\ApiScanTransaction;
-use App\Traits\CheckTransactionWithApiScan;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -32,8 +26,6 @@ class DistributeTicketJob implements ShouldQueue
 
     protected $auctionNftService;
 
-    protected $auctionInfoService;
-
     /**
      * Create a new job instance.
      *
@@ -44,7 +36,6 @@ class DistributeTicketJob implements ShouldQueue
         $this->transaction = $transaction;
         $this->ticketService = new TicketService();
         $this->auctionNftService = new AuctionNftService();
-        $this->auctionInfoService = new AuctionInfoService();
     }
 
     /**
