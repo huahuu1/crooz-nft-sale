@@ -19,7 +19,6 @@ trait DistributeTicket
             $packageInfo = $transaction->package;
             $nftQuantity = $transaction->package->reward->nft_quantity;
             $ticketNumber = 0;
-            info($packageInfo);
             //case user deposits amount not equal with package price
             if ($transaction->amount != $packageInfo->price) {
                 // convert total ticket
@@ -27,7 +26,7 @@ trait DistributeTicket
                 $nftQuantity = $ticketNumber;
             }
             //case user deposits amount equal with package price
-            if ($transaction->amount === $packageInfo->price) {
+            if ($transaction->amount == $packageInfo->price) {
                 // convert total ticket
                 $ticketNumber = $transaction->package->reward->ticket_quantity;
             }
