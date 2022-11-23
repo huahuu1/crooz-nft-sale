@@ -77,10 +77,11 @@ class HistoryListService
             ->with(
                 [
                     'user:id,email,wallet_address,token_validate,status',
-                    'tokenMaster:id,name,code,description,status',
+                    'tokenMaster:id,name,code,description,status,network_id',
                     'nftAuctionInfo:id,name'
                 ]
             )
+            ->with('networkMaster:network_masters.id,network_masters.chain_id,network_masters.rpc_urls,network_masters.block_explorer_urls,network_masters.chain_name,network_masters.unit')
             ->get()
             ->paginate($maxPerPage);
     }
