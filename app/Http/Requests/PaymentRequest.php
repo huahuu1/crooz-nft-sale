@@ -18,15 +18,12 @@ class PaymentRequest extends FormRequest
             'pay_type' => 'required',
             'access_id' => 'required',
             'method' => 'required',
-            'card_no' => 'required',
-            'expire' => 'required',
-            'holder_name' => 'required',
-            'security_code' => 'required',
             'wallet_address' => 'required|regex:' . config('regex.wallet_address'),
             'amount' => 'required|numeric|gt:0',
             'token_id' => 'required',
             'nft_auction_id' => 'required',
             'package_id' => 'required',
+            'token' => 'required',
         ];
     }
 
