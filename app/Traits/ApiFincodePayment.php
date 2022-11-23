@@ -34,10 +34,10 @@ trait ApiFincodePayment
     }
 
     /**
-     * @param $baseUri, $bearerToken, $id, $payType, $accessId, $method, $cardNo, $expire, $holderName, $securityCode
+     * @param $baseUri, $bearerToken, $id, $payType, $accessId, $method, $paymentToken
      * @return $response
      */
-    public function completePaymentCredit($baseUri, $bearerToken, $id, $payType, $accessId, $method, $cardNo, $expire, $holderName, $securityCode)
+    public function completePaymentCredit($baseUri, $bearerToken, $id, $payType, $accessId, $method, $paymentToken)
     {
         try {
             $params = [
@@ -45,10 +45,7 @@ trait ApiFincodePayment
                 'pay_type' => $payType,
                 'access_id' => $accessId,
                 'method' => $method,
-                'card_no' => $cardNo,
-                'expire' => $expire,
-                'holder_name' => $holderName,
-                'security_code' => $securityCode,
+                'token' => (string) $paymentToken
             ];
 
             $response = Http::withToken($bearerToken)

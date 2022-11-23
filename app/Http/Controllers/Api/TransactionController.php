@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PaymentRequest;
 use App\Http\Requests\TransactionRequest;
 use App\Imports\PrivateUserUnlockBalanceImport;
-use App\Jobs\DistributeTicketJob;
 use App\Models\CashFlow;
 use App\Models\Nft;
 use App\Models\NftAuctionHistory;
@@ -400,10 +399,7 @@ class TransactionController extends Controller
                 $request->pay_type,
                 $request->access_id,
                 $request->method,
-                $request->card_no,
-                $request->expire,
-                $request->holder_name,
-                $request->security_code,
+                $request->token
             );
             //case error with call api payment
             if ($result['statusCode'] !== 200) {
