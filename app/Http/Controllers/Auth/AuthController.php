@@ -100,12 +100,12 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logout()
+    public function logout(Request $request)
     {
         // Revoke all tokens
         try {
-            Auth::user()->tokens()->delete();
-
+            $id = $request->user()->currentAccessToken()->id;
+            Auth::user()->tokens()->where('id', $id)->delete();
             return response()->json([
                 'message' => __('authCustom.logout.success'),
             ], 200);
