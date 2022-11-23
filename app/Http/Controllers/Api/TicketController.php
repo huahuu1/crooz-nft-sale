@@ -81,14 +81,14 @@ class TicketController extends Controller
             }
 
             $result = $this->gachaTicket($baseUri, $request->wallet_address, $request->ticket_type);
-            //case error with call api gacha
-            if ($result['response']['status'] != 0) {
+            //case error with call api gaCha
+            if (!empty($result['response']['status']) && $result['response']['status'] != 0) {
                 return response()->json([
                     'message' => 'This is error gacha ticket',
                 ], $result['statusCode']);
             }
             //case success with call api gacha
-            if ($result['statusCode'] === 200) {
+            if ($result['statusCode'] === 200 && !empty($result['response']['result'])) {
                 //minus the number of tickets used
                 $gachaTicket->remain_ticket -= 1;
                 $gachaTicket->update();
