@@ -88,6 +88,7 @@ class TransactionController extends Controller
     public function createDepositNftTransaction(TransactionRequest $request)
     {
         try {
+            info($request->all());
             $depositTransaction = $this->historyListService->getNftAuctionHistoryByTxHash($request->tx_hash);
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
             $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($request->package_id);
@@ -172,6 +173,7 @@ class TransactionController extends Controller
     public function insertMissedTransaction(Request $request)
     {
         try {
+            info($request->all());
             $password = config('defines.password_decrypte');
             $request = $request->all();
             $transactions = CryptoJsAes::decrypt($request['data'] ?? '', $password);
@@ -368,6 +370,7 @@ class TransactionController extends Controller
     public function paymentWithCreditCard(PaymentRequest $request)
     {
         try {
+            info($request->all());
             $bearerToken = config('defines.fincode_authorization_token');
             $baseUri = config('defines.fincode_api_url');
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
