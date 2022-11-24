@@ -178,8 +178,12 @@ class TransactionController extends Controller
             $results = collect([]);
             foreach ($transactions as $transaction) {
                 $nftAuctionHistory = $this->historyListService->getNftAuctionHistoryByTxHash($transaction['tx_hash']);
-                $network = $this->historyListService->getNftAuctionHistoryByTxHash($transaction['tx_hash'])->networkMaster->chain_id;
-                $isTransactionExistedOnBlockChain = $this->isTransactionExisted($transaction['tx_hash'], $network);
+                $networkInfo = $this->auctionInfoService->infoNftAuctionById($transaction['nft_auction_id']);
+                foreach ($networkInfo->auctionNetwork as $network) {
+                    if ($this->isTransactionExisted($transaction['tx_hash'], $network->chain_id)) {
+                        $isTransactionExistedOnBlockChain = true;
+                    }
+                }
                 //case transaction is existed in history table and on blockchain
                 //and case not existed on blockchain
                 if ($nftAuctionHistory && $isTransactionExistedOnBlockChain || !$isTransactionExistedOnBlockChain) {
