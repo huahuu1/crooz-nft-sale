@@ -85,7 +85,7 @@ class TransactionController extends Controller
      * @param  \App\Http\Requests\TransactionRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function createDepositNftTransaction(TransactionRequest $request)
+    public function createDepositNftTransaction(Request $request)
     {
         try {
             info($request->all());
