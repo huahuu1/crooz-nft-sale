@@ -206,18 +206,18 @@ namespace App\Models{
  * @property string $block_explorer_urls
  * @property string $chain_name
  * @property string $unit
- * @property string|null $contract_wallet
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\TokenMaster[] $type
+ * @property-read int|null $type_count
  * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster query()
  * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereBlockExplorerUrls($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereChainId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereChainName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereContractWallet($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NetworkMaster whereRpcUrls($value)
@@ -268,6 +268,7 @@ namespace App\Models{
  * @property int|null $package_id
  * @property string $amount
  * @property string $status
+ * @property int|null $number_of_failed
  * @property string|null $tx_hash
  * @property string|null $payment_method
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -286,6 +287,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory whereNftAuctionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory whereNumberOfFailed($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory wherePackageId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory wherePaymentMethod($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionHistory whereStatus($value)
@@ -591,6 +593,7 @@ namespace App\Models{
  * @property string|null $description
  * @property int $status
  * @property int|null $network_id
+ * @property string|null $contract_wallet
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\NetworkMaster|null $networkMaster
@@ -600,6 +603,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|TokenMaster newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TokenMaster query()
  * @method static \Illuminate\Database\Eloquent\Builder|TokenMaster whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TokenMaster whereContractWallet($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TokenMaster whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TokenMaster whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TokenMaster whereId($value)

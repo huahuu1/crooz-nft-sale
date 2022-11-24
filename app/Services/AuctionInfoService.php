@@ -23,7 +23,7 @@ class AuctionInfoService
         )
         ->with(
             [
-                'auctionNetwork:network_masters.id,network_masters.chain_id,network_masters.rpc_urls,network_masters.block_explorer_urls,network_masters.chain_name,network_masters.unit,network_masters.contract_wallet',
+                'auctionNetwork:network_masters.id,network_masters.chain_id,network_masters.rpc_urls,network_masters.block_explorer_urls,network_masters.chain_name,network_masters.unit',
             ]
         )
         ->orderby('id', 'desc')
@@ -72,7 +72,7 @@ class AuctionInfoService
         )
         ->with(
             [
-                'auctionNetwork:network_masters.id,network_masters.chain_id,network_masters.rpc_urls,network_masters.block_explorer_urls,network_masters.chain_name,network_masters.unit,network_masters.contract_wallet',
+                'auctionNetwork:network_masters.id,network_masters.chain_id,network_masters.rpc_urls,network_masters.block_explorer_urls,network_masters.chain_name,network_masters.unit',
             ]
         )
         ->where('status', 1)
