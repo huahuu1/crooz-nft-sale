@@ -330,6 +330,7 @@ class TransactionController extends Controller
     public function registerPaymentWithCreditCard(Request $request)
     {
         try {
+            info('registerPaymentWithCreditCard-Request',[$request]);
             $bearerToken = config('defines.fincode_authorization_token');
             $baseUri = config('defines.fincode_api_url');
             //call api register payment fincode
@@ -340,6 +341,9 @@ class TransactionController extends Controller
                 "CAPTURE",
                 $request->amount
             );
+
+            info('registerPaymentWithCreditCard-registerPaymentCredit',[$result]);
+
             //case error with call api payment
             if ($result['statusCode'] !== 200) {
                 return response()->json([
