@@ -370,7 +370,7 @@ class TransactionController extends Controller
     public function paymentWithCreditCard(PaymentRequest $request)
     {
         try {
-            info($request->all());
+            info("paymentWithCreditCard-PaymentRequest",[$request->all()]);
             $bearerToken = config('defines.fincode_authorization_token');
             $baseUri = config('defines.fincode_api_url');
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
@@ -408,6 +408,8 @@ class TransactionController extends Controller
                 $request->method,
                 $request->token
             );
+
+            info("paymentWithCreditCard-completePaymentCredit", [$result]);
             //case error with call api payment
             if ($result['statusCode'] !== 200) {
                 //update status and tx hash nft auction history
