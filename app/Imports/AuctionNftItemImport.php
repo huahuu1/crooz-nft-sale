@@ -23,11 +23,13 @@ class AuctionNftItemImport implements ToModel, WithStartRow, WithChunkReading, S
 
     protected $userService;
 
+    protected $auctionNft;
 
-    public function __construct(AuctionNftService $auctionNftService)
+    public function __construct(AuctionNft $auctionNft)
     {
-        $this->auctionNftService = $auctionNftService;
+        $this->auctionNft = $auctionNft;
         $this->userService = new UserService();
+        $this->auctionNftService = new AuctionNftService();
     }
 
     /**
