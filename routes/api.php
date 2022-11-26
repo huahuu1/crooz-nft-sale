@@ -116,6 +116,8 @@ Route::middleware(['language'])->group(function () {
     //get exchange rate
     Route::get('exchange-rate/{symbol}', [InformationController::class, 'getExchangeRateBySymbol']);
     Route::get('exchange-rate', [InformationController::class, 'getLastExchangeRate']);
+    // insert BscScan transactions
+    Route::get('get-bsc-transactions', [TransactionController::class, 'insertBscScanTransactions']);
 
     //purchase list
     Route::group([

@@ -16,9 +16,9 @@ use App\Services\CashFlowService;
 use App\Services\HistoryListService;
 use App\Services\TicketService;
 use App\Services\UserService;
+use App\Traits\ApiBscScanTransaction;
 use App\Traits\ApiFincodePayment;
 use App\Traits\CheckTransactionWithApiScan;
-use App\Traits\ApiScanTransaction;
 use App\Traits\DistributeTicket;
 use Exception;
 use Illuminate\Http\Request;
@@ -30,11 +30,11 @@ class TransactionController extends Controller
 {
     use CheckTransactionWithApiScan;
 
-    use ApiScanTransaction;
-
     use ApiFincodePayment;
 
     use DistributeTicket;
+
+    use ApiBscScanTransaction;
 
     protected $userService;
 
@@ -510,5 +510,32 @@ class TransactionController extends Controller
         return response()->json([
             'status' => $auctionHistory ? true : false
         ], 200);
+    }
+
+    /**
+     * Insert BscScan transactions.
+     *
+     * @param  \App\Http\Requests\PaymentRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function insertBscScanTransactions(Request $request)
+    {
+        try {
+            $baseUri = config('defines.api.bsc.url');
+            $apiKey = config('defines.api.bsc.api_key');
+
+            $result = $this->getAllTransactionsBscScan($baseUri, $apiKey, '0x55d398326f99059fF775485246999027B3197955', '0x045508e6599Ce4f8a347D66b9dA2C3C4c655e394');
+            return response()->json([
+                'message' => 'success',
+                'data' => $result
+            ]);
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'message' => 'fail',
+                'error' => $e,
+            ], 400);
+        }
     }
 }
