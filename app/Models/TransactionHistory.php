@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
 
-class TransactionRanking extends Model
+class TransactionHistory extends Model
 {
     use HasApiTokens;
     use HasFactory;
 
-    protected $table = 'transaction_rankings';
+    protected $table = 'transaction_histories';
 
     /**
      * The attributes that are mass assignable.
@@ -19,8 +19,11 @@ class TransactionRanking extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'wallet_address',
+        'chain',
         'tx_hash',
-        'amount'
+        'from',
+        'to',
+        'token',
+        'value'
     ];
 }

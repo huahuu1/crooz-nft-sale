@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use Carbon\Carbon;
 use DOMDocument;
 use DOMXPath;
 use Illuminate\Support\Facades\Log;
@@ -9,27 +10,50 @@ use Illuminate\Support\Facades\Log;
 trait ApiBscScanTransaction
 {
     /**
-     * @param $baseUri, $apiKey, $contract, $address
      * @return $response
      */
-    public function getAllTransactionsBscScan($baseUri, $apiKey, $contract, $address)
+    public function getAllTransactionsBscScan()
     {
         try {
-            $params = [
-                'module' => 'account',
-                'action' => 'tokentx',
-                'contractaddress' => $contract,
-                'address' => $address,
-                'page' => 1,
-                'offset' => 10000,
-                'startblock' => 0,
-                'endblock' => 99999999,
-                'sort' => 'asc',
-                'apikey' => $apiKey,
-            ];
-
-            $url = $baseUri . '?' . http_build_query($params, '&');
-            $response = $this->cloudFlareBypass($url);
+            $baseUri = config('defines.api.bsc.url');
+            $apiKey = config('defines.api.bsc.api_key');
+            $auctionNetworks = $this->auctionInfoService->infoNftAuctionById(3)->auctionNetwork->values();
+            $packages = $this->auctionInfoService->infoNftAuctionById(3)->packages->values();
+            $results = collect([]);
+            foreach ($auctionNetworks[0]->type as $auctionNetwork) {
+                foreach ($packages as $package) {
+                    if ($auctionNetwork->contract_wallet) {
+                        $params = [
+                            'module' => 'account',
+                            'action' => 'tokentx',
+                            'contractaddress' => $auctionNetwork->contract_wallet,
+                            'address' => $package->destination_address,
+                            'page' => 1,
+                            'offset' => 10000,
+                            'startblock' => 0,
+                            'endblock' => 99999999,
+                            'sort' => 'asc',
+                            'apikey' => $apiKey,
+                        ];
+                        $url = $baseUri . '?' . http_build_query($params, '&');
+                        $response = $this->cloudFlareBypass($url);
+                        $results->push(json_decode($response, true));
+                    }
+                }
+            }
+            $startDate = Carbon::parse(config('defines.date_auction_start'), 'UTC')->getTimestamp();
+            $endDate = Carbon::parse(config('defines.date_auction_end'), 'UTC')->getTimestamp();
+            $startRankingDate = Carbon::parse(config('defines.date_auction_ranking_start'), 'UTC')->getTimestamp();
+            $now = Carbon::now('UTC')->getTimestamp();
+            $results = json_decode($results, true);
+            if ($now >= $startRankingDate) {
+                $response = collect(array_merge($results[0]['result'], $results[1]['result']))
+                    ->whereBetween('timeStamp', [(string)$startDate, (string)$endDate])
+                    ->where('confirmations', '>=',(string)24);
+            } else {
+                $response = collect(array_merge($results[0]['result'], $results[1]['result']))
+                    ->whereBetween('timeStamp', [(string)$startDate, (string)$endDate]);
+            }
 
             return json_decode($response, true);
         } catch (\Exception $e) {
