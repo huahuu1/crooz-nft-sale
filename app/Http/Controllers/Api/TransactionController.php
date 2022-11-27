@@ -14,6 +14,7 @@ use App\Services\AuctionInfoService;
 use App\Services\AuctionNftService;
 use App\Services\CashFlowService;
 use App\Services\HistoryListService;
+use App\Services\RankingService;
 use App\Services\TicketService;
 use App\Services\UserService;
 use App\Traits\ApiBscScanTransaction;
@@ -60,6 +61,7 @@ class TransactionController extends Controller
      * @param AuctionInfoService $auctionInfoService
      * @param TicketService $ticketService
      * @param AuctionNftService $auctionNftService
+     * @param RankingService $auctionNftService
      */
     public function __construct(
         UserService $userService,
@@ -69,6 +71,7 @@ class TransactionController extends Controller
         AuctionInfoService $auctionInfoService,
         TicketService $ticketService,
         AuctionNftService $auctionNftService,
+        RankingService $rankingService
     ) {
         $this->userService = $userService;
         $this->privateUserUnlockBalanceImport = $privateUserUnlockBalanceImport;
@@ -77,6 +80,7 @@ class TransactionController extends Controller
         $this->auctionInfoService = $auctionInfoService;
         $this->ticketService = $ticketService;
         $this->auctionNftService = $auctionNftService;
+        $this->rankingService = $rankingService;
     }
 
     /**
@@ -537,5 +541,18 @@ class TransactionController extends Controller
                 'error' => $e,
             ], 400);
         }
+    }
+
+    /**
+     * Get transactions ranking
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getTransactionsRanking($numberRank = null)
+    {
+        $numberRank = $numberRank ?? config('defines.number_of_ranking');
+        return response()->json([
+            'data' => $this->rankingService->getTransactionsRanking($numberRank)
+        ]);
     }
 }

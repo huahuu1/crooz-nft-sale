@@ -48,7 +48,6 @@ return [
     'fincode_authorization_token' => env('FINCODE_AUTHORIZATION_TOKEN', 'm_test_NWViZWE0ODgtZmQ4NS00NjNiLWJhNWQtZTNiZjI4M2ZjNTBhZmIzMDZlMzYtZjdhNi00NmJkLWExMmEtODE2M2Y3M2E3OTc2c18yMjEwMzE3MDQxMA'),
     'gacha_api_url' => env('GACHA_API_URL', 'http://127.0.0.1:8001'),
     'day_ticket_exchange_end' => env('DAY_TICKET_EXCHANGE_END', '2022/12/02 11:00:00'),
-    'date_auction_start' => env('DATE_AUCTION_START', '2022/11/27 10:00:00'),
-    'date_auction_end' => env('DATE_AUCTION_END', '2022/11/30 10:00:00'),
     'date_auction_ranking_start' => env('DATE_AUCTION_RANKING_START', '2022/11/30 11:00:00'),
+    'number_of_ranking' => env('NUMBER_OF_RANKING', 10),
 ];

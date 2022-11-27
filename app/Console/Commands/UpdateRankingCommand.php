@@ -2,10 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\CreateTransactionJob;
 use App\Jobs\UpdateRankingJob;
-use App\Jobs\UpdateStatusNftAuctionJob;
-use App\Models\NftAuctionHistory;
+use App\Models\TransactionHistory;
+use App\Models\TransactionRanking;
+use App\Models\TransactionRawData;
 use App\Services\AuctionInfoService;
+use App\Services\RankingService;
 use App\Traits\ApiBscScanTransaction;
 use Illuminate\Console\Command;
 
@@ -29,6 +32,8 @@ class UpdateRankingCommand extends Command
 
     protected $auctionInfoService;
 
+    protected $rankingService;
+
     /**
      * Create a new command instance.
      *
@@ -38,6 +43,7 @@ class UpdateRankingCommand extends Command
     {
         parent::__construct();
         $this->auctionInfoService = new AuctionInfoService();
+        $this->rankingService = new RankingService();
     }
 
     /**
@@ -55,12 +61,26 @@ class UpdateRankingCommand extends Command
      */
     public function updateRankingNftAuction()
     {
-        $results = $this->getAllTransactionsBscScan();
-        foreach ($results as $result) {
-            //in case call api success
-            if (!empty($result)) {
+        $results = collect($this->getAllTransactionsBscScan());
+        //in case call api success
+        if (!empty($results)) {
+            $transactionRawData = collect($this->rankingService->getTransactionRawData());
+            $countTransactionHistory = $this->rankingService->countTransactionHistory();
+            if (!$transactionRawData->isEmpty()) {
+                //truncate transaction history and ranking
+                TransactionHistory::truncate();
+                foreach ($transactionRawData->chunk(50) as $data) {
+                    CreateTransactionJob::dispatch($data)
+                        ->onQueue(config('defines.queue.general'));
+                }
+            }
+            //truncate raw data table
+            TransactionRawData::truncate();
+            TransactionRanking::truncate();
+            foreach ($results->chunk(50) as $data) {
                 UpdateRankingJob::dispatch(
-                    $result
+                    $data,
+                    $countTransactionHistory > 0 ? true : false
                 )->onQueue(config('defines.queue.general'));
             }
         }
