@@ -21,6 +21,7 @@ use App\Traits\ApiBscScanTransaction;
 use App\Traits\ApiFincodePayment;
 use App\Traits\CheckTransactionWithApiScan;
 use App\Traits\DistributeTicket;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -551,8 +552,9 @@ class TransactionController extends Controller
     public function getTransactionsRanking($numberRank = null)
     {
         $numberRank = $numberRank ?? config('defines.number_of_ranking');
+        $auctionInfo = $this->auctionInfoService->infoNftAuctionById(3);
         return response()->json([
-            'data' => $this->rankingService->getTransactionsRanking($numberRank)
+            'data' => $this->rankingService->getTransactionsRanking($numberRank, $auctionInfo->start_date, $auctionInfo->end_date)
         ]);
     }
 }

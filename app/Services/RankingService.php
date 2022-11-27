@@ -117,9 +117,10 @@ class RankingService
      * Get Transactions Ranking
      * @return App\Models\TransactionRanking|array
      */
-    public function getTransactionsRanking($numberRank)
+    public function getTransactionsRanking($numberRank, $startDate, $endDate)
     {
         return TransactionRanking::selectRaw('wallet_address, sum(amount) as amount, created_at')
+            ->whereBetween('created_at', [(string)$startDate, (string)$endDate])
             ->groupBy('wallet_address')
             ->orderBy('amount', 'DESC')
             ->take($numberRank)

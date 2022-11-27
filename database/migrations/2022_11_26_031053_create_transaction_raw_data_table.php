@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('transaction_raws', function (Blueprint $table) {
+        Schema::create('transaction_raw_datas', function (Blueprint $table) {
             $table->id();
             $table->string('chain', 50);
             $table->char('tx_hash', 150);

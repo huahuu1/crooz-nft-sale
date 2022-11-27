@@ -11,7 +11,7 @@ class TransactionHistory extends Model
     use HasApiTokens;
     use HasFactory;
 
-    protected $table = 'transaction_histories';
+    protected $table = 'transaction_raw_data_histories';
 
     /**
      * The attributes that are mass assignable.
