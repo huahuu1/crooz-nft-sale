@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\NftAuctionHistory;
+use App\Services\AuctionInfoService;
 use App\Services\HistoryListService;
 use App\Services\UserService;
 use App\Traits\ApiBscScanTransaction;
@@ -31,6 +31,13 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
     protected $historyListService;
 
     /**
+     * auction Info Service variable
+     *
+     * @var App\Services\AuctionInfoService
+     */
+    protected $auctionInfoService;
+
+    /**
      * User Service variable
      *
      * @var App\Services\UserService
@@ -47,6 +54,7 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
         $this->newHistories = $newHistories;
         $this->userService = new UserService();
         $this->historyListService = new HistoryListService();
+        $this->auctionInfoService = new  AuctionInfoService();
     }
 
     /**
@@ -61,7 +69,8 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
             $user = $this->userService->hasUserByWalletAddress($val['from']);
 
             // get token id
-            $tokenId = $val['tokenSymbol'] === 'BSC-USD' ? 5 : 7;
+            $tokens = $this->dataConfig($val['contractAddress']);
+            $tokenId = $tokens['token'] === 'BUSD' ? 5 : 7;
             $auctionId = 3;
             $amount = $this->convertAmount($val['tokenDecimal'], $val['value']);
 
