@@ -117,7 +117,7 @@ Route::middleware(['language'])->group(function () {
     Route::get('exchange-rate/{symbol}', [InformationController::class, 'getExchangeRateBySymbol']);
     Route::get('exchange-rate', [InformationController::class, 'getLastExchangeRate']);
     // get transactions ranking
-    Route::get('get-transactions-ranking/{numberRank?}', [TransactionController::class, 'getTransactionsRanking']);
+    Route::get('get-auction-ranking', [TransactionController::class, 'getTransactionsRanking']);
 
     //purchase list
     Route::group([
