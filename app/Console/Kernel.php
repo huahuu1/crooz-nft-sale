@@ -22,6 +22,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('check:nft-auction')->everyThreeMinutes();
         $schedule->command('update:ranking')->everyThirtyMinutes();
+        $schedule->command('check:miss-nft-auction')->everyTenMinutes();
         $schedule->command('telescope:prune')->daily();
         $schedule->command('sanctum:prune-expired --hours=24')->daily();
         $schedule->command('update:exchange-rate')->cron(config('defines.exchange_rate.cron'));
