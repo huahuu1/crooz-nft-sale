@@ -549,9 +549,9 @@ class TransactionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getTransactionsRanking($numberRank = null)
+    public function getTransactionsRanking()
     {
-        $numberRank = $numberRank ?? config('defines.number_of_ranking');
+        $numberRank = config('defines.number_of_ranking');
         $auctionInfo = $this->auctionInfoService->infoNftAuctionById(3);
         return response()->json([
             'data' => $this->rankingService->getTransactionsRanking($numberRank, $auctionInfo->start_date, $auctionInfo->end_date)

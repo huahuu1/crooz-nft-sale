@@ -63,8 +63,6 @@ Route::middleware(['language'])->group(function () {
             Route::put('payment/credit', 'paymentWithCreditCard');
             // get history purchase nft auction list
             Route::get('package-history-nft-auction', 'historyNftAuctionByPackage');
-            // get transactions ranking
-            Route::get('get-transactions-ranking/{numberRank?}', [TransactionController::class, 'getTransactionsRanking']);
         });
 
         //my page routes
@@ -118,6 +116,8 @@ Route::middleware(['language'])->group(function () {
     //get exchange rate
     Route::get('exchange-rate/{symbol}', [InformationController::class, 'getExchangeRateBySymbol']);
     Route::get('exchange-rate', [InformationController::class, 'getLastExchangeRate']);
+    // get transactions ranking
+    Route::get('get-auction-ranking', [TransactionController::class, 'getTransactionsRanking']);
 
     //purchase list
     Route::group([
