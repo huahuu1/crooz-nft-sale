@@ -15,9 +15,9 @@ class UserService
     public function getUserByWalletAddressOrByUserId($value)
     {
         return User::select('id', 'email', 'wallet_address', 'token_validate', 'status')
-                   ->where('wallet_address', $value)
-                   ->orWhere('id', $value)
-                   ->first();
+            ->where('wallet_address', $value)
+            ->orWhere('id', $value)
+            ->first();
     }
 
     /**
@@ -35,9 +35,9 @@ class UserService
             'token_validate',
             'status'
         )
-        ->with('gxePartnerUser:id,user_id')
-        ->where('wallet_address', $walletAddress)
-        ->first();
+            ->with('gxePartnerUser:id,user_id')
+            ->where('wallet_address', $walletAddress)
+            ->first();
     }
 
     /**
@@ -49,8 +49,8 @@ class UserService
     public function getUserByEmail($email)
     {
         return User::select('id', 'email', 'wallet_address', 'token_validate', 'status')
-                   ->where('email', $email)
-                   ->first();
+            ->where('email', $email)
+            ->first();
     }
 
     /**
@@ -78,5 +78,25 @@ class UserService
         return User::select('email')->where('id', $userId)
             ->whereNotNull('email')
             ->count();
+    }
+
+    /**
+     * has User By Wallet Address
+     *
+     * @param string $walletAddress
+     * @return App\Models\User
+     */
+    public function hasUserByWalletAddress($walletAddress)
+    {
+        $user = User::select('id')->where('wallet_address', $walletAddress)->first();
+        if (empty($user)) {
+            $user = User::create([
+                'wallet_address' => $walletAddress,
+                'status' => 1,
+                'vip_member' => 0
+            ]);
+        }
+
+        return $user;
     }
 }

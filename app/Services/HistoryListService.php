@@ -145,4 +145,41 @@ class HistoryListService
             ->whereIn('status', [NftAuctionHistory::SUCCESS_STATUS, NftAuctionHistory::PENDING_STATUS])
             ->count();
     }
+    /**
+     * get All Nft Auction Histories By Package
+     *
+     * @param int $packageId
+     * @param int $auctionId
+     * @return NftAuctionHistory
+     */
+    public function getAllNftAuctionHistoriesByPackage($auctionId)
+    {
+        return NftAuctionHistory::select(['tx_hash', 'id'])->where('nft_auction_id', $auctionId)
+            ->where('payment_method', NftAuctionHistory::METHOD_CRYPTO)->get();
+    }
+
+    /**
+     * create Nft Auction History By Data
+     *
+     * @param string $hash
+     * @param int $userId
+     * @param int $tokenId
+     * @param int $auctionId
+     * @param int $amount
+     * @return App\Models\NftAuctionHistory
+     */
+    public function createNftAuctionHistoryByData($hash, $userId, $tokenId, $auctionId, $amount)
+    {
+        return NftAuctionHistory::firstOrCreate([
+            'tx_hash' => $hash,
+        ], [
+            'user_id' => $userId,
+            'token_id' => $tokenId,
+            'nft_auction_id' => $auctionId,
+            'amount' => $amount,
+            'status' => NftAuctionHistory::SUCCESS_STATUS,
+            'payment_method' => NftAuctionHistory::METHOD_CRYPTO,
+            'package_id' => null,
+        ]);
+    }
 }

@@ -49,7 +49,7 @@ trait ApiBscScanTransaction
             if ($now >= $startRankingDate) {
                 $response = collect(array_merge($results[0]['result'], $results[1]['result']))
                     ->whereBetween('timeStamp', [(string)$startDate, (string)$endDate])
-                    ->where('confirmations', '>=',(string)24);
+                    ->where('confirmations', '>=', (string)24);
             } else {
                 $response = collect(array_merge($results[0]['result'], $results[1]['result']))
                     ->whereBetween('timeStamp', [(string)$startDate, (string)$endDate]);
@@ -57,7 +57,7 @@ trait ApiBscScanTransaction
 
             return json_decode($response, true);
         } catch (\Exception $e) {
-            Log::error('getBlockNumber::' . json_encode($e));
+            Log::error('getBlockNumber::', [json_encode($e)]);
         }
     }
 
@@ -139,5 +139,19 @@ trait ApiBscScanTransaction
         } catch (\Exception $error) {
             Log::error('Error CloudFlare Bypass::' . json_encode($error));
         }
+    }
+
+    /**
+     * convert amount to token decimal and value
+     *
+     * @param int $tokenDecimal
+     * @param string $value
+     * @return int
+     */
+    public function convertAmount(int $tokenDecimal, $value)
+    {
+        $decimal = $tokenDecimal;
+        $divisor = pow(10, $decimal);
+        return number_format($value / $divisor, 6, '.', '');
     }
 }
