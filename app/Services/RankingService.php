@@ -28,6 +28,7 @@ class RankingService
             'to' => $to,
             'token' => $token,
             'value' => $value,
+            'timestamp' => $timestamp,
             'created_at' => $timestamp,
             'updated_at' => $timestamp,
         ]);
@@ -53,6 +54,7 @@ class RankingService
             'to' => $to,
             'token' => $token,
             'value' => $value,
+            'timestamp' => $timestamp,
             'created_at' => $timestamp,
             'updated_at' => $timestamp,
         ]);

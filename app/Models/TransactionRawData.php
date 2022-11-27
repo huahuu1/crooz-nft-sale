@@ -25,6 +25,7 @@ class TransactionRawData extends Model
         'to',
         'token',
         'value',
+        'timestamp',
         'created_at',
         'updated_at'
     ];
