@@ -17,8 +17,9 @@ trait ApiBscScanTransaction
         try {
             $baseUri = config('defines.api.bsc.url');
             $apiKey = config('defines.api.bsc.api_key');
-            $auctionNetworks = $this->auctionInfoService->infoNftAuctionById(3)->auctionNetwork->values();
-            $packages = $this->auctionInfoService->infoNftAuctionById(3)->packages->values();
+            $auctionInfo = $this->auctionInfoService->infoNftAuctionById(3);
+            $auctionNetworks = $this->auctionInfoService->infoNftAuctionById(3)->auctionNetwork;
+            $packages = $this->auctionInfoService->infoNftAuctionById(3)->packages;
             $results = collect([]);
             foreach ($auctionNetworks[0]->type as $auctionNetwork) {
                 foreach ($packages as $package) {
@@ -41,8 +42,8 @@ trait ApiBscScanTransaction
                     }
                 }
             }
-            $startDate = Carbon::parse(config('defines.date_auction_start'), 'UTC')->getTimestamp();
-            $endDate = Carbon::parse(config('defines.date_auction_end'), 'UTC')->getTimestamp();
+            $startDate = Carbon::parse($auctionInfo->start_date, 'UTC')->getTimestamp();
+            $endDate = Carbon::parse($auctionInfo->end_date, 'UTC')->getTimestamp();
             $startRankingDate = Carbon::parse(config('defines.date_auction_ranking_start'), 'UTC')->getTimestamp();
             $now = Carbon::now('UTC')->getTimestamp();
             $results = json_decode($results, true);
@@ -57,7 +58,7 @@ trait ApiBscScanTransaction
 
             return json_decode($response, true);
         } catch (\Exception $e) {
-            Log::error('getBlockNumber::', [json_encode($e)]);
+            Log::error('getAllTransactionsBscScan::', [json_encode($e)]);
         }
     }
 
@@ -153,5 +154,28 @@ trait ApiBscScanTransaction
         $decimal = $tokenDecimal;
         $divisor = pow(10, $decimal);
         return number_format($value / $divisor, 6, '.', '');
+    }
+
+    public function dataConfig($contractAddress)
+    {
+        $destinationAddress = $this->auctionInfoService->infoNftAuctionById(3)->packages[0]->destination_address;
+        $auctionNetworks = $this->auctionInfoService->infoNftAuctionById(3)->auctionNetwork;
+        foreach ($auctionNetworks[0]->type as $auctionNetwork) {
+            if (strtolower($auctionNetwork->contract_wallet) == strtolower($contractAddress) && $auctionNetwork->code == 'BUSD') {
+                return [
+                    'chain' => 'bsc-BUSD',
+                    'token' => 'BUSD',
+                    'destination_address' => $destinationAddress
+                ];
+            }
+
+            if (strtolower($auctionNetwork->contract_wallet) == strtolower($contractAddress) && $auctionNetwork->code == 'USDT') {
+                return [
+                    'chain' => 'bsc-BSC-USD',
+                    'token' => 'USDT',
+                    'destination_address' => $destinationAddress
+                ];
+            }
+        }
     }
 }
