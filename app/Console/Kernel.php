@@ -21,8 +21,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('check:nft-auction')->everyThreeMinutes();
-        $schedule->command('update:ranking')->everyThirtyMinutes();
-        $schedule->command('check:miss-nft-auction')->everyTenMinutes();
+        $schedule->command('update:ranking')->cron(config('defines.cron_time_value.ranking'));
+        $schedule->command('check:miss-nft-auction')->cron(config('defines.cron_time_value.insert_nft_auction_history'));
         $schedule->command('telescope:prune')->daily();
         $schedule->command('sanctum:prune-expired --hours=24')->daily();
         $schedule->command('update:exchange-rate')->cron(config('defines.exchange_rate.cron'));

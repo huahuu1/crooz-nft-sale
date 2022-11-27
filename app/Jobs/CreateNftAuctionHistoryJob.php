@@ -67,13 +67,14 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
 
             if ($amount > 0) {
                 // create nft Auction History
-                $this->historyListService->createNftAuctionHistoryByData([
+                $this->historyListService->createNftAuctionHistoryByData(
                     $val['hash'],
                     $user->id,
                     $tokenId,
                     $auctionId,
                     $amount,
-                ]);
+                );
+                info("[SUCCESS] Create nft auction History: " . $val['hash']);
             }
         }
     }

@@ -617,6 +617,119 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\TransactionHistory
+ *
+ * @property int $id
+ * @property string $chain
+ * @property string $tx_hash
+ * @property string $from
+ * @property string $to
+ * @property string $token
+ * @property string $value
+ * @property string $timestamp
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionHistory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionHistory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionHistory query()
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionHistory whereChain($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionHistory whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionHistory whereFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionHistory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionHistory whereTimestamp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionHistory whereTo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionHistory whereToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionHistory whereTxHash($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionHistory whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionHistory whereValue($value)
+ */
+	class TransactionHistory extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\TransactionRanking
+ *
+ * @property int $id
+ * @property string $wallet_address
+ * @property string $tx_hash
+ * @property string $amount
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRanking newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRanking newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRanking query()
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRanking whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRanking whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRanking whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRanking whereTxHash($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRanking whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRanking whereWalletAddress($value)
+ */
+	class TransactionRanking extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\TransactionRaw
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRaw newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRaw newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRaw query()
+ */
+	class TransactionRaw extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\TransactionRawData
+ *
+ * @property int $id
+ * @property string $chain
+ * @property string $tx_hash
+ * @property string $from
+ * @property string $to
+ * @property string $token
+ * @property string $value
+ * @property string $timestamp
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRawData newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRawData newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRawData query()
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRawData whereChain($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRawData whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRawData whereFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRawData whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRawData whereTimestamp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRawData whereTo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRawData whereToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRawData whereTxHash($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRawData whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRawData whereValue($value)
+ */
+	class TransactionRawData extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\TransactionRawHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRawHistory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRawHistory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionRawHistory query()
+ */
+	class TransactionRawHistory extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\User
  *
  * @property int $id
