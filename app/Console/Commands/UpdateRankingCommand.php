@@ -62,29 +62,28 @@ class UpdateRankingCommand extends Command
      */
     public function updateRankingNftAuction()
     {
-        GetRankingJob::dispatch()->onQueue(config('defines.queue.general'));
-        // $results = collect($this->getAllTransactionsBscScan());
-        // //in case call api success
-        // if (!empty($results)) {
-        //     $transactionRawData = collect($this->rankingService->getTransactionRawData());
-        //     $countTransactionHistory = $this->rankingService->countTransactionHistory();
-        //     if (!$transactionRawData->isEmpty()) {
-        //         //truncate transaction history and ranking
-        //         TransactionHistory::truncate();
-        //         foreach ($transactionRawData->chunk(50) as $data) {
-        //             CreateTransactionJob::dispatch($data)
-        //                 ->onQueue(config('defines.queue.general'));
-        //         }
-        //     }
-        //     //truncate raw data table
-        //     TransactionRawData::truncate();
-        //     TransactionRanking::truncate();
-        //     foreach ($results->chunk(50) as $data) {
-        //         UpdateRankingJob::dispatch(
-        //             $data,
-        //             $countTransactionHistory > 0 ? true : false
-        //         )->onQueue(config('defines.queue.general'));
-        //     }
-        // }
+        $results = collect($this->getAllTransactionsBscScan());
+        //in case call api success
+        if (!empty($results)) {
+            $transactionRawData = collect($this->rankingService->getTransactionRawData());
+            $countTransactionHistory = $this->rankingService->countTransactionHistory();
+            if (!$transactionRawData->isEmpty()) {
+                //truncate transaction history and ranking
+                TransactionHistory::truncate();
+                foreach ($transactionRawData->chunk(50) as $data) {
+                    CreateTransactionJob::dispatch($data)
+                        ->onQueue(config('defines.queue.general'));
+                }
+            }
+            //truncate raw data table
+            TransactionRawData::truncate();
+            TransactionRanking::truncate();
+            foreach ($results->chunk(50) as $data) {
+                UpdateRankingJob::dispatch(
+                    $data,
+                    $countTransactionHistory > 0 ? true : false
+                )->onQueue(config('defines.queue.general'));
+            }
+        }
     }
 }
