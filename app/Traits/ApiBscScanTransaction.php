@@ -16,7 +16,7 @@ trait ApiBscScanTransaction
             $result = $this->callApiBscScan();
             $success = $result[0]['status'];
             $retries--;
-            sleep(1);
+            sleep(60);
         } while ($retries > 0 && !$success);
         return $result;
     }
