@@ -9,54 +9,73 @@ use Illuminate\Support\Facades\Log;
 
 trait ApiBscScanTransaction
 {
+    public function retry($times) {
+        $retries = $times;
+        do {
+            $this->callApiBscScan();
+            $retries--;
+            sleep(5);
+        } while ($retries > 0);
+    }
+
+    public function callApiBscScan()
+    {
+        $baseUri = config('defines.api.bsc.url');
+        $apiKey = config('defines.api.bsc.api_key');
+        $auctionNetworks = $this->auctionInfoService->infoNftAuctionById(3)->auctionNetwork;
+        $packages = $this->auctionInfoService->infoNftAuctionById(3)->packages;
+        $results = collect([]);
+        foreach ($auctionNetworks[0]->type as $auctionNetwork) {
+            foreach ($packages as $package) {
+                if ($auctionNetwork->contract_wallet) {
+                    $params = [
+                        'module' => 'account',
+                        'action' => 'tokentx',
+                        'contractaddress' => $auctionNetwork->contract_wallet,
+                        'address' => $package->destination_address,
+                        'page' => 1,
+                        'offset' => 10000,
+                        'startblock' => 0,
+                        'endblock' => 99999999,
+                        'sort' => 'asc',
+                        'apikey' => $apiKey,
+                    ];
+                    $url = $baseUri . '?' . http_build_query($params, '&');
+                    $response = $this->cloudFlareBypass($url);
+                    $results->push(json_decode($response, true));
+                }
+            }
+        }
+        return $results;
+    }
+
     /**
      * @return $response
      */
     public function getAllTransactionsBscScan()
     {
         try {
-            $baseUri = config('defines.api.bsc.url');
-            $apiKey = config('defines.api.bsc.api_key');
-            $auctionInfo = $this->auctionInfoService->infoNftAuctionById(3);
-            $auctionNetworks = $this->auctionInfoService->infoNftAuctionById(3)->auctionNetwork;
-            $packages = $this->auctionInfoService->infoNftAuctionById(3)->packages;
-            $results = collect([]);
-            foreach ($auctionNetworks[0]->type as $auctionNetwork) {
-                foreach ($packages as $package) {
-                    if ($auctionNetwork->contract_wallet) {
-                        $params = [
-                            'module' => 'account',
-                            'action' => 'tokentx',
-                            'contractaddress' => $auctionNetwork->contract_wallet,
-                            'address' => $package->destination_address,
-                            'page' => 1,
-                            'offset' => 10000,
-                            'startblock' => 0,
-                            'endblock' => 99999999,
-                            'sort' => 'asc',
-                            'apikey' => $apiKey,
-                        ];
-                        $url = $baseUri . '?' . http_build_query($params, '&');
-                        $response = $this->cloudFlareBypass($url);
-                        $results->push(json_decode($response, true));
-                    }
-                }
-            }
-            $startDate = Carbon::parse($auctionInfo->start_date, 'UTC')->getTimestamp();
-            $endDate = Carbon::parse($auctionInfo->end_date, 'UTC')->getTimestamp();
-            $startRankingDate = Carbon::parse(config('defines.date_auction_ranking_start'), 'UTC')->getTimestamp();
-            $now = Carbon::now('UTC')->getTimestamp();
-            $results = json_decode($results, true);
-            if ($now >= $startRankingDate) {
-                $response = collect(array_merge($results[0]['result'], $results[1]['result']))
-                    ->whereBetween('timeStamp', [(string)$startDate, (string)$endDate])
-                    ->where('confirmations', '>=', (string)24);
+            $results = $this->callApiBscScan();
+            if ($results[0]['status'] == '0' || $results[1]['status'] == '0') {
+                $this->retry(3);
             } else {
-                $response = collect(array_merge($results[0]['result'], $results[1]['result']))
-                    ->whereBetween('timeStamp', [(string)$startDate, (string)$endDate]);
-            }
+                $auctionInfo = $this->auctionInfoService->infoNftAuctionById(3);
+                $startDate = Carbon::parse($auctionInfo->start_date, 'UTC')->getTimestamp();
+                $endDate = Carbon::parse($auctionInfo->end_date, 'UTC')->getTimestamp();
+                $startRankingDate = Carbon::parse(config('defines.date_auction_ranking_start'), 'UTC')->getTimestamp();
+                $now = Carbon::now('UTC')->getTimestamp();
+                $results = json_decode($results, true);
+                if ($now >= $startRankingDate) {
+                    $response = collect(array_merge($results[0]['result'], $results[1]['result']))
+                        ->whereBetween('timeStamp', [(string)$startDate, (string)$endDate])
+                        ->where('confirmations', '>=', (string)24);
+                } else {
+                    $response = collect(array_merge($results[0]['result'], $results[1]['result']))
+                        ->whereBetween('timeStamp', [(string)$startDate, (string)$endDate]);
+                }
 
-            return json_decode($response, true);
+                return json_decode($response, true);
+            }
         } catch (\Exception $e) {
             Log::error('getAllTransactionsBscScan::', [json_encode($e)]);
         }

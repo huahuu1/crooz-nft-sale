@@ -54,5 +54,6 @@ return [
     'cron_time_value' => [
         'ranking' => env('RANKING_CRON_VALUE', '*/30 * * * *'),
         'insert_nft_auction_history' => env('INSERT_NFT_AUCTION_HISTORY_CRON_VALUE', '*/10 * * * *')
-    ]
+    ],
+    'mail_receive_failed_job' => env('MAIL_RECEIVE_FAILED_JOB', 'tewu41@gmail.com')
 ];

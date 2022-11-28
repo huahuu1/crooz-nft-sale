@@ -121,4 +121,5 @@ return [
     |--------------------------------------------------------------------------
     */
     'send_token_validate' => env('MAIL_SEND_TOKEN_VALIDATE'),
+    'send_failed_job' => env('MAIL_FAILED_JOB'),
 ];
