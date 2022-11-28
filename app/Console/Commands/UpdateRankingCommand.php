@@ -2,11 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\CreateTransactionJob;
 use App\Jobs\UpdateRankingJob;
 use App\Models\TransactionHistory;
-use App\Models\TransactionRanking;
-use App\Models\TransactionRawData;
 use App\Notifications\EmailFailedJobNotification;
 use App\Services\AuctionInfoService;
 use App\Services\RankingService;

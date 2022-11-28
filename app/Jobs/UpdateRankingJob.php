@@ -7,6 +7,7 @@ use App\Models\TransactionRawData;
 use App\Services\AuctionInfoService;
 use App\Services\RankingService;
 use App\Traits\ApiBscScanTransaction;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -56,14 +57,23 @@ class UpdateRankingJob implements ShouldQueue
             if (!empty($this->transactions)) {
                 $transactionRawData = collect([]);
                 TransactionRawData::truncate();
-                foreach ($this->transactions->chunk(2) as $transactions) {
+                foreach ($this->transactions->chunk(50) as $transactions) {
+                    $auctionInfo = $this->auctionInfoService->infoNftAuctionById(3);
+                    $startDate = Carbon::parse($auctionInfo->start_date, 'UTC')->getTimestamp();
+                    $endDate = Carbon::parse($auctionInfo->end_date, 'UTC')->getTimestamp();
                     // push transactions to transactionRawData
                     $transactionRawData->push($transactions);
                     // create Transaction Raw Data
                     TransactionRawDataJob::dispatch($transactions, $this->countTransactionHistory)->onQueue(config('defines.queue.general'));
                 }
-
-                $this->insertDataRanking($transactionRawData->flatten(1));
+                // check date time end auction to insert ranking
+                $now = Carbon::now('UTC')->getTimestamp();
+                $endRanking = Carbon::parse(config('defines.time_auction_ranking_end'), 'UTC')->getTimestamp();
+                if ($now < $endRanking) {
+                    $transactionRawData = collect($transactionRawData->flatten(1))
+                        ->whereBetween('timeStamp', [(string)$startDate, (string)$endDate]);
+                    $this->insertDataRanking($transactionRawData);
+                }
             }
         } catch (Exception $e) {
             Log::error($e);

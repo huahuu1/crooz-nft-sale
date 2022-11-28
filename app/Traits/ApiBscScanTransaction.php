@@ -11,11 +11,14 @@ trait ApiBscScanTransaction
 {
     public function retry($times) {
         $retries = $times;
+        $success = false;
         do {
-            $this->callApiBscScan();
+            $result = $this->callApiBscScan();
+            $success = $result[0]['status'];
             $retries--;
-            sleep(5);
-        } while ($retries > 0);
+            sleep(1);
+        } while ($retries > 0 && !$success);
+        return $result;
     }
 
     public function callApiBscScan()
@@ -57,23 +60,16 @@ trait ApiBscScanTransaction
         try {
             $results = $this->callApiBscScan();
             if ($results[0]['status'] == '0' || $results[1]['status'] == '0') {
-                $this->retry(3);
-            } else {
-                $auctionInfo = $this->auctionInfoService->infoNftAuctionById(3);
-                $startDate = Carbon::parse($auctionInfo->start_date, 'UTC')->getTimestamp();
-                $endDate = Carbon::parse($auctionInfo->end_date, 'UTC')->getTimestamp();
-                $startRankingDate = Carbon::parse(config('defines.date_auction_ranking_start'), 'UTC')->getTimestamp();
-                $now = Carbon::now('UTC')->getTimestamp();
-                $results = json_decode($results, true);
-                if ($now >= $startRankingDate) {
-                    $response = collect(array_merge($results[0]['result'], $results[1]['result']))
-                        ->whereBetween('timeStamp', [(string)$startDate, (string)$endDate])
-                        ->where('confirmations', '>=', (string)24);
-                } else {
-                    $response = collect(array_merge($results[0]['result'], $results[1]['result']))
-                        ->whereBetween('timeStamp', [(string)$startDate, (string)$endDate]);
+                $results = $this->retry(3);
+                if ($results[0]['status'] == '1' || $results[1]['status'] == '1') {
+                    $results = $this->callApiBscScan();
+                    $results = json_decode($results, true);
+                    $response = collect(array_merge($results[0]['result'], $results[1]['result']));
+                    return json_decode($response, true);
                 }
-
+            } else {
+                $results = json_decode($results, true);
+                $response = collect(array_merge($results[0]['result'], $results[1]['result']));
                 return json_decode($response, true);
             }
         } catch (\Exception $e) {
