@@ -29,8 +29,8 @@ class RankingService
             'token' => $token,
             'value' => $value,
             'timestamp' => $timestamp,
-            'created_at' => $timestamp,
-            'updated_at' => $timestamp,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
         ]);
     }
 
@@ -68,14 +68,11 @@ class RankingService
      * @param string $amount
      * @return App\Models\TransactionRanking|array
      */
-    public function createTransactionRanking($walletAddress, $txHash, $amount, $timestamp)
+    public function createTransactionRanking($walletAddress, $amount)
     {
         return TransactionRanking::create([
             'wallet_address' => $walletAddress,
-            'tx_hash' => $txHash,
-            'amount' => $amount,
-            'created_at' => $timestamp,
-            'updated_at' => $timestamp,
+            'amount' => $amount
         ]);
     }
 
@@ -85,7 +82,7 @@ class RankingService
      */
     public function getTransactionRawData()
     {
-        return TransactionRawData::select('id', 'chain', 'tx_hash', 'from', 'to', 'token', 'value', 'created_at')->get();
+        return TransactionRawData::select('id', 'chain', 'tx_hash', 'from', 'to', 'token', 'value', 'created_at', 'updated_at')->get();
     }
 
     /**
@@ -129,6 +126,4 @@ class RankingService
             ->take($numberRank)
             ->get();
     }
-
-
 }

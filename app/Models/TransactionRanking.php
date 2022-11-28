@@ -11,7 +11,7 @@ class TransactionRanking extends Model
     use HasApiTokens;
     use HasFactory;
 
-    protected $table = 'transaction_rankings';
+    protected $table = 'auction_rankings';
 
     /**
      * The attributes that are mass assignable.
@@ -20,9 +20,6 @@ class TransactionRanking extends Model
      */
     protected $fillable = [
         'wallet_address',
-        'tx_hash',
-        'amount',
-        'created_at',
-        'updated_at'
+        'amount'
     ];
 }

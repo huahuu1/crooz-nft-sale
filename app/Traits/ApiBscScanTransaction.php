@@ -9,54 +9,69 @@ use Illuminate\Support\Facades\Log;
 
 trait ApiBscScanTransaction
 {
+    public function retry($times) {
+        $retries = $times;
+        $success = false;
+        do {
+            $result = $this->callApiBscScan();
+            $success = $result[0]['status'];
+            $retries--;
+            sleep(1);
+        } while ($retries > 0 && !$success);
+        return $result;
+    }
+
+    public function callApiBscScan()
+    {
+        $baseUri = config('defines.api.bsc.url');
+        $apiKey = config('defines.api.bsc.api_key');
+        $auctionNetworks = $this->auctionInfoService->infoNftAuctionById(3)->auctionNetwork;
+        $packages = $this->auctionInfoService->infoNftAuctionById(3)->packages;
+        $results = collect([]);
+        foreach ($auctionNetworks[0]->type as $auctionNetwork) {
+            foreach ($packages as $package) {
+                if ($auctionNetwork->contract_wallet) {
+                    $params = [
+                        'module' => 'account',
+                        'action' => 'tokentx',
+                        'contractaddress' => $auctionNetwork->contract_wallet,
+                        'address' => $package->destination_address,
+                        'page' => 1,
+                        'offset' => 10000,
+                        'startblock' => 0,
+                        'endblock' => 99999999,
+                        'sort' => 'asc',
+                        'apikey' => $apiKey,
+                    ];
+                    $url = $baseUri . '?' . http_build_query($params, '&');
+                    $response = $this->cloudFlareBypass($url);
+                    $results->push(json_decode($response, true));
+                }
+            }
+        }
+        return $results;
+    }
+
     /**
      * @return $response
      */
     public function getAllTransactionsBscScan()
     {
         try {
-            $baseUri = config('defines.api.bsc.url');
-            $apiKey = config('defines.api.bsc.api_key');
-            $auctionInfo = $this->auctionInfoService->infoNftAuctionById(3);
-            $auctionNetworks = $this->auctionInfoService->infoNftAuctionById(3)->auctionNetwork;
-            $packages = $this->auctionInfoService->infoNftAuctionById(3)->packages;
-            $results = collect([]);
-            foreach ($auctionNetworks[0]->type as $auctionNetwork) {
-                foreach ($packages as $package) {
-                    if ($auctionNetwork->contract_wallet) {
-                        $params = [
-                            'module' => 'account',
-                            'action' => 'tokentx',
-                            'contractaddress' => $auctionNetwork->contract_wallet,
-                            'address' => $package->destination_address,
-                            'page' => 1,
-                            'offset' => 10000,
-                            'startblock' => 0,
-                            'endblock' => 99999999,
-                            'sort' => 'asc',
-                            'apikey' => $apiKey,
-                        ];
-                        $url = $baseUri . '?' . http_build_query($params, '&');
-                        $response = $this->cloudFlareBypass($url);
-                        $results->push(json_decode($response, true));
-                    }
+            $results = $this->callApiBscScan();
+            if ($results[0]['status'] == '0' || $results[1]['status'] == '0') {
+                $results = $this->retry(3);
+                if ($results[0]['status'] == '1' || $results[1]['status'] == '1') {
+                    $results = $this->callApiBscScan();
+                    $results = json_decode($results, true);
+                    $response = collect(array_merge($results[0]['result'], $results[1]['result']));
+                    return json_decode($response, true);
                 }
-            }
-            $startDate = Carbon::parse($auctionInfo->start_date, 'UTC')->getTimestamp();
-            $endDate = Carbon::parse($auctionInfo->end_date, 'UTC')->getTimestamp();
-            $startRankingDate = Carbon::parse(config('defines.date_auction_ranking_start'), 'UTC')->getTimestamp();
-            $now = Carbon::now('UTC')->getTimestamp();
-            $results = json_decode($results, true);
-            if ($now >= $startRankingDate) {
-                $response = collect(array_merge($results[0]['result'], $results[1]['result']))
-                    ->whereBetween('timeStamp', [(string)$startDate, (string)$endDate])
-                    ->where('confirmations', '>=', (string)24);
             } else {
-                $response = collect(array_merge($results[0]['result'], $results[1]['result']))
-                    ->whereBetween('timeStamp', [(string)$startDate, (string)$endDate]);
+                $results = json_decode($results, true);
+                $response = collect(array_merge($results[0]['result'], $results[1]['result']));
+                return json_decode($response, true);
             }
-
-            return json_decode($response, true);
         } catch (\Exception $e) {
             Log::error('getAllTransactionsBscScan::', [json_encode($e)]);
         }
@@ -155,7 +170,12 @@ trait ApiBscScanTransaction
         $divisor = pow(10, $decimal);
         return number_format($value / $divisor, 6, '.', '');
     }
-
+    /**
+     * convert data config
+     *
+     * @param string $contractAddress
+     * @return array
+     */
     public function dataConfig($contractAddress)
     {
         $destinationAddress = $this->auctionInfoService->infoNftAuctionById(3)->packages[0]->destination_address;
@@ -176,6 +196,22 @@ trait ApiBscScanTransaction
                     'destination_address' => $destinationAddress
                 ];
             }
+        }
+    }
+
+    /**
+     * check Amount By Raw Data function
+     *
+     * @param array $transactionData
+     * @param array $destinationAddress
+     * @return void
+     */
+    public function checkAmountByRawData($transactionData, $destinationAddress)
+    {
+        if ($transactionData['value'] > 0 && strtolower($transactionData['to']) == strtolower($destinationAddress['destination_address'])) {
+            return $transactionData;
+        } else {
+            return null;
         }
     }
 }

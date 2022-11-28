@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Models\TransactionRanking;
+use App\Models\TransactionRawData;
 use App\Services\AuctionInfoService;
 use App\Services\RankingService;
 use App\Traits\ApiBscScanTransaction;
@@ -24,21 +26,21 @@ class UpdateRankingJob implements ShouldQueue
 
     protected $transactions;
 
-    protected $transactionHistory;
-
     protected $rankingService;
 
     protected $auctionInfoService;
 
+
+    protected $countTransactionHistory;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($transactions, $transactionHistory)
+    public function __construct($transactions,  $countTransactionHistory)
     {
         $this->transactions = $transactions;
-        $this->transactionHistory = $transactionHistory;
+        $this->countTransactionHistory = $countTransactionHistory;
         $this->rankingService = new RankingService();
         $this->auctionInfoService = new AuctionInfoService();
     }
@@ -51,49 +53,80 @@ class UpdateRankingJob implements ShouldQueue
     public function handle()
     {
         try {
-            foreach ($this->transactions as $transaction) {
-                $data = $this->dataConfig($transaction['contractAddress']);
-                //value must greater than 0 and transaction to must be company wallet
-                if ($transaction['value'] > 0 && strtolower($transaction['to']) == strtolower($data['destination_address'])) {
-                    $value = $this->convertAmount((int)$transaction['tokenDecimal'], $transaction['value']);
-                    $timeStamp = Carbon::createFromTimestamp($transaction['timeStamp'])->format('Y-m-d H:i:s');
-                    //insert data to transaction_raw_data
-                    $this->rankingService->createTransactionRawData(
-                        $data['chain'],
-                        $transaction['hash'],
-                        $transaction['from'],
-                        $transaction['to'],
-                        $data['token'],
-                        $value,
-                        $timeStamp
-                    );
-                    //insert data to transaction_rankings
-                    $this->rankingService->createTransactionRanking(
-                        $transaction['from'],
-                        $transaction['hash'],
-                        $value,
-                        $timeStamp
-                    );
-                    if (!$this->transactionHistory) {
-                        //insert data to transaction_histories
-                        $this->rankingService->createTransactionHistory(
-                            $data['chain'],
-                            $transaction['hash'],
-                            $transaction['from'],
-                            $transaction['to'],
-                            $data['token'],
-                            $value,
-                            $timeStamp
-                        );
-                    }
-                    Log::info(
-                        '[SUCCESS] Update ranking for: '
-                            . $transaction['hash']
-                    );
+            // not empty transactions
+            if (!empty($this->transactions)) {
+                $transactionRawData = collect([]);
+                TransactionRawData::truncate();
+                foreach ($this->transactions->chunk(50) as $transactions) {
+                    $auctionInfo = $this->auctionInfoService->infoNftAuctionById(3);
+                    $startDate = Carbon::parse($auctionInfo->start_date, 'UTC')->getTimestamp();
+                    $endDate = Carbon::parse($auctionInfo->end_date, 'UTC')->getTimestamp();
+                    // push transactions to transactionRawData
+                    $transactionRawData->push($transactions);
+                    // create Transaction Raw Data
+                    TransactionRawDataJob::dispatch($transactions, $this->countTransactionHistory)->onQueue(config('defines.queue.general'));
+                }
+                // check date time end auction to insert ranking
+                $now = Carbon::now('UTC')->getTimestamp();
+                $endRanking = Carbon::parse(config('defines.time_auction_ranking_end'), 'UTC')->getTimestamp();
+                if ($now < $endRanking) {
+                    $transactionRawData = collect($transactionRawData->flatten(1))
+                        ->whereBetween('timeStamp', [(string)$startDate, (string)$endDate]);
+                    $this->insertDataRanking($transactionRawData);
                 }
             }
         } catch (Exception $e) {
             Log::error($e);
+        }
+    }
+
+    /**
+     * insert Data Ranking
+     *
+     * @param array $rawData
+     * @return void
+     */
+    public function insertDataRanking($transactionRawData)
+    {
+        // transaction Raw Data
+        if (!empty($transactionRawData)) {
+            $rawData =  collect([]);
+            foreach ($transactionRawData as $rawTransaction) {
+                $data = $this->dataConfig($rawTransaction['contractAddress']);
+                //value must greater than 0 and transaction to must be company wallet
+                if (!empty($this->checkAmountByRawData($rawTransaction, $data))) {
+                    $value = $this->convertAmount((int)$rawTransaction['tokenDecimal'], $rawTransaction['value']);
+                    // push to new raw data
+                    $rawData->push([
+                        'wallet_address' => $rawTransaction['from'],
+                        'tx_hash' => $rawTransaction['hash'],
+                        'value' => $value
+                    ]);
+                }
+            }
+
+            // map by amount sum
+            $newRawData = $rawData->mapToGroups(function ($item) {
+                return [
+                    $item['wallet_address'] =>  $item['value']
+                ];
+            })->map->sum();
+
+            // not new Raw Data empty
+            if (!empty($newRawData)) {
+                // truncate TransactionRanking
+                TransactionRanking::truncate();
+                foreach ($newRawData as $key => $value) {
+                    // create ranking
+                    TransactionRanking::firstOrCreate([
+                        'wallet_address' => $key
+                    ], [
+                        'amount' => $value
+                    ]);
+
+                    info("[SUCCESS] create ranking for: " . $key);
+                }
+            }
         }
     }
 }
