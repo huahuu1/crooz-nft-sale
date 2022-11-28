@@ -552,9 +552,10 @@ class TransactionController extends Controller
     public function getTransactionsRanking()
     {
         $numberRank = config('defines.number_of_ranking');
+        $amountRank = config('defines.amount_of_ranking');
         $auctionInfo = $this->auctionInfoService->infoNftAuctionById(3);
         return response()->json([
-            'data' => $this->rankingService->getTransactionsRanking($numberRank, $auctionInfo->start_date, $auctionInfo->end_date)
+            'data' => $this->rankingService->getTransactionsRanking($numberRank, $auctionInfo->start_date, $auctionInfo->end_date, $amountRank)
         ]);
     }
 }
