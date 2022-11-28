@@ -654,7 +654,6 @@ namespace App\Models{
  *
  * @property int $id
  * @property string $wallet_address
- * @property string $tx_hash
  * @property string $amount
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -666,7 +665,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|TransactionRanking whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TransactionRanking whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TransactionRanking whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TransactionRanking whereTxHash($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TransactionRanking whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TransactionRanking whereWalletAddress($value)
  */

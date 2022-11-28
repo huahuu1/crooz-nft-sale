@@ -58,15 +58,15 @@ class UpdateRankingJob implements ShouldQueue
                 $transactionRawData = collect([]);
                 TransactionRawData::truncate();
                 foreach ($this->transactions->chunk(50) as $transactions) {
-                    $auctionInfo = $this->auctionInfoService->infoNftAuctionById(3);
-                    $startDate = Carbon::parse($auctionInfo->start_date, 'UTC')->getTimestamp();
-                    $endDate = Carbon::parse($auctionInfo->end_date, 'UTC')->getTimestamp();
                     // push transactions to transactionRawData
                     $transactionRawData->push($transactions);
                     // create Transaction Raw Data
                     TransactionRawDataJob::dispatch($transactions, $this->countTransactionHistory)->onQueue(config('defines.queue.general'));
                 }
                 // check date time end auction to insert ranking
+                $auctionInfo = $this->auctionInfoService->infoNftAuctionById(3);
+                $startDate = Carbon::parse($auctionInfo->start_date, 'UTC')->getTimestamp();
+                $endDate = Carbon::parse($auctionInfo->end_date, 'UTC')->getTimestamp();
                 $now = Carbon::now('UTC')->getTimestamp();
                 $endRanking = Carbon::parse(config('defines.time_auction_ranking_end'), 'UTC')->getTimestamp();
                 if ($now < $endRanking) {
