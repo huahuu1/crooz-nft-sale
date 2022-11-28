@@ -51,6 +51,7 @@ class UpdateRankingJob implements ShouldQueue
     public function handle()
     {
         try {
+            $rawData = collect([]);
             foreach ($this->transactions as $transaction) {
                 $data = $this->dataConfig($transaction['contractAddress']);
                 //value must greater than 0 and transaction to must be company wallet
@@ -67,13 +68,18 @@ class UpdateRankingJob implements ShouldQueue
                         $value,
                         $timeStamp
                     );
+
+
+                    $rawData->push([
+                        'wallet_address' => $transaction['from'],
+                        'tx_hash' => $transaction['hash'],
+                        'value' => $value
+                    ]);
                     //insert data to transaction_rankings
-                    $this->rankingService->createTransactionRanking(
-                        $transaction['from'],
-                        $transaction['hash'],
-                        $value,
-                        $timeStamp
-                    );
+                    // $this->rankingService->createTransactionRanking(
+                    //     $transaction['from'],
+                    //     $value
+                    // );
                     if (!$this->transactionHistory) {
                         //insert data to transaction_histories
                         $this->rankingService->createTransactionHistory(
@@ -86,14 +92,61 @@ class UpdateRankingJob implements ShouldQueue
                             $timeStamp
                         );
                     }
-                    Log::info(
-                        '[SUCCESS] Update ranking for: '
-                            . $transaction['hash']
-                    );
+                    // Log::info(
+                    //     '[SUCCESS] Update ranking for: '
+                    //         . $transaction['hash']
+                    // );
                 }
             }
+            $this->insertDataRanking($rawData);
         } catch (Exception $e) {
             Log::error($e);
         }
+    }
+
+    public function insertDataRanking($rawData)
+    {
+        $newRawData = collect([]);
+        // foreach ($rawData as $value) {
+        //     $newRawData->push($value);
+        // }
+        // $test = $rawData->groupBy('wallet_address');
+
+        // $test = $rawData->groupBy('wallet_address')->flatMap(function ($items) {
+
+        //     $quantity = $items->sum('value');
+
+        //     return $items->map(function ($item) use ($quantity) {
+
+        //         $item->quantity = $quantity;
+
+        //         return $item;
+
+        //     });
+        // });
+        $test = $rawData->mapToGroups(function ($item) {
+            return [
+                $item['wallet_address'] => $item['value']
+            ];
+         })->map->sum();
+
+
+         info($test->wallet_address);
+        // foreach ($test as $value) {
+        //     # code...
+        //     info($value);
+        // }
+        // foreach ($rawData->all() as $value) {
+        //     $newRawData->push($value);
+        // }
+
+
+        // $test = $rawData->flatten(1);
+        // info($test->values()->all());
+        // $rawData->each(function ($item) use ($rankingData) {
+        //     if ($auctions->contains('tx_hash', $item['hash']) === false && $auctions->where('confirmations', '>=', (string)24)) {
+        //         $newAuctionHistories->push($item);
+        //     }
+        // });
     }
 }
