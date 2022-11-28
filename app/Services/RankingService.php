@@ -68,14 +68,11 @@ class RankingService
      * @param string $amount
      * @return App\Models\TransactionRanking|array
      */
-    public function createTransactionRanking($walletAddress, $txHash, $amount, $timestamp)
+    public function createTransactionRanking($walletAddress, $amount)
     {
         return TransactionRanking::create([
             'wallet_address' => $walletAddress,
-            'tx_hash' => $txHash,
-            'amount' => $amount,
-            'created_at' => $timestamp,
-            'updated_at' => $timestamp,
+            'amount' => $amount
         ]);
     }
 

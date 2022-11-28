@@ -20,9 +20,6 @@ class TransactionRanking extends Model
      */
     protected $fillable = [
         'wallet_address',
-        'tx_hash',
-        'amount',
-        'created_at',
-        'updated_at'
+        'amount'
     ];
 }
