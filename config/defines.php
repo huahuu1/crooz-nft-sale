@@ -50,6 +50,7 @@ return [
     'day_ticket_exchange_end' => env('DAY_TICKET_EXCHANGE_END', '2022/12/02 11:00:00'),
     'date_auction_ranking_start' => env('DATE_AUCTION_RANKING_START', '2022/11/30 11:00:00'),
     'number_of_ranking' => env('NUMBER_OF_RANKING', 10),
+    'amount_of_ranking' => env('AMOUNT_OF_RANKING', 300),
     'cron_time_value' => [
         'ranking' => env('RANKING_CRON_VALUE', '*/30 * * * *'),
         'insert_nft_auction_history' => env('INSERT_NFT_AUCTION_HISTORY_CRON_VALUE', '*/10 * * * *')
