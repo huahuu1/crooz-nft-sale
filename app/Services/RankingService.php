@@ -29,8 +29,8 @@ class RankingService
             'token' => $token,
             'value' => $value,
             'timestamp' => $timestamp,
-            'created_at' => $timestamp,
-            'updated_at' => $timestamp,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
         ]);
     }
 
@@ -82,7 +82,7 @@ class RankingService
      */
     public function getTransactionRawData()
     {
-        return TransactionRawData::select('id', 'chain', 'tx_hash', 'from', 'to', 'token', 'value', 'created_at')->get();
+        return TransactionRawData::select('id', 'chain', 'tx_hash', 'from', 'to', 'token', 'value', 'created_at', 'updated_at')->get();
     }
 
     /**
@@ -126,6 +126,4 @@ class RankingService
             ->take($numberRank)
             ->get();
     }
-
-
 }

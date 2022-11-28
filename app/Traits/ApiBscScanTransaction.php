@@ -155,7 +155,12 @@ trait ApiBscScanTransaction
         $divisor = pow(10, $decimal);
         return number_format($value / $divisor, 6, '.', '');
     }
-
+    /**
+     * convert data config
+     *
+     * @param string $contractAddress
+     * @return array
+     */
     public function dataConfig($contractAddress)
     {
         $destinationAddress = $this->auctionInfoService->infoNftAuctionById(3)->packages[0]->destination_address;
@@ -176,6 +181,22 @@ trait ApiBscScanTransaction
                     'destination_address' => $destinationAddress
                 ];
             }
+        }
+    }
+
+    /**
+     * check Amount By Raw Data function
+     *
+     * @param array $transactionData
+     * @param array $destinationAddress
+     * @return void
+     */
+    public function checkAmountByRawData($transactionData, $destinationAddress)
+    {
+        if ($transactionData['value'] > 0 && strtolower($transactionData['to']) == strtolower($destinationAddress['destination_address'])) {
+            return $transactionData;
+        } else {
+            return null;
         }
     }
 }
