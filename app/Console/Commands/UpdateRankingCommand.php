@@ -80,20 +80,15 @@ class UpdateRankingCommand extends Command
             if (!$transactionRawData->isEmpty()) {
                 //truncate transaction history and ranking
                 TransactionHistory::truncate();
-                foreach ($transactionRawData->chunk(50) as $data) {
-                    CreateTransactionJob::dispatch($data)
-                        ->onQueue(config('defines.queue.general'));
-                }
+                // insert all transaction history
+                TransactionHistory::insert($transactionRawData->toArray());
             }
-            //truncate raw data table
-            TransactionRawData::truncate();
-            TransactionRanking::truncate();
-            foreach ($results->chunk(50) as $data) {
-                UpdateRankingJob::dispatch(
-                    $data,
-                    $countTransactionHistory > 0 ? true : false
-                )->onQueue(config('defines.queue.general'));
-            }
+
+            // update ranking
+            UpdateRankingJob::dispatch(
+                $results,
+                $countTransactionHistory > 0 ? true : false
+            )->onQueue(config('defines.queue.general'));
         }
     }
 }

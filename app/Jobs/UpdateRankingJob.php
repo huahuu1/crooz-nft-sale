@@ -2,10 +2,11 @@
 
 namespace App\Jobs;
 
+use App\Models\TransactionRanking;
+use App\Models\TransactionRawData;
 use App\Services\AuctionInfoService;
 use App\Services\RankingService;
 use App\Traits\ApiBscScanTransaction;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -24,21 +25,21 @@ class UpdateRankingJob implements ShouldQueue
 
     protected $transactions;
 
-    protected $transactionHistory;
-
     protected $rankingService;
 
     protected $auctionInfoService;
 
+
+    protected $countTransactionHistory;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($transactions, $transactionHistory)
+    public function __construct($transactions,  $countTransactionHistory)
     {
         $this->transactions = $transactions;
-        $this->transactionHistory = $transactionHistory;
+        $this->countTransactionHistory = $countTransactionHistory;
         $this->rankingService = new RankingService();
         $this->auctionInfoService = new AuctionInfoService();
     }
@@ -51,102 +52,71 @@ class UpdateRankingJob implements ShouldQueue
     public function handle()
     {
         try {
-            $rawData = collect([]);
-            foreach ($this->transactions as $transaction) {
-                $data = $this->dataConfig($transaction['contractAddress']);
-                //value must greater than 0 and transaction to must be company wallet
-                if ($transaction['value'] > 0 && strtolower($transaction['to']) == strtolower($data['destination_address'])) {
-                    $value = $this->convertAmount((int)$transaction['tokenDecimal'], $transaction['value']);
-                    $timeStamp = Carbon::createFromTimestamp($transaction['timeStamp'])->format('Y-m-d H:i:s');
-                    //insert data to transaction_raw_data
-                    $this->rankingService->createTransactionRawData(
-                        $data['chain'],
-                        $transaction['hash'],
-                        $transaction['from'],
-                        $transaction['to'],
-                        $data['token'],
-                        $value,
-                        $timeStamp
-                    );
-
-
-                    $rawData->push([
-                        'wallet_address' => $transaction['from'],
-                        'tx_hash' => $transaction['hash'],
-                        'value' => $value
-                    ]);
-                    //insert data to transaction_rankings
-                    // $this->rankingService->createTransactionRanking(
-                    //     $transaction['from'],
-                    //     $value
-                    // );
-                    if (!$this->transactionHistory) {
-                        //insert data to transaction_histories
-                        $this->rankingService->createTransactionHistory(
-                            $data['chain'],
-                            $transaction['hash'],
-                            $transaction['from'],
-                            $transaction['to'],
-                            $data['token'],
-                            $value,
-                            $timeStamp
-                        );
-                    }
-                    // Log::info(
-                    //     '[SUCCESS] Update ranking for: '
-                    //         . $transaction['hash']
-                    // );
+            // not empty transactions
+            if (!empty($this->transactions)) {
+                $transactionRawData = collect([]);
+                TransactionRawData::truncate();
+                foreach ($this->transactions->chunk(2) as $transactions) {
+                    // push transactions to transactionRawData
+                    $transactionRawData->push($transactions);
+                    // create Transaction Raw Data
+                    TransactionRawDataJob::dispatch($transactions, $this->countTransactionHistory)->onQueue(config('defines.queue.general'));
                 }
+
+                $this->insertDataRanking($transactionRawData->flatten(1));
             }
-            $this->insertDataRanking($rawData);
         } catch (Exception $e) {
             Log::error($e);
         }
     }
 
-    public function insertDataRanking($rawData)
+    /**
+     * insert Data Ranking
+     *
+     * @param array $rawData
+     * @return void
+     */
+    public function insertDataRanking($transactionRawData)
     {
-        $newRawData = collect([]);
-        // foreach ($rawData as $value) {
-        //     $newRawData->push($value);
-        // }
-        // $test = $rawData->groupBy('wallet_address');
+        // transaction Raw Data
+        if (!empty($transactionRawData)) {
+            $rawData =  collect([]);
+            foreach ($transactionRawData as $rawTransaction) {
+                $data = $this->dataConfig($rawTransaction['contractAddress']);
+                //value must greater than 0 and transaction to must be company wallet
+                if (!empty($this->checkAmountByRawData($rawTransaction, $data))) {
+                    $value = $this->convertAmount((int)$rawTransaction['tokenDecimal'], $rawTransaction['value']);
+                    // push to new raw data
+                    $rawData->push([
+                        'wallet_address' => $rawTransaction['from'],
+                        'tx_hash' => $rawTransaction['hash'],
+                        'value' => $value
+                    ]);
+                }
+            }
 
-        // $test = $rawData->groupBy('wallet_address')->flatMap(function ($items) {
+            // map by amount sum
+            $newRawData = $rawData->mapToGroups(function ($item) {
+                return [
+                    $item['wallet_address'] =>  $item['value']
+                ];
+            })->map->sum();
 
-        //     $quantity = $items->sum('value');
+            // not new Raw Data empty
+            if (!empty($newRawData)) {
+                // truncate TransactionRanking
+                TransactionRanking::truncate();
+                foreach ($newRawData as $key => $value) {
+                    // create ranking
+                    TransactionRanking::firstOrCreate([
+                        'wallet_address' => $key
+                    ], [
+                        'amount' => $value
+                    ]);
 
-        //     return $items->map(function ($item) use ($quantity) {
-
-        //         $item->quantity = $quantity;
-
-        //         return $item;
-
-        //     });
-        // });
-        $test = $rawData->mapToGroups(function ($item) {
-            return [
-                $item['wallet_address'] => $item['value']
-            ];
-         })->map->sum();
-
-
-         info($test->wallet_address);
-        // foreach ($test as $value) {
-        //     # code...
-        //     info($value);
-        // }
-        // foreach ($rawData->all() as $value) {
-        //     $newRawData->push($value);
-        // }
-
-
-        // $test = $rawData->flatten(1);
-        // info($test->values()->all());
-        // $rawData->each(function ($item) use ($rankingData) {
-        //     if ($auctions->contains('tx_hash', $item['hash']) === false && $auctions->where('confirmations', '>=', (string)24)) {
-        //         $newAuctionHistories->push($item);
-        //     }
-        // });
+                    info("[SUCCESS] create ranking for: " . $key);
+                }
+            }
+        }
     }
 }
