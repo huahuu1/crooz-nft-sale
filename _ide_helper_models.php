@@ -160,6 +160,7 @@ namespace App\Models{
  * @property int $remain_ticket
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\NftAuctionInfo|null $nftAuctionInfo
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static \Illuminate\Database\Eloquent\Builder|GachaTicket newModelQuery()
@@ -432,6 +433,8 @@ namespace App\Models{
  * @property int $weapon_gacha_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Nft $Nft
+ * @property-read \App\Models\NftAuctionPackage $Package
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static \Illuminate\Database\Eloquent\Builder|NftClass newModelQuery()
@@ -700,17 +703,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|TransactionRanking whereWalletAddress($value)
  */
 	class TransactionRanking extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
- * App\Models\TransactionRaw
- *
- * @method static \Illuminate\Database\Eloquent\Builder|TransactionRaw newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|TransactionRaw newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|TransactionRaw query()
- */
-	class TransactionRaw extends \Eloquent {}
 }
 
 namespace App\Models{
