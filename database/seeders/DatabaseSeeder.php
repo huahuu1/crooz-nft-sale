@@ -28,7 +28,8 @@ class DatabaseSeeder extends Seeder
             NftAuctionRewardSeeder::class,
             NftAuctionPackageStockSeeder::class,
             AuctionNetworkSeeder::class,
-            HikaruAuctionSaleSeeder::class
+            HikaruAuctionSaleSeeder::class,
+            NftClassSeeder::class
         ]);
     }
 }

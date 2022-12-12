@@ -46,6 +46,15 @@ class NftAuctionInfoSeeder extends Seeder
                 'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'start_date' => date('Y-m-d H:i:s'),
+                'end_date' => date('Y-m-d H:i:s', strtotime('+30 days', time())),
+                'min_price' => '200',
+                'name'  => '202212 nft auction',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
             ]
         ];
         NftAuctionInfo::insert($auctionInfos);

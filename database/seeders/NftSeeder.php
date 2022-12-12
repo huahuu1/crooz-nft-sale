@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Nft;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Schema;
 
 class NftSeeder extends Seeder
 {
@@ -14,6 +16,8 @@ class NftSeeder extends Seeder
      */
     public function run()
     {
+        Schema::disableForeignKeyConstraints();
+        Nft::truncate();
         DB::table('nfts')->insert([
             [
                 'nft_id' => 1,
@@ -240,6 +244,31 @@ class NftSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
+            [
+                'nft_id' => 29,
+                'nft_type' => 1,
+                'name' => 'PSYCHIC',
+                'image_url' => 'https://d1aevkh4jc7ik5.cloudfront.net/nft/chara_gxepartner2211_en.png',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'nft_id' => 30,
+                'nft_type' => 1,
+                'name' => 'GRAPPLER',
+                'image_url' => 'https://d1aevkh4jc7ik5.cloudfront.net/nft/chara_gxepartner2211_en.png',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'nft_id' => 31,
+                'nft_type' => 1,
+                'name' => 'RANDOM',
+                'image_url' => 'https://d1aevkh4jc7ik5.cloudfront.net/nft/chara_gxepartner2211_en.png',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
         ]);
+        Schema::enableForeignKeyConstraints();
     }
 }
