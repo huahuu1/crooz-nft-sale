@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('nft_classes', function (Blueprint $table) {
             $table->id();
             $table->dateTime('sale_date');
+            $table->foreignId('auction_id')->constrained('nft_auction_infos');
             $table->foreignId('package_id')->constrained('nft_auction_packages');
             $table->unsignedBigInteger('xeno_class');
             $table->foreign('xeno_class')->references('nft_id')->on('nfts');

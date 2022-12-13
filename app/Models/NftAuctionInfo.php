@@ -33,7 +33,10 @@ class NftAuctionInfo extends Model
      *
      * @var array
      */
-    protected $with = ['packages:id,auction_id,price,unit_price,destination_address'];
+    protected $with = [
+        'packages:id,auction_id,price,unit_price,destination_address',
+        'NftClasses:id,sale_date,package_id,xeno_class,auction_id,xeno_gacha_id,weapon_gacha_id'
+    ];
 
     /**
      * Display information of the latest nft auction follow Id.
@@ -71,5 +74,14 @@ class NftAuctionInfo extends Model
     {
         return $this->hasMany(NftAuctionPackage::class, 'auction_id', 'id');
     }
-}
 
+    /**
+     * Get all of the NftClasses for the NftAuctionInfo
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function NftClasses(): HasMany
+    {
+        return $this->hasMany(NftClass::class, 'auction_id', 'id');
+    }
+}

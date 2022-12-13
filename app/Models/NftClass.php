@@ -23,6 +23,7 @@ class NftClass extends Model
         'sale_date',
         'package_id',
         'xeno_class',
+        'auction_id',
         'xeno_gacha_id',
         'weapon_gacha_id'
     ];
