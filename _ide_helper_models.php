@@ -314,6 +314,8 @@ namespace App\Models{
  * @property string|null $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\NftClass[] $NftClasses
+ * @property-read int|null $nft_classes_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\NftAuctionPackage[] $Packages
  * @property-read int|null $packages_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\NetworkMaster[] $auctionNetwork
@@ -347,6 +349,7 @@ namespace App\Models{
  * @property string $destination_address
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\NftClass|null $NftClass
  * @property-read \App\Models\NftAuctionPackageStock|null $PackageStock
  * @property-read \App\Models\NftAuctionReward|null $Reward
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
@@ -427,6 +430,7 @@ namespace App\Models{
  *
  * @property int $id
  * @property string $sale_date
+ * @property int $auction_id
  * @property int $package_id
  * @property int $xeno_class
  * @property int $xeno_gacha_id
@@ -440,6 +444,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|NftClass newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|NftClass newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|NftClass query()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftClass whereAuctionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftClass whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftClass whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NftClass wherePackageId($value)
