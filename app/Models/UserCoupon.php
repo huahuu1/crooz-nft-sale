@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Sanctum\HasApiTokens;
 
-class GachaTicket extends Model
+class UserCoupon extends Model
 {
     use HasApiTokens;
     use HasFactory;
 
-    protected $table = 'gacha_tickets';
+    protected $table = 'user_coupons';
 
     /**
      * The attributes that are mass assignable.
@@ -22,17 +22,11 @@ class GachaTicket extends Model
     protected $fillable = [
         'user_id',
         'nft_auction_id',
-        'ticket_type',
-        'total_ticket',
-        'remain_ticket'
+        'remain_coupon'
     ];
 
-    public const PAID_TICKET = 1;
-
-    public const FREE_TICKET = 2;
-
     /**
-     * Get the nft auction info relates to gacha ticket.
+     * Get the nft auction info relates to user coupon.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function nftAuctionInfo(): BelongsTo
