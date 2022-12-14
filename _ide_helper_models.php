@@ -314,12 +314,12 @@ namespace App\Models{
  * @property string|null $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\NftClass[] $NftClasses
- * @property-read int|null $nft_classes_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\NftAuctionPackage[] $Packages
  * @property-read int|null $packages_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\NetworkMaster[] $auctionNetwork
  * @property-read int|null $auction_network_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\NftClass[] $nftClasses
+ * @property-read int|null $nft_classes_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static \Database\Factories\NftAuctionInfoFactory factory(...$parameters)
@@ -827,6 +827,8 @@ namespace App\Models{
  * @property int $remain_coupon
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UserCouponHistory[] $histories
+ * @property-read int|null $histories_count
  * @property-read \App\Models\NftAuctionInfo $nftAuctionInfo
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
@@ -841,6 +843,27 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|UserCoupon whereUserId($value)
  */
 	class UserCoupon extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\UserCouponHistory
+ *
+ * @property int $id
+ * @property int $user_coupon_id
+ * @property string $used_time
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|UserCouponHistory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserCouponHistory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserCouponHistory query()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserCouponHistory whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserCouponHistory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserCouponHistory whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserCouponHistory whereUsedTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserCouponHistory whereUserCouponId($value)
+ */
+	class UserCouponHistory extends \Eloquent {}
 }
 
 namespace App\Models{

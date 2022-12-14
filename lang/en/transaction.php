@@ -20,4 +20,9 @@ return [
         'success' => 'Import unlock user balance successfully',
         'fail' => 'Import unlock user balance failed',
     ],
+    'coupon' => [
+        'fail' => 'unsuccessful use of discount code',
+        'hasCoupon' => 'discount code does not exist',
+        'success' => 'successfully used discount code'
+    ]
 ];

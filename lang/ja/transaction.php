@@ -20,4 +20,9 @@ return [
         'success' => 'アンロック ユーザー残高のインポートに成功しました。',
         'fail' => 'アンロック ユーザー残高のインポートに失敗しました。',
     ],
+    'coupon' => [
+        'fail' => 'unsuccessful use of discount code',
+        'hasCoupon' => 'discount code does not exist',
+        'success' => 'successfully used discount code'
+    ]
 ];

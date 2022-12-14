@@ -13,7 +13,7 @@ class AuctionInfoService
      */
     public function latestInfoNftAuction()
     {
-        return NftAuctionInfo::select(
+        $auction = NftAuctionInfo::select(
             'id',
             'start_date',
             'end_date',
@@ -21,13 +21,15 @@ class AuctionInfoService
             'status',
             'name',
         )
-        ->with(
-            [
-                'auctionNetwork:network_masters.id,network_masters.chain_id,network_masters.rpc_urls,network_masters.block_explorer_urls,network_masters.chain_name,network_masters.unit',
-            ]
-        )
-        ->orderby('id', 'desc')
-        ->first();
+            ->with(
+                [
+                    'auctionNetwork:network_masters.id,network_masters.chain_id,network_masters.rpc_urls,network_masters.block_explorer_urls,network_masters.chain_name,network_masters.unit',
+                ]
+            )
+            ->orderby('id', 'desc')
+            ->first();
+
+        return $auction;
     }
 
     /**
@@ -46,12 +48,12 @@ class AuctionInfoService
             'status',
             'name'
         )
-        ->with(
-            [
-                'auctionNetwork:network_masters.id,network_masters.chain_id,network_masters.rpc_urls,network_masters.block_explorer_urls,network_masters.chain_name,network_masters.unit',
-            ]
-        )
-        ->find($id);
+            ->with(
+                [
+                    'auctionNetwork:network_masters.id,network_masters.chain_id,network_masters.rpc_urls,network_masters.block_explorer_urls,network_masters.chain_name,network_masters.unit',
+                ]
+            )
+            ->find($id);
     }
 
     /**
@@ -70,15 +72,12 @@ class AuctionInfoService
             'status',
             'name',
         )
-        ->with(
-            [
-                'auctionNetwork:network_masters.id,network_masters.chain_id,network_masters.rpc_urls,network_masters.block_explorer_urls,network_masters.chain_name,network_masters.unit',
-            ]
-        )
-        ->where('status', 1)
-        ->get();
+            ->with(
+                [
+                    'auctionNetwork:network_masters.id,network_masters.chain_id,network_masters.rpc_urls,network_masters.block_explorer_urls,network_masters.chain_name,network_masters.unit',
+                ]
+            )
+            ->where('status', 1)
+            ->get();
     }
 }
-
-
-

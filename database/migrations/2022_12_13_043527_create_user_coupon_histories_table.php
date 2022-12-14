@@ -13,12 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('user_coupons', function (Blueprint $table) {
+        Schema::create('user_coupon_histories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('nft_auction_id')->constrained('nft_auction_infos');
-            $table->integer('remain_coupon');
-            $table->integer('total_coupon');
+            $table->foreignId('user_coupon_id')->constrained('user_coupons');
+            $table->dateTime('used_time');
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_coupons');
+        Schema::dropIfExists('user_coupon_histories');
     }
 };

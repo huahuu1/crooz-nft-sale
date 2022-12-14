@@ -72,7 +72,7 @@ class TicketController extends Controller
                 ], 400);
             }
 
-            $gachaTicket = $this->ticketService->getGachaTicketByUserIdAndType($user->id, $request->ticket_type);
+            $gachaTicket = $this->ticketService->getGachaTicketByUserIdAndType($user->id, $request->ticket_type, $request->auction_id ?? null);
             //check the number of remain ticket
             if ($gachaTicket->remain_ticket <= 0) {
                 return response()->json([

@@ -46,10 +46,13 @@ class NftAuctionHistory extends Model
 
     public const FAILED_STATUS = 3;
 
+    public const CANCELED_STATUS = 4;
+
     public const METHOD_CRYPTO = 1;
 
     public const METHOD_CREDIT = 2;
 
+    public const METHOD_COUPON = 3;
     /**
      * Get ALl Pending Transactions
      *
@@ -60,8 +63,8 @@ class NftAuctionHistory extends Model
         return $this->where('status', $this::PENDING_STATUS)
             ->where('payment_method', $this::METHOD_CRYPTO)
             ->where('created_at', '<', Carbon::now()
-            ->subMinutes(1)
-            ->toDateTimeString());
+                ->subMinutes(1)
+                ->toDateTimeString());
     }
 
     /**

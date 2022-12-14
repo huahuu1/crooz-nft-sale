@@ -10,12 +10,14 @@ use App\Models\CashFlow;
 use App\Models\Nft;
 use App\Models\NftAuctionHistory;
 use App\Models\NftAuctionPackageStock;
+use App\Models\UserCouponHistory;
 use App\Services\AuctionInfoService;
 use App\Services\AuctionNftService;
 use App\Services\CashFlowService;
 use App\Services\HistoryListService;
 use App\Services\RankingService;
 use App\Services\TicketService;
+use App\Services\UserCouponService;
 use App\Services\UserService;
 use App\Traits\ApiBscScanTransaction;
 use App\Traits\ApiFincodePayment;
@@ -52,6 +54,8 @@ class TransactionController extends Controller
 
     protected $auctionNftService;
 
+    protected $userCouponService;
+
     /**
      * TransactionController constructor.
      *
@@ -72,7 +76,8 @@ class TransactionController extends Controller
         AuctionInfoService $auctionInfoService,
         TicketService $ticketService,
         AuctionNftService $auctionNftService,
-        RankingService $rankingService
+        RankingService $rankingService,
+        UserCouponService $userCouponService
     ) {
         $this->userService = $userService;
         $this->privateUserUnlockBalanceImport = $privateUserUnlockBalanceImport;
@@ -82,6 +87,7 @@ class TransactionController extends Controller
         $this->ticketService = $ticketService;
         $this->auctionNftService = $auctionNftService;
         $this->rankingService = $rankingService;
+        $this->userCouponService = $userCouponService;
     }
 
     /**
@@ -335,7 +341,7 @@ class TransactionController extends Controller
     public function registerPaymentWithCreditCard(Request $request)
     {
         try {
-            info('registerPaymentWithCreditCard-Request',[$request->all()]);
+            info('registerPaymentWithCreditCard-Request', [$request->all()]);
             $bearerToken = config('defines.fincode_authorization_token');
             $baseUri = config('defines.fincode_api_url');
             //call api register payment fincode
@@ -347,7 +353,7 @@ class TransactionController extends Controller
                 $request->amount
             );
 
-            info('registerPaymentWithCreditCard-registerPaymentCredit',[$result]);
+            info('registerPaymentWithCreditCard-registerPaymentCredit', [$result]);
 
             //case error with call api payment
             if ($result['statusCode'] !== 200) {
@@ -379,7 +385,7 @@ class TransactionController extends Controller
     public function paymentWithCreditCard(PaymentRequest $request)
     {
         try {
-            info("paymentWithCreditCard-PaymentRequest",[$request->all()]);
+            info("paymentWithCreditCard-PaymentRequest", [$request->all()]);
             $bearerToken = config('defines.fincode_authorization_token');
             $baseUri = config('defines.fincode_api_url');
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
@@ -466,6 +472,89 @@ class TransactionController extends Controller
             ], 400);
         }
     }
+    /**
+     * Create transaction with coupon.
+     *
+     * @param  \App\Http\Requests\PaymentRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function paymentWithCoupon(Request $request)
+    {
+        try {
+            info("paymentWithCoupon-PaymentRequest", [$request->all()]);
+
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'token_id' => 'required',
+                    'wallet_address' => 'required',
+                    'auction_id' => 'required',
+                    'package_id' => 'required'
+                ]
+            );
+            if (!$validator->fails()) {
+                $user = $this->userService->getUserByWalletAddress($request->wallet_address);
+                //case not found user
+                if (!$user) {
+                    return response()->json([
+                        'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
+                    ], 400);
+                }
+                // user has coupon
+                $isCoupon = $this->userCouponService->hasUserCoupon($user->id, $request->auction_id);
+                if (empty($isCoupon)) {
+                    return response()->json([
+                        'message' => __('transaction.coupon.hasCoupon'),
+                    ], 400);
+                }
+
+                //prevent out of stock package
+                $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($request->package_id);
+                if (!empty($packageStock) && $packageStock->remain <= 0) {
+                    return response()->json([
+                        'message' => __('transaction.createDepositNftTransaction.out_of_stock'),
+                    ], 400);
+                }
+
+                //create data in nft auction history with status pending
+                $auctionFiat = $this->historyListService->createNftAuctionHistory(
+                    $user->id,
+                    $request->token_id,
+                    $request->auction_id,
+                    0,
+                    NftAuctionHistory::SUCCESS_STATUS,
+                    null,
+                    NftAuctionHistory::METHOD_COUPON,
+                    $request->package_id
+                );
+                // update package stock
+                if (!empty($packageStock)) {
+                    $packageStock->remain -= 1;
+                    $packageStock->update();
+                }
+                // update coupon
+                $isCoupon->remain_coupon -= 1;
+                $isCoupon->update();
+
+                // add user coupon history
+                $this->userCouponService->createUserCouponHistory($isCoupon->id);
+
+                // update remain Ticket
+                $this->distributeTicket($auctionFiat, $this->ticketService, $this->auctionNftService);
+
+                return response()->json([
+                    'message' => __('transaction.coupon.success'),
+                ], 200);
+            }
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'message' => __('transaction.coupon.fail'),
+                'error' => $e,
+            ], 400);
+        }
+    }
 
     public function gachaTicketApi(Request $request)
     {
@@ -500,7 +589,7 @@ class TransactionController extends Controller
     public function historyNftAuctionByPackage(Request $request)
     {
         $user = $this->userService->getUserByWalletAddress($request->wallet_address);
-        if(empty($user) || empty($request->package_id) || empty($request->auction_id)){
+        if (empty($user) || empty($request->package_id) || empty($request->auction_id)) {
             return response()->json([
                 'message' => 'Not Found'
             ], 400);

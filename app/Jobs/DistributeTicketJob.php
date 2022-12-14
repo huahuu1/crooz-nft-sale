@@ -68,12 +68,14 @@ class DistributeTicketJob implements ShouldQueue
                     $this->ticketService->createPaidGachaTicketData(
                         $this->transaction->user_id,
                         $ticketNumber,
+                        $packageInfo->auction_id
                     );
                 } else {
                     // update gacha ticket form user_id and paid ticket
                     $userTicket = $this->ticketService->getGachaTicketByUserIdAndType(
                         $this->transaction->user_id,
-                        GachaTicket::PAID_TICKET
+                        GachaTicket::PAID_TICKET,
+                        $packageInfo->auction_id
                     );
                     $userTicket->total_ticket += $ticketNumber;
                     $userTicket->remain_ticket += $ticketNumber;
