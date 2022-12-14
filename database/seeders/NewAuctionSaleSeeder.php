@@ -21,11 +21,13 @@ class NewAuctionSaleSeeder extends Seeder
     {
         // nft delivery sources
         NftDeliverySource::create([
+            'id' => 8,
             'name' => '202212 NFT Auction'
         ]);
 
         // auction info
         $auctionInfos = [
+            'id' => 4,
             'start_date' => date('Y-m-d H:i:s'),
             'end_date' => date('Y-m-d H:i:s', strtotime('+30 days', time())),
             'min_price' => '200',
