@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 
 class UserCoupon extends Model
@@ -22,7 +23,18 @@ class UserCoupon extends Model
     protected $fillable = [
         'user_id',
         'nft_auction_id',
-        'remain_coupon'
+        'remain_coupon',
+        'total_coupon'
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $with = [
+        'nftAuctionInfo',
+        'histories'
     ];
 
     /**
@@ -32,5 +44,15 @@ class UserCoupon extends Model
     public function nftAuctionInfo(): BelongsTo
     {
         return $this->belongsTo(NftAuctionInfo::class, 'nft_auction_id');
+    }
+
+    /**
+     * Get all of the histories for the UserCoupon
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function histories(): HasMany
+    {
+        return $this->hasMany(UserCouponHistory::class, 'user_coupon_id', 'id');
     }
 }

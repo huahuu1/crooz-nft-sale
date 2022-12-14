@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Laravel\Sanctum\HasApiTokens;
@@ -35,7 +37,7 @@ class NftAuctionInfo extends Model
      */
     protected $with = [
         'packages:id,auction_id,price,unit_price,destination_address',
-        'NftClasses:id,sale_date,package_id,xeno_class,auction_id,xeno_gacha_id,weapon_gacha_id'
+        'xenoClassSaleTime:id,auction_id,xeno_class_id,start_time,end_time'
     ];
 
     /**
@@ -76,12 +78,12 @@ class NftAuctionInfo extends Model
     }
 
     /**
-     * Get all of the NftClasses for the NftAuctionInfo
+     * Get the xenoClassSaleTime that owns the NftAuctionInfo
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function NftClasses(): HasMany
+    public function xenoClassSaleTime(): HasMany
     {
-        return $this->hasMany(NftClass::class, 'auction_id', 'id');
+        return $this->hasMany(XenoClassSaleTime::class,  'auction_id', 'id');
     }
 }

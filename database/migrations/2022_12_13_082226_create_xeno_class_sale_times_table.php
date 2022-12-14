@@ -13,15 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('nft_classes', function (Blueprint $table) {
+        Schema::create('xeno_class_sale_times', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('sale_date');
             $table->foreignId('auction_id')->constrained('nft_auction_infos');
-            $table->foreignId('package_id')->constrained('nft_auction_packages');
-            $table->unsignedBigInteger('xeno_class');
-            $table->foreign('xeno_class')->references('nft_id')->on('nfts');
-            $table->integer('xeno_gacha_id');
-            $table->integer('weapon_gacha_id');
+            $table->foreignId('xeno_class_id')->constrained('xeno_classes');
+            $table->dateTime('start_time');
+            $table->dateTime('end_time');
             $table->timestamps();
         });
     }
@@ -33,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('nft_classes');
+        Schema::dropIfExists('xeno_class_sale_times');
     }
 };

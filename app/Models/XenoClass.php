@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Sanctum\HasApiTokens;
 
-class NftClass extends Model
+class XenoClass extends Model
 {
     use HasApiTokens;
     use HasFactory;
 
-    protected $table = 'nft_classes';
+    protected $table = 'xeno_classes';
 
     /**
      * The attributes that are mass assignable.
@@ -20,12 +20,7 @@ class NftClass extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'sale_date',
-        'package_id',
-        'xeno_class',
-        'auction_id',
-        'xeno_gacha_id',
-        'weapon_gacha_id'
+        'class'
     ];
 
     /**
@@ -43,6 +38,6 @@ class NftClass extends Model
      */
     public function Nft(): BelongsTo
     {
-        return $this->belongsTo(Nft::class, 'xeno_class', 'nft_id',);
+        return $this->belongsTo(Nft::class, 'xeno_class', 'nft_id');
     }
 }

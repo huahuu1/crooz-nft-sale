@@ -3,12 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\AuctionNetwork;
-use App\Models\Nft;
 use App\Models\NftAuctionInfo;
 use App\Models\NftAuctionPackage;
 use App\Models\NftAuctionPackageStock;
-use App\Models\UserCoupon;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\NftAuctionReward;
+use App\Models\NftDeliverySource;
 use Illuminate\Database\Seeder;
 
 class NewAuctionSaleSeeder extends Seeder
@@ -20,6 +19,10 @@ class NewAuctionSaleSeeder extends Seeder
      */
     public function run()
     {
+        // nft delivery sources
+        NftDeliverySource::create([
+            'name' => '202212 NFT Auction'
+        ]);
 
         // auction info
         $auctionInfos = [
@@ -97,46 +100,53 @@ class NewAuctionSaleSeeder extends Seeder
         ];
         NftAuctionPackageStock::insert($NftAuctionPackageStocks);
 
-        // NFT item
-        $nfts = [
+        // nft auction rewards
+        $nftAuctionRewards = [
             [
-                'nft_id' => 29,
-                'nft_type' => 1,
-                'name' => 'PSYCHIC',
-                'image_url' => 'https://d1aevkh4jc7ik5.cloudfront.net/nft/chara_gxepartner2211_en.png',
+                'package_id' => 5,
+                'nft_id' => 7,
+                'ticket_quantity' => 1,
+                'nft_quantity' => 1,
+                'nft_delivery_id' => 8,
                 'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ],
             [
-                'nft_id' => 30,
-                'nft_type' => 1,
-                'name' => 'GRAPPLER',
-                'image_url' => 'https://d1aevkh4jc7ik5.cloudfront.net/nft/chara_gxepartner2211_en.png',
+                'package_id' => 6,
+                'nft_id' => 7,
+                'ticket_quantity' => 6,
+                'nft_quantity' => 5,
+                'nft_delivery_id' => 8,
                 'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ],
             [
-                'nft_id' => 31,
-                'nft_type' => 1,
-                'name' => 'RANDOM',
-                'image_url' => 'https://d1aevkh4jc7ik5.cloudfront.net/nft/chara_gxepartner2211_en.png',
+                'package_id' => 7,
+                'nft_id' => 7,
+                'ticket_quantity' => 1,
+                'nft_quantity' => 1,
+                'nft_delivery_id' => 8,
                 'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ]
-        ];
-
-        Nft::insert($nfts);
-
-        // user coupon
-        $userCoupon = [
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
             [
-                'user_id' => 1,
-                'nft_auction_id' => 4,
-                'remain_coupon' => 10,
+                'package_id' => 8,
+                'nft_id' => 7,
+                'ticket_quantity' => 1,
+                'nft_quantity' => 1,
+                'nft_delivery_id' => 8,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ]
         ];
-        UserCoupon::insert($userCoupon);
+        NftAuctionReward::insert($nftAuctionRewards);
+
+        // Xeno Class sale time
+        $this->call([
+            XenoClassSeeder::class,
+            XenoClassSaleTimeSeeder::class,
+            NftAuctionGachaIdSeeder::class,
+            UserCouponSeeder::class
+        ]);
     }
 }

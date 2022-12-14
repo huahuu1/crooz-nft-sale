@@ -36,7 +36,6 @@ class NftAuctionPackage extends Model
     protected $with = [
         'Reward',
         'PackageStock',
-        'NftClass:sale_date,package_id,xeno_class,auction_id,xeno_gacha_id,weapon_gacha_id'
     ];
 
     /**
@@ -57,18 +56,5 @@ class NftAuctionPackage extends Model
     public function PackageStock(): BelongsTo
     {
         return $this->belongsTo(NftAuctionPackageStock::class, 'id', 'package_id');
-    }
-
-    /**
-     * Get all of the nft class for the NftAuctionPackage by today
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function NftClass(): BelongsTo
-    {
-        $startSaleDate = Carbon::today('UTC')->format('Y-m-d') . " 20:00:00";
-        $endSaleDate = Carbon::today('UTC')->addDays(1)->format('Y-m-d') . " 19:59:59";
-
-        return $this->belongsTo(NftClass::class, 'id', 'package_id')->whereBetween('sale_date', [$startSaleDate, $endSaleDate]);
     }
 }

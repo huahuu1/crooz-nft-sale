@@ -53,16 +53,18 @@ Route::middleware(['language'])->group(function () {
 
         //transaction routes
         Route::controller(TransactionController::class)->group(function () {
-            //send transaction
+            // send transaction
             Route::post('buy-token-transaction', 'createDepositTokenTransaction');
             Route::post('buy-nft-transaction', 'createDepositNftTransaction');
             Route::post('insert-missed-transaction', 'insertMissedTransaction');
-            //register payment with credit card
+            // register payment with credit card
             Route::post('register-payment/credit', 'registerPaymentWithCreditCard');
-            //complete payment with credit card
+            // complete payment with credit card
             Route::put('payment/credit', 'paymentWithCreditCard');
             // get history purchase nft auction list
             Route::get('package-history-nft-auction', 'historyNftAuctionByPackage');
+            // complete payment with coupon
+            Route::post('payment/coupon', 'paymentWithCoupon');
         });
 
         //my page routes

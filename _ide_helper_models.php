@@ -262,6 +262,32 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\NftAuctionGachaId
+ *
+ * @property int $id
+ * @property int $package_id
+ * @property int $sale_time_id
+ * @property int $xeno_gacha_id
+ * @property int $weapon_gacha_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\XenoClassSaleTime $xenoSaleTime
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId query()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId wherePackageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId whereSaleTimeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId whereWeaponGachaId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId whereXenoGachaId($value)
+ */
+	class NftAuctionGachaId extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\NftAuctionHistory
  *
  * @property int $id
@@ -314,14 +340,14 @@ namespace App\Models{
  * @property string|null $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\NftClass[] $NftClasses
- * @property-read int|null $nft_classes_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\NftAuctionPackage[] $Packages
  * @property-read int|null $packages_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\NetworkMaster[] $auctionNetwork
  * @property-read int|null $auction_network_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\XenoClassSaleTime[] $xenoClassSaleTime
+ * @property-read int|null $xeno_class_sale_time_count
  * @method static \Database\Factories\NftAuctionInfoFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionInfo newQuery()
@@ -349,7 +375,6 @@ namespace App\Models{
  * @property string $destination_address
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\NftClass|null $NftClass
  * @property-read \App\Models\NftAuctionPackageStock|null $PackageStock
  * @property-read \App\Models\NftAuctionReward|null $Reward
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
@@ -422,39 +447,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward whereUpdatedAt($value)
  */
 	class NftAuctionReward extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
- * App\Models\NftClass
- *
- * @property int $id
- * @property string $sale_date
- * @property int $auction_id
- * @property int $package_id
- * @property int $xeno_class
- * @property int $xeno_gacha_id
- * @property int $weapon_gacha_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Nft $Nft
- * @property-read \App\Models\NftAuctionPackage $Package
- * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
- * @property-read int|null $tokens_count
- * @method static \Illuminate\Database\Eloquent\Builder|NftClass newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|NftClass newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|NftClass query()
- * @method static \Illuminate\Database\Eloquent\Builder|NftClass whereAuctionId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NftClass whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NftClass whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NftClass wherePackageId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NftClass whereSaleDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NftClass whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NftClass whereWeaponGachaId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NftClass whereXenoClass($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NftClass whereXenoGachaId($value)
- */
-	class NftClass extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -825,8 +817,11 @@ namespace App\Models{
  * @property int $user_id
  * @property int $nft_auction_id
  * @property int $remain_coupon
+ * @property int $total_coupon
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UserCouponHistory[] $histories
+ * @property-read int|null $histories_count
  * @property-read \App\Models\NftAuctionInfo $nftAuctionInfo
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
@@ -837,10 +832,32 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|UserCoupon whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|UserCoupon whereNftAuctionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|UserCoupon whereRemainCoupon($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserCoupon whereTotalCoupon($value)
  * @method static \Illuminate\Database\Eloquent\Builder|UserCoupon whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|UserCoupon whereUserId($value)
  */
 	class UserCoupon extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\UserCouponHistory
+ *
+ * @property int $id
+ * @property int $user_coupon_id
+ * @property string $used_time
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|UserCouponHistory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserCouponHistory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserCouponHistory query()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserCouponHistory whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserCouponHistory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserCouponHistory whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserCouponHistory whereUsedTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserCouponHistory whereUserCouponId($value)
+ */
+	class UserCouponHistory extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -899,5 +916,54 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|WhitelistUser whereUserId($value)
  */
 	class WhitelistUser extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\XenoClass
+ *
+ * @property int $id
+ * @property string $class
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Nft|null $Nft
+ * @property-read \App\Models\NftAuctionPackage $Package
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClass newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClass newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClass query()
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClass whereClass($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClass whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClass whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClass whereUpdatedAt($value)
+ */
+	class XenoClass extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\XenoClassSaleTime
+ *
+ * @property int $id
+ * @property int $auction_id
+ * @property int $xeno_class_id
+ * @property string $start_time
+ * @property string $end_time
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\XenoClass $xenoClass
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClassSaleTime newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClassSaleTime newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClassSaleTime query()
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClassSaleTime whereAuctionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClassSaleTime whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClassSaleTime whereEndTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClassSaleTime whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClassSaleTime whereStartTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClassSaleTime whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClassSaleTime whereXenoClassId($value)
+ */
+	class XenoClassSaleTime extends \Eloquent {}
 }
 

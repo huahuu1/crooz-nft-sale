@@ -48,16 +48,19 @@ class TicketService
      *
      * @param int $userId
      * @param int $ticketNumber
+     * @package int $auctionId
      * @return \App\Models\GachaTicket::PAID_TICKET
      */
     public function createPaidGachaTicketData(
         $userId,
-        $ticketNumber
+        $ticketNumber,
+        $auctionId
     ) {
         try {
             // set default value
             $gaChaTicket = [
                 'user_id' => $userId,
+                'nft_auction_id' => $auctionId,
                 'total_ticket' => $ticketNumber,
                 'remain_ticket' => $ticketNumber,
                 'ticket_type' => GachaTicket::PAID_TICKET
@@ -110,13 +113,14 @@ class TicketService
     /**
      * Get gacha ticket info by user id and ticket type.
      *
-     * @param $userId, $ticketType
+     * @param $userId, $ticketType, $auctionId
      * @return array|object
      */
-    public function getGachaTicketByUserIdAndType($userId, $ticketType): array|object
+    public function getGachaTicketByUserIdAndType($userId, $ticketType, $auctionId): array|object
     {
         return GachaTicket::where('user_id', $userId)
             ->where('ticket_type', $ticketType)
+            ->where('nft_auction_id', $auctionId)
             ->lockForUpdate()
             ->first();
     }
