@@ -22,7 +22,7 @@ class XenoClassSaleTime extends Model
      *
      * @var array
      */
-    protected $with = ['xenoClass:id,class'];
+    protected $with = ['xenoClass:id,class,standard_img,special_img,premium_img,legandary_img'];
 
     /**
      * The attributes that are mass assignable.

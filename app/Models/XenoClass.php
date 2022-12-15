@@ -20,7 +20,11 @@ class XenoClass extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'class'
+        'class',
+        'standard_img',
+        'special_img',
+        'premium_img',
+        'legandary_img'
     ];
 
     /**
