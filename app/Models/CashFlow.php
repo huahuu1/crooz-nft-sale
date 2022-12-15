@@ -37,4 +37,6 @@ class CashFlow extends Model
     public const METHOD_CRYPTO = 1;
 
     public const METHOD_CREDIT = 2;
+
+    public const METHOD_COUPON = 3;
 }

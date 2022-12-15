@@ -106,36 +106,24 @@ class NewAuctionSaleSeeder extends Seeder
         $nftAuctionRewards = [
             [
                 'package_id' => 5,
-                'nft_id' => 7,
-                'ticket_quantity' => 1,
-                'nft_quantity' => 1,
                 'nft_delivery_id' => 8,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ],
             [
                 'package_id' => 6,
-                'nft_id' => 7,
-                'ticket_quantity' => 6,
-                'nft_quantity' => 5,
                 'nft_delivery_id' => 8,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ],
             [
                 'package_id' => 7,
-                'nft_id' => 7,
-                'ticket_quantity' => 1,
-                'nft_quantity' => 1,
                 'nft_delivery_id' => 8,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ],
             [
                 'package_id' => 8,
-                'nft_id' => 7,
-                'ticket_quantity' => 1,
-                'nft_quantity' => 1,
                 'nft_delivery_id' => 8,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
@@ -147,7 +135,8 @@ class NewAuctionSaleSeeder extends Seeder
         $this->call([
             XenoClassSeeder::class,
             XenoClassSaleTimeSeeder::class,
-            NftAuctionGachaIdSeeder::class,
+            NftAuctionXenoGachaIdSeeder::class,
+            NftAuctionWeaponGachaIdSeeder::class,
             UserCouponSeeder::class
         ]);
     }

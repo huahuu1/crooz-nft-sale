@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class NftAuctionGachaId extends Model
+class NftAuctionXenoGachaId extends Model
 {
     use HasFactory;
 
@@ -16,7 +16,7 @@ class NftAuctionGachaId extends Model
      *
      * @var string
      */
-    protected $table = 'nft_auction_gacha_ids';
+    protected $table = 'nft_auction_xeno_gacha_ids';
 
     /**
      * The accessors to append to the model's array form.
@@ -34,7 +34,6 @@ class NftAuctionGachaId extends Model
         'package_id',
         'sale_time_id',
         'xeno_gacha_id',
-        'weapon_gacha_id'
     ];
 
     /**

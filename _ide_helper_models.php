@@ -98,7 +98,7 @@ namespace App\Models{
  * @property string $amount
  * @property int $type
  * @property string $transaction_type
- * @property string $tx_hash
+ * @property string|null $tx_hash
  * @property string|null $payment_method
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -262,32 +262,6 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * App\Models\NftAuctionGachaId
- *
- * @property int $id
- * @property int $package_id
- * @property int $sale_time_id
- * @property int $xeno_gacha_id
- * @property int $weapon_gacha_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\XenoClassSaleTime $xenoSaleTime
- * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId query()
- * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId wherePackageId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId whereSaleTimeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId whereWeaponGachaId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionGachaId whereXenoGachaId($value)
- */
-	class NftAuctionGachaId extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
  * App\Models\NftAuctionHistory
  *
  * @property int $id
@@ -424,14 +398,14 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $package_id
- * @property int $nft_id
+ * @property int|null $nft_id
  * @property int|null $nft_delivery_id
- * @property int $ticket_quantity
- * @property int $nft_quantity
+ * @property int|null $ticket_quantity
+ * @property int|null $nft_quantity
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\NftDeliverySource $Delivery
- * @property-read \App\Models\Nft $Nft
+ * @property-read \App\Models\NftDeliverySource|null $Delivery
+ * @property-read \App\Models\Nft|null $Nft
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward newModelQuery()
@@ -447,6 +421,47 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward whereUpdatedAt($value)
  */
 	class NftAuctionReward extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\NftAuctionWeaponGachaId
+ *
+ * @property int $id
+ * @property int $nft_id
+ * @property int $weapon_gacha_id
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionWeaponGachaId newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionWeaponGachaId newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionWeaponGachaId query()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionWeaponGachaId whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionWeaponGachaId whereNftId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionWeaponGachaId whereWeaponGachaId($value)
+ */
+	class NftAuctionWeaponGachaId extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\NftAuctionXenoGachaId
+ *
+ * @property int $id
+ * @property int $package_id
+ * @property int $sale_time_id
+ * @property int $xeno_gacha_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\XenoClassSaleTime $xenoSaleTime
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionXenoGachaId newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionXenoGachaId newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionXenoGachaId query()
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionXenoGachaId whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionXenoGachaId whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionXenoGachaId wherePackageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionXenoGachaId whereSaleTimeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionXenoGachaId whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionXenoGachaId whereXenoGachaId($value)
+ */
+	class NftAuctionXenoGachaId extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -924,6 +939,10 @@ namespace App\Models{
  *
  * @property int $id
  * @property string $class
+ * @property string|null $standard_img
+ * @property string|null $special_img
+ * @property string|null $premium_img
+ * @property string|null $legandary_img
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Nft|null $Nft
@@ -936,6 +955,10 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|XenoClass whereClass($value)
  * @method static \Illuminate\Database\Eloquent\Builder|XenoClass whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|XenoClass whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClass whereLegandaryImg($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClass wherePremiumImg($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClass whereSpecialImg($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|XenoClass whereStandardImg($value)
  * @method static \Illuminate\Database\Eloquent\Builder|XenoClass whereUpdatedAt($value)
  */
 	class XenoClass extends \Eloquent {}

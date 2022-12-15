@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PaymentCouponRequest;
 use App\Http\Requests\PaymentRequest;
 use App\Http\Requests\TransactionRequest;
 use App\Imports\PrivateUserUnlockBalanceImport;
@@ -32,6 +33,7 @@ use Nullix\CryptoJsAes\CryptoJsAes;
 
 class TransactionController extends Controller
 {
+
     use CheckTransactionWithApiScan;
 
     use ApiFincodePayment;
@@ -413,6 +415,8 @@ class TransactionController extends Controller
                 NftAuctionHistory::METHOD_CREDIT,
                 $request->package_id
             );
+
+
             //call api payment fincode
             $result = $this->completePaymentCredit(
                 $baseUri,
@@ -475,7 +479,7 @@ class TransactionController extends Controller
     /**
      * Create transaction with coupon.
      *
-     * @param  \App\Http\Requests\PaymentRequest $request
+     * @param  \App\Http\Requests\PaymentCouponRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function paymentWithCoupon(Request $request)
@@ -486,10 +490,11 @@ class TransactionController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'token_id' => 'required',
-                    'wallet_address' => 'required',
-                    'auction_id' => 'required',
-                    'package_id' => 'required'
+                    'token_id' => 'required|numeric',
+                    'wallet_address' => 'required|regex:' . config('regex.wallet_address'),
+                    'auction_id' => 'required|numeric',
+                    'package_id' => 'required|numeric',
+                    'amount' => 'required|numeric'
                 ]
             );
             if (!$validator->fails()) {
@@ -521,12 +526,23 @@ class TransactionController extends Controller
                     $user->id,
                     $request->token_id,
                     $request->auction_id,
-                    0,
+                    $request->amount,
                     NftAuctionHistory::SUCCESS_STATUS,
                     null,
                     NftAuctionHistory::METHOD_COUPON,
                     $request->package_id
                 );
+
+                // Insert record in cash flow
+                $this->cashFlowService->createCashFlow(
+                    $user->id,
+                    $request->token_id,
+                    $request->amount,
+                    CashFlow::NFT_DEPOSIT,
+                    null,
+                    CashFlow::METHOD_COUPON
+                );
+
                 // update package stock
                 if (!empty($packageStock)) {
                     $packageStock->remain -= 1;
@@ -545,6 +561,10 @@ class TransactionController extends Controller
                 return response()->json([
                     'message' => __('transaction.coupon.success'),
                 ], 200);
+            } else {
+                return response()->json([
+                    'message' => __('transaction.coupon.fail'),
+                ], 400);
             }
         } catch (Exception $e) {
             Log::error($e);

@@ -11,8 +11,6 @@ return new class extends Migration
      */
     public function up()
     {
-
-
         DB::statement("ALTER TABLE cash_flows CHANGE COLUMN payment_method payment_method ENUM('CRYPTO', 'CREDIT', 'COUPON') NULL");
     }
 
