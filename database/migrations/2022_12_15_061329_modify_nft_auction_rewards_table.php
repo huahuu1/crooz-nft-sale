@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('nft_auction_rewards', function (Blueprint $table) {
-            $table->integer('nft_id')->nullable()->change();
+            $table->unsignedBigInteger('nft_id')->nullable()->change();
             $table->integer('ticket_quantity')->nullable()->change();
             $table->integer('nft_quantity')->nullable()->change();
         });
@@ -28,7 +28,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('nft_auction_rewards', function (Blueprint $table) {
-            $table->integer('nft_id')->change();
+            $table->unsignedBigInteger('nft_id')->change();
             $table->integer('ticket_quantity')->change();
             $table->integer('nft_quantity')->change();
         });
