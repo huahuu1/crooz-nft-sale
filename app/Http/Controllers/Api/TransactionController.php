@@ -5,13 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PaymentCouponRequest;
 use App\Http\Requests\PaymentRequest;
-use App\Http\Requests\TransactionRequest;
 use App\Imports\PrivateUserUnlockBalanceImport;
 use App\Models\CashFlow;
 use App\Models\Nft;
 use App\Models\NftAuctionHistory;
 use App\Models\NftAuctionPackageStock;
-use App\Models\UserCouponHistory;
 use App\Services\AuctionInfoService;
 use App\Services\AuctionNftService;
 use App\Services\CashFlowService;
@@ -24,7 +22,6 @@ use App\Traits\ApiBscScanTransaction;
 use App\Traits\ApiFincodePayment;
 use App\Traits\CheckTransactionWithApiScan;
 use App\Traits\DistributeTicket;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -33,7 +30,6 @@ use Nullix\CryptoJsAes\CryptoJsAes;
 
 class TransactionController extends Controller
 {
-
     use CheckTransactionWithApiScan;
 
     use ApiFincodePayment;
@@ -482,90 +478,74 @@ class TransactionController extends Controller
      * @param  \App\Http\Requests\PaymentCouponRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function paymentWithCoupon(Request $request)
+    public function paymentWithCoupon(PaymentCouponRequest $request)
     {
         try {
             info("paymentWithCoupon-PaymentRequest", [$request->all()]);
 
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'token_id' => 'required|numeric',
-                    'wallet_address' => 'required|regex:' . config('regex.wallet_address'),
-                    'auction_id' => 'required|numeric',
-                    'package_id' => 'required|numeric',
-                    'amount' => 'required|numeric'
-                ]
-            );
-            if (!$validator->fails()) {
-                $user = $this->userService->getUserByWalletAddress($request->wallet_address);
-                //case not found user
-                if (!$user) {
-                    return response()->json([
-                        'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
-                    ], 400);
-                }
-                // user has coupon
-                $isCoupon = $this->userCouponService->hasUserCoupon($user->id, $request->auction_id);
-                if (empty($isCoupon)) {
-                    return response()->json([
-                        'message' => __('transaction.coupon.hasCoupon'),
-                    ], 400);
-                }
-
-                //prevent out of stock package
-                $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($request->package_id);
-                if (!empty($packageStock) && $packageStock->remain <= 0) {
-                    return response()->json([
-                        'message' => __('transaction.createDepositNftTransaction.out_of_stock'),
-                    ], 400);
-                }
-
-                //create data in nft auction history with status pending
-                $auctionFiat = $this->historyListService->createNftAuctionHistory(
-                    $user->id,
-                    $request->token_id,
-                    $request->auction_id,
-                    $request->amount,
-                    NftAuctionHistory::SUCCESS_STATUS,
-                    null,
-                    NftAuctionHistory::METHOD_COUPON,
-                    $request->package_id
-                );
-
-                // Insert record in cash flow
-                $this->cashFlowService->createCashFlow(
-                    $user->id,
-                    $request->token_id,
-                    $request->amount,
-                    CashFlow::NFT_DEPOSIT,
-                    null,
-                    CashFlow::METHOD_COUPON
-                );
-
-                // update package stock
-                if (!empty($packageStock)) {
-                    $packageStock->remain -= 1;
-                    $packageStock->update();
-                }
-                // update coupon
-                $isCoupon->remain_coupon -= 1;
-                $isCoupon->update();
-
-                // add user coupon history
-                $this->userCouponService->createUserCouponHistory($isCoupon->id);
-
-                // update remain Ticket
-                $this->distributeTicket($auctionFiat, $this->ticketService, $this->auctionNftService);
-
+            $user = $this->userService->getUserByWalletAddress($request->wallet_address);
+            //case not found user
+            if (!$user) {
                 return response()->json([
-                    'message' => __('transaction.coupon.success'),
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => __('transaction.coupon.fail'),
+                    'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
                 ], 400);
             }
+            // user has coupon
+            $isCoupon = $this->userCouponService->hasUserCoupon($user->id, $request->auction_id);
+            if (empty($isCoupon)) {
+                return response()->json([
+                    'message' => __('transaction.coupon.hasCoupon'),
+                ], 400);
+            }
+
+            //prevent out of stock package
+            $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($request->package_id);
+            if (!empty($packageStock) && $packageStock->remain <= 0) {
+                return response()->json([
+                    'message' => __('transaction.createDepositNftTransaction.out_of_stock'),
+                ], 400);
+            }
+
+            //create data in nft auction history with status pending
+            $auctionFiat = $this->historyListService->createNftAuctionHistory(
+                $user->id,
+                $request->token_id,
+                $request->auction_id,
+                $request->amount,
+                NftAuctionHistory::SUCCESS_STATUS,
+                null,
+                NftAuctionHistory::METHOD_COUPON,
+                $request->package_id
+            );
+
+            // Insert record in cash flow
+            $this->cashFlowService->createCashFlow(
+                $user->id,
+                $request->token_id,
+                $request->amount,
+                CashFlow::NFT_DEPOSIT,
+                null,
+                CashFlow::METHOD_COUPON
+            );
+
+            // update package stock
+            if (!empty($packageStock)) {
+                $packageStock->remain -= 1;
+                $packageStock->update();
+            }
+            // update coupon
+            $isCoupon->remain_coupon -= 1;
+            $isCoupon->update();
+
+            // add user coupon history
+            $this->userCouponService->createUserCouponHistory($isCoupon->id);
+
+            // update remain Ticket
+            $this->distributeTicket($auctionFiat, $this->ticketService, $this->auctionNftService);
+
+            return response()->json([
+                'message' => __('transaction.coupon.success'),
+            ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
