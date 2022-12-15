@@ -18,6 +18,7 @@ class XenoClassSaleTimeSeeder extends Seeder
     {
         $xenoClassesTime = [
             [
+                'id' => 1,
                 'auction_id' => 4,
                 'xeno_class_id' => 1,
                 'start_time' => Carbon::create('2022', '12', '27', '20'),
@@ -26,6 +27,7 @@ class XenoClassSaleTimeSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
+                'id' => 2,
                 'auction_id' => 4,
                 'xeno_class_id' => 2,
                 'start_time' => Carbon::create('2022', '12', '28', '20'),
@@ -34,6 +36,7 @@ class XenoClassSaleTimeSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
+                'id' => 3,
                 'auction_id' => 4,
                 'xeno_class_id' => 3,
                 'start_time' => Carbon::create('2022', '12', '29', '20'),
@@ -42,6 +45,7 @@ class XenoClassSaleTimeSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
+                'id' => 4,
                 'auction_id' => 4,
                 'xeno_class_id' => 4,
                 'start_time' => Carbon::create('2022', '12', '30', '20'),
@@ -50,6 +54,7 @@ class XenoClassSaleTimeSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
+                'id' => 5,
                 'auction_id' => 4,
                 'xeno_class_id' => 5,
                 'start_time' => Carbon::create('2022', '12', '31', '20'),
@@ -58,6 +63,7 @@ class XenoClassSaleTimeSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
+                'id' => 6,
                 'auction_id' => 4,
                 'xeno_class_id' => 6,
                 'start_time' => Carbon::create('2023', '01', '01', '20'),
@@ -66,6 +72,7 @@ class XenoClassSaleTimeSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
+                'id' => 7,
                 'auction_id' => 4,
                 'xeno_class_id' => 1,
                 'start_time' => Carbon::create('2023', '01', '02', '20'),
@@ -74,6 +81,7 @@ class XenoClassSaleTimeSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
+                'id' => 8,
                 'auction_id' => 4,
                 'xeno_class_id' => 2,
                 'start_time' => Carbon::create('2023', '01', '03', '20'),
@@ -82,6 +90,7 @@ class XenoClassSaleTimeSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
+                'id' => 9,
                 'auction_id' => 4,
                 'xeno_class_id' => 3,
                 'start_time' => Carbon::create('2023', '01', '04', '20'),
@@ -90,6 +99,7 @@ class XenoClassSaleTimeSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
+                'id' => 10,
                 'auction_id' => 4,
                 'xeno_class_id' => 4,
                 'start_time' => Carbon::create('2023', '01', '05', '20'),
@@ -98,6 +108,7 @@ class XenoClassSaleTimeSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
+                'id' => 11,
                 'auction_id' => 4,
                 'xeno_class_id' => 5,
                 'start_time' => Carbon::create('2023', '01', '06', '20'),
@@ -106,6 +117,7 @@ class XenoClassSaleTimeSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
+                'id' => 12,
                 'auction_id' => 4,
                 'xeno_class_id' => 6,
                 'start_time' => Carbon::create('2023', '01', '07', '20'),
@@ -114,6 +126,7 @@ class XenoClassSaleTimeSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
+                'id' => 13,
                 'auction_id' => 4,
                 'xeno_class_id' => 7,
                 'start_time' => Carbon::create('2023', '01', '08', '20'),

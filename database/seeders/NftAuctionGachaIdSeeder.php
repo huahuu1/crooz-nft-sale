@@ -36,7 +36,7 @@ class NftAuctionGachaIdSeeder extends Seeder
 
                 $nftAuctionGachaIds[] = [
                     'package_id' => $packageId,
-                    'xeno_class_id' => $i,
+                    'sale_time_id' => $i,
                     'xeno_gacha_id' => $xenoGachaId,
                     'weapon_gacha_id' => $weaponId,
                     'created_at' => date('Y-m-d H:i:s'),
