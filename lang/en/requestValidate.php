@@ -38,5 +38,17 @@ return [
     ],
     'token_id' => [
         'required' => 'The token id field is required',
+        'numeric' => 'The token id field must be number',
+        'exists' => 'The selected token id is invalid'
     ],
+    'auction_id' => [
+        'required' => 'The auction id field is required',
+        'numeric' => 'The auction id field must be number',
+        'exists' => 'The selected auction id is invalid'
+    ],
+    'package_id' => [
+        'required' => 'The auction id field is required',
+        'numeric' => 'The auction id field must be number',
+        'exists' => 'The selected auction id is invalid'
+    ]
 ];
