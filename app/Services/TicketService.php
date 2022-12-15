@@ -43,6 +43,7 @@ class TicketService
             throw new Exception($e->getMessage());
         }
     }
+
     /**
      * Create Paid gaCha ticket
      *
@@ -66,6 +67,37 @@ class TicketService
                 'ticket_type' => GachaTicket::PAID_TICKET
             ];
             GachaTicket::create($gaChaTicket);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    /**
+     * Create Paid gaCha ticket
+     *
+     * @param int $userId
+     * @param int $ticketNumber
+     * @package int $auctionId
+     * @return \App\Models\GachaTicket::FREE_TICKET
+     */
+    public function createFreeGachaTicketData(
+        $userId,
+        $ticketNumber,
+        $auctionId,
+        $dateTime
+    ) {
+        try {
+            // set default value
+            $gaChaTicket = [
+                'user_id' => $userId,
+                'nft_auction_id' => $auctionId,
+                'total_ticket' => $ticketNumber,
+                'remain_ticket' => $ticketNumber,
+                'ticket_type' => GachaTicket::FREE_TICKET,
+                'created_at' => $dateTime,
+                'updated_at' => $dateTime,
+            ];
+            return GachaTicket::create($gaChaTicket);
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
@@ -136,5 +168,19 @@ class TicketService
         return GachaTicket::select('ticket_type', 'remain_ticket')
             ->where('user_id', $userId)
             ->get();
+    }
+
+    /**
+     * Get user's free tickets number by user id.
+     *
+     * @param $userId
+     * @return array|object
+     */
+    public function getUserFreeTicketsNumber($userId)
+    {
+        return GachaTicket::select('id', 'user_id', 'ticket_type', 'total_ticket', 'remain_ticket')
+            ->where('user_id', $userId)
+            ->where('ticket_type', GachaTicket::FREE_TICKET)
+            ->first();
     }
 }

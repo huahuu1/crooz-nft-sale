@@ -30,7 +30,9 @@ class NftAuctionHistory extends Model
         'tx_hash',
         'payment_method',
         'package_id',
-        'number_of_failed'
+        'number_of_failed',
+        'created_at',
+        'updated_at'
     ];
 
     /**
