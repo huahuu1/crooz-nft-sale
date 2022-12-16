@@ -2,8 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Services\AuctionInfoService;
-use App\Services\HistoryListService;
 use App\Services\TicketService;
 use App\Services\UserService;
 use App\Traits\ApiBscScanTransaction;

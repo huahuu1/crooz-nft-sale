@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Jobs\CreateNftAuctionHistoryJob;
-use App\Models\NftAuctionHistory;
 use App\Services\AuctionInfoService;
 use App\Services\HistoryListService;
 use App\Traits\ApiBscScanTransaction;
