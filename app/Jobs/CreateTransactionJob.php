@@ -12,7 +12,12 @@ use Illuminate\Queue\SerializesModels;
 
 class CreateTransactionJob implements ShouldQueue
 {
-    use ApiBscScanTransaction, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use ApiBscScanTransaction;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
     /**
      * New Histories variable
      *

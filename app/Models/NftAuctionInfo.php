@@ -84,6 +84,6 @@ class NftAuctionInfo extends Model
      */
     public function xenoClassSaleTime(): HasMany
     {
-        return $this->hasMany(XenoClassSaleTime::class,  'auction_id', 'id');
+        return $this->hasMany(XenoClassSaleTime::class, 'auction_id', 'id');
     }
 }

@@ -13,6 +13,7 @@ use Illuminate\Console\Command;
 class UpdateNewDataNftAuctionHistoryCommand extends Command
 {
     use ApiBscScanTransaction;
+
     /**
      * The name and signature of the console command.
      *
@@ -77,8 +78,7 @@ class UpdateNewDataNftAuctionHistoryCommand extends Command
         // get all transaction in blockchain
         $dataAuctionHistories = collect($this->getAllTransactionsBscScan('transaction', $this->argument('auction_id')));
         $auctionInfo = $this->auctionInfoService->infoNftAuctionById($this->argument('auction_id'));
-        if (!empty($dataAuctionHistories))
-        {
+        if (!empty($dataAuctionHistories)) {
             $startDate = Carbon::parse($auctionInfo->start_date, 'UTC')->getTimestamp();
             $endDate = Carbon::parse($auctionInfo->end_date, 'UTC')->getTimestamp();
             // new nft auction history data

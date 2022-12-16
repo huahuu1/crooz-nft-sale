@@ -9,7 +9,6 @@ use Carbon\Carbon;
 
 class UserCouponService
 {
-
     /**
      * has User Coupon function
      *

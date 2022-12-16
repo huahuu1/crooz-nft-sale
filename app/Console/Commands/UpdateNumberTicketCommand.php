@@ -11,6 +11,7 @@ use Illuminate\Console\Command;
 class UpdateNumberTicketCommand extends Command
 {
     use ApiBscScanTransaction;
+
     /**
      * The name and signature of the console command.
      *
@@ -71,7 +72,7 @@ class UpdateNumberTicketCommand extends Command
             $endDate = Carbon::parse($auctionInfo->end_date, 'UTC')->getTimestamp();
 
             // filter value > 0
-            $dataFiltered = $dataTickets->filter(function ($item) use($startDate, $endDate) {
+            $dataFiltered = $dataTickets->filter(function ($item) use ($startDate, $endDate) {
                 return $item['value'] > 0 &&
                        $item['timeStamp'] >= $startDate &&
                        $item['timeStamp'] <= $endDate;

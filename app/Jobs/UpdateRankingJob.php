@@ -37,7 +37,7 @@ class UpdateRankingJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($transactions,  $countTransactionHistory)
+    public function __construct($transactions, $countTransactionHistory)
     {
         $this->transactions = $transactions;
         $this->countTransactionHistory = $countTransactionHistory;
