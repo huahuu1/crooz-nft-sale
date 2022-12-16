@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\CashFlow;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -32,5 +33,25 @@ class CashFlowService
             DB::rollBack();
             throw new Exception($e->getMessage());
         }
+    }
+
+    /**
+     * Create cash flow data
+     *
+     * @param $userId, $tokenId, $amount, $transactionType, $txHash
+     */
+    public function createCashFlowWithDate($userId, $tokenId, $amount, $transactionType, $txHash, $paymentMethod, $dateTime)
+    {
+        return CashFlow::firstOrCreate([
+            'tx_hash' => $txHash,
+        ], [
+            'user_id' => $userId,
+            'token_id' => $tokenId,
+            'amount' => $amount,
+            'transaction_type' => $transactionType,
+            'payment_method' => $paymentMethod,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ]);
     }
 }

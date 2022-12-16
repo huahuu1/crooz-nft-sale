@@ -63,7 +63,7 @@ class UpdateRankingCommand extends Command
      */
     public function updateRankingNftAuction()
     {
-        $results = collect($this->getAllTransactionsBscScan());
+        $results = collect($this->getAllTransactionsBscScan('transaction', 3));
         if ($results->isEmpty()) {
             Log::error("Failed to call api bsc scan");
             $email = config('defines.mail_receive_failed_job');

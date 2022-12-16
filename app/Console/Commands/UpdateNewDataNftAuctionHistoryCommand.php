@@ -3,12 +3,14 @@
 namespace App\Console\Commands;
 
 use App\Jobs\CreateNftAuctionHistoryJob;
+use App\Models\NftAuctionHistory;
 use App\Services\AuctionInfoService;
 use App\Services\HistoryListService;
 use App\Traits\ApiBscScanTransaction;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class CheckMissTransactionNftAuctionCommand extends Command
+class UpdateNewDataNftAuctionHistoryCommand extends Command
 {
     use ApiBscScanTransaction;
     /**
@@ -16,14 +18,14 @@ class CheckMissTransactionNftAuctionCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'check:miss-nft-auction {auction_id=3}';
+    protected $signature = 'update:nft-auction-history {auction_id=4}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Check Miss Transactions NFT Auction Command';
+    protected $description = 'Update new data to NFT Auction History Command';
 
     /**
      *  The transactions of NftAuctionHistory
@@ -58,9 +60,9 @@ class CheckMissTransactionNftAuctionCommand extends Command
      */
     public function handle()
     {
-        info("Start UpdateMissTransactions");
-        $this->UpdateMissTransactions();
-        info("End UpdateMissTransactions");
+        info("Start UpdateNftAuctionHistory");
+        $this->updateNftAuctionHistory();
+        info("End UpdateNftAuctionHistory");
     }
 
     /**
@@ -68,20 +70,27 @@ class CheckMissTransactionNftAuctionCommand extends Command
      *
      * @return void
      */
-    public function UpdateMissTransactions()
+    public function updateNftAuctionHistory()
     {
         // get all auction histories
         $auctions = collect($this->historyListService->getAllNftAuctionHistoriesByPackage($this->argument('auction_id'))->toArray());
-
         // get all transaction in blockchain
         $dataAuctionHistories = collect($this->getAllTransactionsBscScan('transaction', $this->argument('auction_id')));
-        if (!empty($dataAuctionHistories)) {
+        $auctionInfo = $this->auctionInfoService->infoNftAuctionById($this->argument('auction_id'));
+        if (!empty($dataAuctionHistories))
+        {
+            $startDate = Carbon::parse($auctionInfo->start_date, 'UTC')->getTimestamp();
+            $endDate = Carbon::parse($auctionInfo->end_date, 'UTC')->getTimestamp();
             // new nft auction history data
             $newAuctionHistories = collect([]);
-
             // get new history by tx_hash
-            $dataAuctionHistories->each(function ($item) use ($auctions, $newAuctionHistories) {
-                if ($auctions->contains('tx_hash', $item['hash']) === false && $auctions->where('confirmations', '>=', (string)24)) {
+            $dataAuctionHistories->each(function ($item) use ($auctions, $newAuctionHistories, $startDate, $endDate) {
+                if (
+                    $auctions->contains('tx_hash', $item['hash']) === false &&
+                    $item['confirmations'] >= 24 &&
+                    $item['timeStamp'] >= $startDate &&
+                    $item['timeStamp'] <= $endDate
+                ) {
                     $newAuctionHistories->push($item);
                 }
             });

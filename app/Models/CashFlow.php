@@ -25,7 +25,9 @@ class CashFlow extends Model
         'type',
         'transaction_type',
         'tx_hash',
-        'payment_method'
+        'payment_method',
+        'created_at',
+        'updated_at'
     ];
 
     public const TOKEN_WITHDRAWAL = 1;

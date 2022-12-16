@@ -24,7 +24,9 @@ class GachaTicket extends Model
         'nft_auction_id',
         'ticket_type',
         'total_ticket',
-        'remain_ticket'
+        'remain_ticket',
+        'created_at',
+        'updated_at'
     ];
 
     public const PAID_TICKET = 1;

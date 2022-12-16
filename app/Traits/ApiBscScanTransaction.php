@@ -2,31 +2,30 @@
 
 namespace App\Traits;
 
-use Carbon\Carbon;
 use DOMDocument;
 use DOMXPath;
 use Illuminate\Support\Facades\Log;
 
 trait ApiBscScanTransaction
 {
-    public function retry($times) {
+    public function retry($times, $type, $auctionId, $key) {
         $retries = $times;
         $success = false;
         do {
-            $result = $this->callApiBscScan();
-            $success = $result[0]['status'];
+            $result = $this->configCallApi($type, $auctionId);
+            $success = $result[$key]['status'];
             $retries--;
             sleep(60);
         } while ($retries > 0 && !$success);
         return $result;
     }
 
-    public function callApiBscScan()
+    public function callApiBscScan($auctionId)
     {
         $baseUri = config('defines.api.bsc.url');
         $apiKey = config('defines.api.bsc.api_key');
-        $auctionNetworks = $this->auctionInfoService->infoNftAuctionById(3)->auctionNetwork;
-        $packages = $this->auctionInfoService->infoNftAuctionById(3)->packages;
+        $auctionNetworks = $this->auctionInfoService->infoNftAuctionById($auctionId)->auctionNetwork;
+        $packages = $this->auctionInfoService->infoNftAuctionById($auctionId)->packages;
         $results = collect([]);
         foreach ($auctionNetworks[0]->type as $auctionNetwork) {
             foreach ($packages as $package) {
@@ -52,28 +51,67 @@ trait ApiBscScanTransaction
         return $results;
     }
 
+    public function callApiBscScanTokenTicket()
+    {
+        $baseUri = config('defines.api.bsc.url');
+        $apiKey = config('defines.api.bsc.api_key');
+        $results = collect([]);
+        $ticketContractWallet = config('defines.ticket.contract_wallet');
+        $ticketDestinationAddress = config('defines.ticket.destination_address');
+        $params = [
+            'module' => 'account',
+            'action' => 'tokentx',
+            'contractaddress' => $ticketContractWallet,
+            'address' => $ticketDestinationAddress,
+            'page' => 1,
+            'offset' => 10000,
+            'startblock' => 0,
+            'endblock' => 99999999,
+            'sort' => 'asc',
+            'apikey' => $apiKey,
+        ];
+        $url = $baseUri . '?' . http_build_query($params, '&');
+        $response = $this->cloudFlareBypass($url);
+        $results->push(json_decode($response, true));
+        return $results;
+    }
+
     /**
      * @return $response
      */
-    public function getAllTransactionsBscScan()
+    public function getAllTransactionsBscScan($type, $auctionId)
     {
         try {
-            $results = $this->callApiBscScan();
-            if ($results[0]['status'] == '0' || $results[1]['status'] == '0') {
-                $results = $this->retry(3);
-                if ($results[0]['status'] == '1' || $results[1]['status'] == '1') {
-                    $results = $this->callApiBscScan();
-                    $results = json_decode($results, true);
-                    $response = collect(array_merge($results[0]['result'], $results[1]['result']));
-                    return json_decode($response, true);
+            $results = $this->configCallApi($type, $auctionId);
+            $response = [];
+            foreach ($results as $key => $result) {
+                if ($result['status'] == '0') {
+                    $results = $this->retry(3, $type, $auctionId, $key);
+                    if ($result['status'] == '1') {
+                        $result = $this->configCallApi($type, $auctionId);
+                        $response[] = $result['result'];
+                    }
+                } else {
+                    $response[] = $result['result'];
                 }
-            } else {
-                $results = json_decode($results, true);
-                $response = collect(array_merge($results[0]['result'], $results[1]['result']));
-                return json_decode($response, true);
             }
+            $response = collect(array_merge([], ...$response));
+            return json_decode($response, true);
         } catch (\Exception $e) {
             Log::error('getAllTransactionsBscScan::', [json_encode($e)]);
+        }
+    }
+
+    /**
+     * @return $response
+     */
+    public function configCallApi($type, $auctionId)
+    {
+        switch ($type) {
+            case 'ticket':
+                return $this->callApiBscScanTokenTicket();
+            case 'transaction':
+                return $this->callApiBscScan($auctionId);
         }
     }
 
