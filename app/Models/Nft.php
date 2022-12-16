@@ -61,6 +61,6 @@ class Nft extends Model
      */
     public static function getRandomNfts()
     {
-        return Nft::select('nft_id')->pluck('nft_id')->random(3)->toArray();
+        return Nft::select('nft_id')->pluck('nft_id')->random(1)->toArray();
     }
 }
