@@ -54,7 +54,7 @@ return [
         'ranking' => env('RANKING_CRON_VALUE', '*/30 * * * *'),
         'insert_nft_auction_history' => env('INSERT_NFT_AUCTION_HISTORY_CRON_VALUE', '*/10 * * * *')
     ],
-    'mail_receive_failed_job' => env('MAIL_RECEIVE_FAILED_JOB', 'tewu41@gmail.com'),
+    'mail_receive_failed_job' => env('MAIL_RECEIVE_FAILED_JOB', 'huuth@kozo-japan.com'),
     'ticket' => [
         'contract_wallet' => env('TICKET_CONTRACT_WALLET', '0x922Eea7c52Bf3Be99a851227D73d8F63b82e9422'),
         'destination_address' => env('TICKET_DESTINATION_ADDRESS', '0x9106C3CF4B1619EdDeDFfD91556C88507e71DE81'),
