@@ -545,12 +545,52 @@ class TransactionController extends Controller
 
             return response()->json([
                 'message' => __('transaction.coupon.success'),
+                'remain_coupon' => $isCoupon->remain_coupon
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json([
                 'message' => __('transaction.coupon.fail'),
+                'error' => $e,
+            ], 400);
+        }
+    }
+    /**
+     * Get user has coupon.
+     *
+     * @param  \App\Http\Requests\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function checkUserWithDiscountCoupon(Request $request)
+    {
+        try {
+            info("checkUserWithDiscountCoupon-Request", [$request->all()]);
+
+            $user = $this->userService->getUserByWalletAddress($request->wallet_address);
+            //case not found user
+            if (!$user) {
+                return response()->json([
+                    'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
+                ], 400);
+            }
+
+            // user has coupon
+            $isCoupon = $this->userCouponService->getUserCoupon($user->id, $request->auction_id);
+            if (empty($isCoupon)) {
+                return response()->json([
+                    'message' => __('transaction.coupon.hasCoupon'),
+                ], 400);
+            }
+
+            return response()->json([
+                'remain_coupon' => $isCoupon->remain_coupon
+            ], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'message' => __('transaction.coupon.hasCoupon'),
                 'error' => $e,
             ], 400);
         }
