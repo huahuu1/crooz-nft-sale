@@ -20,8 +20,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('check:nft-auction')->everyThreeMinutes();
-        $schedule->command('update:ranking')->cron(config('defines.cron_time_value.ranking'));
         $schedule->command('check:miss-nft-auction')->cron(config('defines.cron_time_value.insert_nft_auction_history'));
         $schedule->command('update:nft-auction-history')->everyTwoMinutes();
         $schedule->command('update:ticket')->hourly();

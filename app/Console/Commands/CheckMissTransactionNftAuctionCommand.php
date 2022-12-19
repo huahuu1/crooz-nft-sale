@@ -11,6 +11,7 @@ use Illuminate\Console\Command;
 class CheckMissTransactionNftAuctionCommand extends Command
 {
     use ApiBscScanTransaction;
+
     /**
      * The name and signature of the console command.
      *

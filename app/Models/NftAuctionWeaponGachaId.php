@@ -22,4 +22,16 @@ class NftAuctionWeaponGachaId extends Model
      * @var array
      */
     protected $fillable = ['nft_id', 'weapon_gacha_id'];
+
+    /**
+     * Display information of the nft auction weapon gacha ids by nft id.
+     *
+     * @return \App\Models\NftAuctionWeaponGachaId
+     */
+    public static function getNftAuctionWeaponGachaIdsByNftId($nftId)
+    {
+        return NftAuctionWeaponGachaId::select()
+        ->where('nft_id', $nftId)
+        ->first();
+    }
 }

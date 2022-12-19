@@ -2,42 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\Nft;
 use App\Models\NftAuctionWeaponGachaId;
-use Illuminate\Container\Container;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Faker\Generator;
+use Schema;
 
 class NftAuctionWeaponGachaIdSeeder extends Seeder
 {
-    /**
-     * The current Faker instance.
-     *
-     * @var \Faker\Generator
-     */
-    protected $faker;
-
-    /**
-     * Create a new seeder instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->faker = $this->withFaker();
-    }
-
-    /**
-     * Get a new Faker instance.
-     *
-     * @return \Faker\Generator
-     */
-    protected function withFaker()
-    {
-        return Container::getInstance()->make(Generator::class);
-    }
-
     /**
      * Run the database seeds.
      *
@@ -45,14 +15,57 @@ class NftAuctionWeaponGachaIdSeeder extends Seeder
      */
     public function run()
     {
+        Schema::disableForeignKeyConstraints();
+        NftAuctionWeaponGachaId::truncate();
 
-        $weapons = [];
-        for ($i = 0; $i < 20; $i++) {
-            $weapons[$i] = [
-                'nft_id' => $this->faker->randomElement(Nft::pluck('nft_id')->toArray()),
-                'weapon_gacha_id' =>  $this->faker->numberBetween(10, 60),
-            ];
-        }
-        NftAuctionWeaponGachaId::insert($weapons);
+        $nftAuctionWeaponGachaIds = [
+            [
+                'id' => 1,
+                'nft_id' => 23,
+                'weapon_gacha_id' => 31
+            ],
+            [
+                'id' => 2,
+                'nft_id' => 24,
+                'weapon_gacha_id' => 30
+            ],
+            [
+                'id' => 3,
+                'nft_id' => 25,
+                'weapon_gacha_id' => 29
+            ],
+            [
+                'id' => 4,
+                'nft_id' => 26,
+                'weapon_gacha_id' => 28
+            ],
+            [
+                'id' => 5,
+                'nft_id' => 27,
+                'weapon_gacha_id' => 27
+            ],
+            [
+                'id' => 6,
+                'nft_id' => 28,
+                'weapon_gacha_id' => 26
+            ],
+            [
+                'id' => 7,
+                'nft_id' => 29,
+                'weapon_gacha_id' => 25
+            ],
+            [
+                'id' => 8,
+                'nft_id' => 30,
+                'weapon_gacha_id' => 24
+            ],
+            [
+                'id' => 9,
+                'nft_id' => 31,
+                'weapon_gacha_id' => 23
+            ]
+        ];
+        NftAuctionWeaponGachaId::insert($nftAuctionWeaponGachaIds);
+        Schema::enableForeignKeyConstraints();
     }
 }

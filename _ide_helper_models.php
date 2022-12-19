@@ -180,6 +180,29 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\GachaTicketExchangeTime
+ *
+ * @property int $id
+ * @property int $auction_id
+ * @property string $start_time
+ * @property string $end_time
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicketExchangeTime newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicketExchangeTime newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicketExchangeTime query()
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicketExchangeTime whereAuctionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicketExchangeTime whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicketExchangeTime whereEndTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicketExchangeTime whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicketExchangeTime whereStartTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicketExchangeTime whereUpdatedAt($value)
+ */
+	class GachaTicketExchangeTime extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\GxePartnerUsers
  *
  * @property int $id

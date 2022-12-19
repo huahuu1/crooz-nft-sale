@@ -14,7 +14,11 @@ use Illuminate\Queue\SerializesModels;
 
 class TransactionRawDataJob implements ShouldQueue
 {
-    use ApiBscScanTransaction, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use ApiBscScanTransaction;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
 
     protected $transactions;

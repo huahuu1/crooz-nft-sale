@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\GachaTicketExchangeTime;
 use App\Services\AuctionNftService;
 use App\Services\NftService;
 use App\Services\TicketService;
@@ -55,7 +56,7 @@ class TicketController extends Controller
     {
         try {
             $baseUri = config('defines.gacha_api_url');
-            $endDay = Carbon::parse(config('defines.day_ticket_exchange_end'), 'UTC')->getTimestamp();
+            $endDay = Carbon::parse(GachaTicketExchangeTime::getTicketExchangeTimeByAuctionId($request->auction_id)->end_time, 'UTC')->getTimestamp();
 
             // Ticket can't exchange after sale finished.
             if (Carbon::now('UTC')->getTimestamp() >= $endDay) {

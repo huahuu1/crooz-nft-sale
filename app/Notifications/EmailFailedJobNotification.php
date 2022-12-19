@@ -12,14 +12,17 @@ class EmailFailedJobNotification extends Notification
 
     private $email;
 
+    private $job_name;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($email)
+    public function __construct($email, $job_name)
     {
         $this->email = $email;
+        $this->job_name = $job_name;
     }
 
     /**
@@ -41,6 +44,6 @@ class EmailFailedJobNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new FailedJobMail($this->email))->to($this->email);
+        return (new FailedJobMail($this->email, $this->job_name))->to($this->email);
     }
 }

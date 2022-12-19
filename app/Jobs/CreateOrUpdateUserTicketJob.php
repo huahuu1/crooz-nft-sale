@@ -13,7 +13,12 @@ use Illuminate\Queue\SerializesModels;
 
 class CreateOrUpdateUserTicketJob implements ShouldQueue
 {
-    use ApiBscScanTransaction, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use ApiBscScanTransaction;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
     /**
      * Data Ticket variable
      *

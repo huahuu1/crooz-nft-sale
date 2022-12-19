@@ -24,4 +24,24 @@ class AuctionNftService
             'status' => $status,
         ]);
     }
+
+    /**
+     * Create NFT Auction
+     *
+     * @param string $walletAddress
+     * @param int $nftId
+     * @param int $nftDeliveryId
+     * @param bool $status
+     */
+    public function createNftAuctions($walletAddress, $nftIds, $nftDeliveryId, $status)
+    {
+        foreach ($nftIds as $nftId) {
+            AuctionNft::create([
+                'wallet_address' => $walletAddress,
+                'nft_id' => $nftId,
+                'nft_delivery_source_id' => $nftDeliveryId,
+                'status' => $status,
+            ]);
+        }
+    }
 }
