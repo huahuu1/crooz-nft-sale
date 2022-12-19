@@ -9,7 +9,6 @@ use Carbon\Carbon;
 
 class UserCouponService
 {
-
     /**
      * has User Coupon function
      *
@@ -22,6 +21,20 @@ class UserCouponService
         return UserCoupon::where('user_id', $userId)
             ->where('nft_auction_id', $auctionId)
             ->where('remain_coupon', '>', 0)
+            ->first();
+    }
+
+    /**
+     * get User Coupon
+     *
+     * @param int $userId
+     * @param int $auctionId
+     * @return UserCoupon
+     */
+    public function getUserCoupon($userId, $auctionId)
+    {
+        return UserCoupon::where('user_id', $userId)
+            ->where('nft_auction_id', $auctionId)
             ->first();
     }
 

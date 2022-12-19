@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['language'])->group(function () {
-
     //Router authorization
     Route::controller(AuthController::class)->group(function () {
         Route::post('register', 'register');
@@ -65,6 +64,7 @@ Route::middleware(['language'])->group(function () {
             Route::get('package-history-nft-auction', 'historyNftAuctionByPackage');
             // complete payment with coupon
             Route::post('payment/coupon', 'paymentWithCoupon');
+            Route::get('check-user-with-discount-coupon', [TransactionController::class, 'checkUserWithDiscountCoupon']);
         });
 
         //my page routes
