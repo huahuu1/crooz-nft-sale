@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 trait ApiGachaTicket
 {
     /**
-     * @param $baseUri, $apiKey, $networkId, $to, $amount, $tokenType
+     * @param $baseUri, $walletId, $gachaId
      * @return $response
      */
     public function gachaTicket($baseUri, $walletId, $gachaId)

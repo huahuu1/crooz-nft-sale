@@ -3,10 +3,13 @@
 namespace App\Console\Commands;
 
 use App\Jobs\CreateOrUpdateUserTicketJob;
+use App\Notifications\EmailFailedJobNotification;
 use App\Services\AuctionInfoService;
 use App\Traits\ApiBscScanTransaction;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Log;
+use Notification;
 
 class UpdateNumberTicketCommand extends Command
 {
@@ -65,17 +68,18 @@ class UpdateNumberTicketCommand extends Command
     {
         // get all transaction in blockchain
         $dataTickets = collect($this->getAllTransactionsBscScan('ticket', $this->argument('auction_id')));
-
+        //in case call api fail
+        if ($dataTickets->isEmpty()) {
+            Log::error("Failed to call api bsc scan");
+            $email = config('defines.mail_receive_failed_job');
+            Notification::route('mail', $email)->notify(new EmailFailedJobNotification($email, 'Update Number Ticket Job'));
+            return;
+        }
+        //in case call api success
         if (!empty($dataTickets)) {
-            $auctionInfo = $this->auctionInfoService->infoNftAuctionById($this->argument('auction_id'));
-            $startDate = Carbon::parse($auctionInfo->start_date, 'UTC')->getTimestamp();
-            $endDate = Carbon::parse($auctionInfo->end_date, 'UTC')->getTimestamp();
-
             // filter value > 0
-            $dataFiltered = $dataTickets->filter(function ($item) use ($startDate, $endDate) {
-                return $item['value'] > 0 &&
-                       $item['timeStamp'] >= $startDate &&
-                       $item['timeStamp'] <= $endDate;
+            $dataFiltered = $dataTickets->filter(function ($item) {
+                return $item['value'] > 0;
             });
             // group value by wallet address
             $result[] = $dataFiltered->groupBy('from')->map(function ($row) {

@@ -3,11 +3,17 @@
 namespace App\Jobs;
 
 use App\Models\CashFlow;
+use App\Models\NftAuctionWeaponGachaId;
+use App\Models\NftDeliverySource;
 use App\Services\AuctionInfoService;
+use App\Services\AuctionNftService;
 use App\Services\CashFlowService;
+use App\Services\GachaService;
 use App\Services\HistoryListService;
+use App\Services\PackageService;
 use App\Services\UserService;
 use App\Traits\ApiBscScanTransaction;
+use App\Traits\ApiGachaTicket;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,7 +22,13 @@ use Illuminate\Queue\SerializesModels;
 
 class CreateNftAuctionHistoryJob implements ShouldQueue
 {
-    use ApiBscScanTransaction, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use ApiBscScanTransaction;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use ApiGachaTicket;
+
     /**
      * New Histories variable
      *
@@ -52,12 +64,33 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
      */
     protected $userService;
 
-     /**
+    /**
      * CashFlow Service variable
      *
      * @var App\Services\CashFlowService
      */
     protected $cashFlowService;
+
+    /**
+     * Package Service variable
+     *
+     * @var App\Services\PackageService
+     */
+    protected $packageService;
+
+    /**
+     * Auction NftService variable
+     *
+     * @var App\Services\AuctionNftService
+     */
+    protected $auctionNftService;
+
+    /**
+     * Gacha Service variable
+     *
+     * @var App\Services\GachaService
+     */
+    protected $gachaService;
 
     /**
      * Create a new job instance.
@@ -72,6 +105,9 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
         $this->historyListService = new HistoryListService();
         $this->auctionInfoService = new AuctionInfoService();
         $this->cashFlowService = new CashFlowService();
+        $this->packageService = new PackageService();
+        $this->auctionNftService = new AuctionNftService();
+        $this->gachaService = new GachaService();
     }
 
     /**
@@ -81,6 +117,7 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
      */
     public function handle()
     {
+        $baseUri = config('defines.gacha_api_url');
         foreach ($this->newHistories as $val) {
             // get user by from address
             $user = $this->userService->hasUserByWalletAddress($val['from']);
@@ -109,9 +146,34 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
                     CashFlow::METHOD_CRYPTO,
                     date('Y-m-d H:i:s', $val['timeStamp'])
                 );
-                // call api to get gacha NFT
-
-                info("[SUCCESS] Create nft auction History: " . $val['hash']);
+                // get package id
+                $package = $this->packageService->getNftAuctionPackageByAddress($val['to']);
+                if (!$package) {
+                    info("[FAIL] Package Id not found: " . $val['hash']);
+                } else {
+                    $xenoGacha = $this->gachaService->getXenoGachaId($package->id, date('Y-m-d H:i:s', $val['timeStamp']), $this->auctionId);
+                    // get xeno gacha id
+                    if (!$xenoGacha) {
+                        info("[FAIL] Xeno Gacha Id not found: " . $val['hash']);
+                    } else {
+                        // call api to get gacha NFT
+                        $nftXenoId = $this->gachaTicket($baseUri, $val['from'], $xenoGacha->xeno_gacha_id)['response']['result'][0];
+                        // get weapon gacha id
+                        $xenoWeaponId = NftAuctionWeaponGachaId::getNftAuctionWeaponGachaIdsByNftId($nftXenoId)->weapon_gacha_id;
+                        // call api to get gacha NFT
+                        $nftWeaponId = $this->gachaTicket($baseUri, $val['from'], $xenoWeaponId)['response']['result'][0];
+                        // get nft delivery id
+                        $deliveryId = NftDeliverySource::getDeliverySourceIdByPackageId($package->id)->nft_delivery_id;
+                        // save to auction nft
+                        $this->auctionNftService->createNftAuctions(
+                            $val['from'],
+                            array($xenoWeaponId, $nftWeaponId),
+                            $deliveryId,
+                            1
+                        );
+                    }
+                    info("[SUCCESS] Create nft auction History: " . $val['hash']);
+                }
             }
         }
     }

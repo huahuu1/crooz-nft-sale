@@ -3,12 +3,14 @@
 namespace App\Console\Commands;
 
 use App\Jobs\CreateNftAuctionHistoryJob;
-use App\Models\NftAuctionHistory;
+use App\Notifications\EmailFailedJobNotification;
 use App\Services\AuctionInfoService;
 use App\Services\HistoryListService;
 use App\Traits\ApiBscScanTransaction;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Log;
+use Notification;
 
 class UpdateNewDataNftAuctionHistoryCommand extends Command
 {
@@ -77,33 +79,43 @@ class UpdateNewDataNftAuctionHistoryCommand extends Command
         $auctions = collect($this->historyListService->getAllNftAuctionHistoriesByPackage($this->argument('auction_id'))->toArray());
         // get all transaction in blockchain
         $dataAuctionHistories = collect($this->getAllTransactionsBscScan('transaction', $this->argument('auction_id')));
-        $auctionInfo = $this->auctionInfoService->infoNftAuctionById($this->argument('auction_id'));
-        if (!empty($dataAuctionHistories)) {
-            $startDate = Carbon::parse($auctionInfo->start_date, 'UTC')->getTimestamp();
-            $endDate = Carbon::parse($auctionInfo->end_date, 'UTC')->getTimestamp();
-            // new nft auction history data
-            $newAuctionHistories = collect([]);
-            // get new history by tx_hash
-            $dataAuctionHistories->each(function ($item) use ($auctions, $newAuctionHistories, $startDate, $endDate) {
-                if (
-                    $auctions->contains('tx_hash', $item['hash']) === false &&
-                    $item['confirmations'] >= 24 &&
-                    $item['timeStamp'] >= $startDate &&
-                    $item['timeStamp'] <= $endDate
-                ) {
-                    $newAuctionHistories->push($item);
-                }
-            });
+        //in case call api fail
+        if ($dataAuctionHistories->isEmpty()) {
+            Log::error("Failed to call api bsc scan");
+            $email = config('defines.mail_receive_failed_job');
+            Notification::route('mail', $email)->notify(new EmailFailedJobNotification($email, 'Auction History Job'));
+            return;
+        }
+        //in case call api success
+        if (!$dataAuctionHistories->isEmpty()) {
+            $auctionInfo = $this->auctionInfoService->infoNftAuctionById($this->argument('auction_id'));
+            if (!empty($dataAuctionHistories)) {
+                $startDate = Carbon::parse($auctionInfo->start_date, 'UTC')->getTimestamp();
+                $endDate = Carbon::parse($auctionInfo->end_date, 'UTC')->getTimestamp();
+                // new nft auction history data
+                $newAuctionHistories = collect([]);
+                // get new history by tx_hash
+                $dataAuctionHistories->each(function ($item) use ($auctions, $newAuctionHistories, $startDate, $endDate) {
+                    if (
+                        $auctions->contains('tx_hash', $item['hash']) === false &&
+                        $item['confirmations'] >= 24 &&
+                        $item['timeStamp'] >= $startDate &&
+                        $item['timeStamp'] <= $endDate
+                    ) {
+                        $newAuctionHistories->push($item);
+                    }
+                });
 
-            // call job insert Nft Auction History
-            if (!empty($newAuctionHistories)) {
-                foreach ($newAuctionHistories->chunk(20) as $k => $auctionHistory) {
-                    CreateNftAuctionHistoryJob::dispatch(
-                        $auctionHistory,
-                        $this->argument('auction_id')
-                    )
-                        ->onQueue(config('defines.queue.general'))
-                        ->delay(now()->addSeconds(((int) $k + 1) * 2));
+                // call job insert Nft Auction History
+                if (!empty($newAuctionHistories)) {
+                    foreach ($newAuctionHistories->chunk(20) as $k => $auctionHistory) {
+                        CreateNftAuctionHistoryJob::dispatch(
+                            $auctionHistory,
+                            $this->argument('auction_id')
+                        )
+                            ->onQueue(config('defines.queue.general'))
+                            ->delay(now()->addSeconds(((int) $k + 1) * 2));
+                    }
                 }
             }
         }

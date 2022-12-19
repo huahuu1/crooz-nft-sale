@@ -33,4 +33,17 @@ class NftDeliverySource extends Model
      * @var array
      */
     protected $hidden = ['created_at','updated_at'];
+
+
+    /**
+     * Get the nft delivery id by package id.
+     *
+     * @return \App\Models\NftAuctionReward
+     */
+    public static function getDeliverySourceIdByPackageId($packageId)
+    {
+        return NftAuctionReward::select('nft_delivery_id')
+            ->where('package_id', $packageId)
+            ->first();
+    }
 }

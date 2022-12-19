@@ -13,14 +13,17 @@ class FailedJobMail extends Mailable
 
     public $email;
 
+    public $job_name;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($email)
+    public function __construct($email, $job_name)
     {
         $this->email = $email;
+        $this->job_name = $job_name;
     }
 
     /**
@@ -33,6 +36,6 @@ class FailedJobMail extends Mailable
         return $this->markdown('mails.failedJob')
                     ->from(config('mail.send_failed_job'), config('mail.send_failed_job'))
                     ->subject('[AUCTION NFT JOB] The auction ranking job is failed')
-                    ->with($this->email);
+                    ->with($this->email, $this->job_name);
     }
 }

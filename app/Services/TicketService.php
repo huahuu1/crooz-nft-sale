@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\GachaTicket;
+use App\Models\NftAuctionXenoGachaId;
+use App\Models\XenoClassSaleTime;
 use Carbon\Carbon;
 use DB;
 use Exception;
