@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\CashFlow;
+use App\Models\NftAuctionPackageStock;
 use App\Models\NftAuctionWeaponGachaId;
 use App\Models\NftDeliverySource;
 use App\Services\AuctionInfoService;
@@ -117,7 +118,6 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
      */
     public function handle()
     {
-        $baseUri = config('defines.gacha_api_url');
         foreach ($this->newHistories as $val) {
             // get user by from address
             $user = $this->userService->hasUserByWalletAddress($val['from']);
@@ -127,52 +127,47 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
             $amount = $this->convertAmount($val['tokenDecimal'], $val['value']);
 
             if ($amount > 0) {
-                // create nft Auction History
-                $this->historyListService->createNftAuctionHistoryByData(
-                    $val['hash'],
-                    $user->id,
-                    $tokenId,
-                    $this->auctionId,
-                    $amount,
-                    date('Y-m-d H:i:s', $val['timeStamp'])
-                );
-                // create cashflow
-                $this->cashFlowService->createCashFlowWithDate(
-                    $user->id,
-                    $tokenId,
-                    $amount,
-                    CashFlow::TOKEN_DEPOSIT,
-                    $val['hash'],
-                    CashFlow::METHOD_CRYPTO,
-                    date('Y-m-d H:i:s', $val['timeStamp'])
-                );
                 // get package id
                 $package = $this->packageService->getNftAuctionPackageByAddress($val['to']);
                 if (!$package) {
                     info("[FAIL] Package Id not found: " . $val['hash']);
                 } else {
-                    $xenoGacha = $this->gachaService->getXenoGachaId($package->id, date('Y-m-d H:i:s', $val['timeStamp']), $this->auctionId);
-                    // get xeno gacha id
-                    if (!$xenoGacha) {
-                        info("[FAIL] Xeno Gacha Id not found: " . $val['hash']);
+                    $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($package->id);
+                    //prevent out of stock package
+                    if (!empty($packageStock) && $packageStock->remain <= 0) {
+                        info("[FAIL] Package out of stock: " . $val['hash']);
                     } else {
-                        // call api to get gacha NFT
-                        $nftXenoId = $this->gachaTicket($baseUri, $val['from'], $xenoGacha->xeno_gacha_id)['response']['result'][0];
-                        // get weapon gacha id
-                        $xenoWeaponId = NftAuctionWeaponGachaId::getNftAuctionWeaponGachaIdsByNftId($nftXenoId)->weapon_gacha_id;
-                        // call api to get gacha NFT
-                        $nftWeaponId = $this->gachaTicket($baseUri, $val['from'], $xenoWeaponId)['response']['result'][0];
-                        // get nft delivery id
-                        $deliveryId = NftDeliverySource::getDeliverySourceIdByPackageId($package->id)->nft_delivery_id;
-                        // save to auction nft
-                        $this->auctionNftService->createNftAuctions(
-                            $val['from'],
-                            array($xenoWeaponId, $nftWeaponId),
-                            $deliveryId,
-                            1
+                        // create nft Auction History
+                        $this->historyListService->createNftAuctionHistoryByData(
+                            $val['hash'],
+                            $user->id,
+                            $tokenId,
+                            $this->auctionId,
+                            $amount,
+                            $package->id,
+                            date('Y-m-d H:i:s', $val['timeStamp'])
                         );
+                        // create cashflow
+                        $this->cashFlowService->createCashFlowWithDate(
+                            $user->id,
+                            $tokenId,
+                            $amount,
+                            CashFlow::TOKEN_DEPOSIT,
+                            $val['hash'],
+                            CashFlow::METHOD_CRYPTO,
+                            date('Y-m-d H:i:s', $val['timeStamp'])
+                        );
+
+                        //subtract ticket when transaction is success
+                        if (!empty($packageStock)) {
+                            $packageStock->remain -= 1;
+                            $packageStock->update();
+                        }
+                        // call api gacha NFT
+                        $this->gachaService->callApiGachaNft($package->id, $this->auctionId, date('Y-m-d H:i:s', $val['timeStamp']), $val['from'], $this->auctionNftService);
+
+                        info("[SUCCESS] Create nft auction History: " . $val['hash']);
                     }
-                    info("[SUCCESS] Create nft auction History: " . $val['hash']);
                 }
             }
         }
