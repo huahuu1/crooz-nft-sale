@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\NftType;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Schema;
 
 class NftTypeSeeder extends Seeder
 {
@@ -14,6 +16,8 @@ class NftTypeSeeder extends Seeder
      */
     public function run()
     {
+        Schema::disableForeignKeyConstraints();
+        NftType::truncate();
         DB::table('nft_types')->insert([
             [
                 'id' => 1,
@@ -45,11 +49,19 @@ class NftTypeSeeder extends Seeder
             ],
             [
                 'id' => 5,
-                'name' => 'Nft Box',
+                'name' => 'Nft-Box',
                 'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
+            [
+                'id' => 6,
+                'name' => 'Nft-Art',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]
         ]);
+        Schema::enableForeignKeyConstraints();
     }
 }
