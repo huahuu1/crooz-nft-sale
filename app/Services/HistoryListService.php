@@ -168,7 +168,7 @@ class HistoryListService
      * @param int $amount
      * @return App\Models\NftAuctionHistory
      */
-    public function createNftAuctionHistoryByData($hash, $userId, $tokenId, $auctionId, $amount, $dateTime)
+    public function createNftAuctionHistoryByData($hash, $userId, $tokenId, $auctionId, $amount, $packageId, $dateTime)
     {
         return NftAuctionHistory::firstOrCreate([
             'tx_hash' => $hash,
@@ -179,7 +179,7 @@ class HistoryListService
             'amount' => $amount,
             'status' => NftAuctionHistory::SUCCESS_STATUS,
             'payment_method' => NftAuctionHistory::METHOD_CRYPTO,
-            'package_id' => null,
+            'package_id' => $packageId,
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ]);
