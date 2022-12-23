@@ -11,6 +11,7 @@ use App\Services\AuctionNftService;
 use App\Services\CashFlowService;
 use App\Services\GachaService;
 use App\Services\HistoryListService;
+use App\Services\NftService;
 use App\Services\PackageService;
 use App\Services\UserService;
 use App\Traits\ApiBscScanTransaction;
@@ -94,6 +95,13 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
     protected $gachaService;
 
     /**
+     * Nft Service variable
+     *
+     * @var App\Services\NftService
+     */
+    protected $nftService;
+
+    /**
      * Create a new job instance.
      *
      * @return void
@@ -109,6 +117,7 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
         $this->packageService = new PackageService();
         $this->auctionNftService = new AuctionNftService();
         $this->gachaService = new GachaService();
+        $this->nftService = new NftService();
     }
 
     /**
@@ -157,14 +166,13 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
                             CashFlow::METHOD_CRYPTO,
                             date('Y-m-d H:i:s', $val['timeStamp'])
                         );
-
                         //subtract ticket when transaction is success
                         if (!empty($packageStock)) {
                             $packageStock->remain -= 1;
                             $packageStock->update();
                         }
                         // call api gacha NFT
-                        $this->gachaService->callApiGachaNft($package->id, $this->auctionId, date('Y-m-d H:i:s', $val['timeStamp']), $val['from'], $this->auctionNftService);
+                        $this->gachaService->callApiGachaNft($package->id, $this->auctionId, date('Y-m-d H:i:s', $val['timeStamp']), $val['from'], $this->auctionNftService, $this->nftService);
 
                         info("[SUCCESS] Create nft auction History: " . $val['hash']);
                     }

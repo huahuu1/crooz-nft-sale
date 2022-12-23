@@ -34,12 +34,15 @@ class GachaService
      * @param $packageId, $auctionId, $purchaseTime, $walletAddress
      * @return array|object
      */
-    public function callApiGachaNft($packageId, $auctionId, $purchaseTime, $walletAddress, $auctionNftService)
+    public function callApiGachaNft($packageId, $auctionId, $purchaseTime, $walletAddress, $auctionNftService, $nftService)
     {
         $baseUri = config('defines.gacha_api_url');
         $xenoGacha = $this->getXenoGachaId($packageId, $purchaseTime, $auctionId);
         // get xeno gacha id
         if (!$xenoGacha) {
+            info("[FAIL_GachaNFT] Xeno Gacha Id not found");
+            info("[FAIL_GachaNFT] Wallet address: " . $walletAddress);
+            info("[FAIL_GachaNFT] Purchase time: " . $purchaseTime);
             return response()->json([
                 'message' => "Xeno Gacha Id not found"
             ], 400);
@@ -59,6 +62,8 @@ class GachaService
                 $deliveryId,
                 1
             );
+            // get all nft of gaCha result
+            return $nftService->getNftByIds(array($xenoWeaponId, $nftWeaponId)) ?? [];
         }
     }
 }
