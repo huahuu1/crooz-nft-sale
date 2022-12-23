@@ -10,13 +10,12 @@ use App\Models\CashFlow;
 use App\Models\Nft;
 use App\Models\NftAuctionHistory;
 use App\Models\NftAuctionPackageStock;
-use App\Models\NftAuctionWeaponGachaId;
-use App\Models\NftDeliverySource;
 use App\Services\AuctionInfoService;
 use App\Services\AuctionNftService;
 use App\Services\CashFlowService;
 use App\Services\GachaService;
 use App\Services\HistoryListService;
+use App\Services\NftService;
 use App\Services\RankingService;
 use App\Services\TicketService;
 use App\Services\UserCouponService;
@@ -63,6 +62,8 @@ class TransactionController extends Controller
 
     protected $gachaService;
 
+    protected $nftService;
+
     /**
      * TransactionController constructor.
      *
@@ -73,7 +74,8 @@ class TransactionController extends Controller
      * @param AuctionInfoService $auctionInfoService
      * @param TicketService $ticketService
      * @param AuctionNftService $auctionNftService
-     * @param RankingService $auctionNftService
+     * @param RankingService $rankingService
+     * @param NftService $nftService
      */
     public function __construct(
         UserService $userService,
@@ -85,7 +87,8 @@ class TransactionController extends Controller
         AuctionNftService $auctionNftService,
         RankingService $rankingService,
         UserCouponService $userCouponService,
-        GachaService $gachaService
+        GachaService $gachaService,
+        NftService $nftService
     ) {
         $this->userService = $userService;
         $this->privateUserUnlockBalanceImport = $privateUserUnlockBalanceImport;
@@ -97,6 +100,7 @@ class TransactionController extends Controller
         $this->rankingService = $rankingService;
         $this->userCouponService = $userCouponService;
         $this->gachaService = $gachaService;
+        $this->nftService = $nftService;
     }
 
     /**
@@ -459,7 +463,7 @@ class TransactionController extends Controller
                     // Call Job Distribute Ticket
                     $this->distributeTicket($auctionFiat, $this->ticketService, $this->auctionNftService);
                     // call api gacha NFT
-                    $this->gachaService->callApiGachaNft($request->package_id, $request->nft_auction_id, Carbon::now(), $request->wallet_address, $this->auctionNftService);
+                    $nfts = $this->gachaService->callApiGachaNft($request->package_id, $request->nft_auction_id, Carbon::now(), $request->wallet_address, $this->auctionNftService, $this->nftService);
                     // Insert record in cash flow
                     $this->cashFlowService->createCashFlow(
                         $user->id,
@@ -473,6 +477,7 @@ class TransactionController extends Controller
             }
             return response()->json([
                 'message' => __('transaction.createDepositNftTransaction.success'),
+                'data' => $nfts
             ], $result['statusCode']);
         } catch (Exception $e) {
             Log::error($e);
@@ -548,10 +553,12 @@ class TransactionController extends Controller
             // update remain Ticket
             $this->distributeTicket($auctionFiat, $this->ticketService, $this->auctionNftService);
             // call api gacha NFT
-            $this->gachaService->callApiGachaNft($request->package_id, $request->auction_id, Carbon::now(), $request->wallet_address, $this->auctionNftService);
+            $nfts = $this->gachaService->callApiGachaNft($request->package_id, $request->auction_id, Carbon::now(), $request->wallet_address, $this->auctionNftService, $this->nftService);
+
             return response()->json([
                 'message' => __('transaction.coupon.success'),
-                'remain_coupon' => $isCoupon->remain_coupon
+                'remain_coupon' => $isCoupon->remain_coupon,
+                'data' => $nfts
             ], 200);
         } catch (Exception $e) {
             Log::error($e);
