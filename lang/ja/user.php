@@ -26,5 +26,11 @@ return [
     'changePassword' => [
         'success' => 'パスワードの変更に成功。',
         'fail' => 'パスワードの変更に失敗しました。',
+    ],
+    'loginWeb3' => [
+        'fail' => 'ログインに失敗しました'
+    ],
+    'registerSignature' => [
+        'fail' => '署名の登録に失敗しました'
     ]
 ];

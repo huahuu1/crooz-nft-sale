@@ -39,4 +39,8 @@ return [
     'token_id' => [
         'required' => 'トークン ID フィールドは必須です。',
     ],
+    'signature' => [
+        'required' => '署名欄は必須です'
+    ]
+
 ];

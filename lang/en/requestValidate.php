@@ -39,4 +39,7 @@ return [
     'token_id' => [
         'required' => 'The token id field is required',
     ],
+    'signature' => [
+        'required' => 'The required field is required'
+    ]
 ];

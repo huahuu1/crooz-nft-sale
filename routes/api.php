@@ -27,6 +27,11 @@ Route::middleware(['language'])->group(function () {
         Route::post('register-wallet', 'registerByWalletAddress');
         Route::post('login', 'login');
 
+        // create signature
+        Route::post('register-signature', 'registerSignature');
+        // login with signature
+        Route::post('login-web3', 'loginWeb3');
+
         Route::group([
             'prefix' => 'authentication',
         ], function () {

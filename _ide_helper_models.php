@@ -98,7 +98,7 @@ namespace App\Models{
  * @property string $amount
  * @property int $type
  * @property string $transaction_type
- * @property string $tx_hash
+ * @property string|null $tx_hash
  * @property string|null $payment_method
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -154,6 +154,7 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $user_id
+ * @property int|null $nft_auction_id
  * @property int $ticket_type
  * @property int $total_ticket
  * @property int $remain_ticket
@@ -166,6 +167,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|GachaTicket query()
  * @method static \Illuminate\Database\Eloquent\Builder|GachaTicket whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GachaTicket whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GachaTicket whereNftAuctionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GachaTicket whereRemainTicket($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GachaTicket whereTicketType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GachaTicket whereTotalTicket($value)
@@ -393,14 +395,14 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $package_id
- * @property int $nft_id
+ * @property int|null $nft_id
  * @property int|null $nft_delivery_id
- * @property int $ticket_quantity
- * @property int $nft_quantity
+ * @property int|null $ticket_quantity
+ * @property int|null $nft_quantity
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\NftDeliverySource $Delivery
- * @property-read \App\Models\Nft $Nft
+ * @property-read \App\Models\NftDeliverySource|null $Delivery
+ * @property-read \App\Models\Nft|null $Nft
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static \Illuminate\Database\Eloquent\Builder|NftAuctionReward newModelQuery()
@@ -735,6 +737,7 @@ namespace App\Models{
  * @property string|null $wallet_address
  * @property string|null $password
  * @property string|null $token_validate
+ * @property string|null $signature
  * @property int $status
  * @property int $vip_member
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -752,6 +755,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereSignature($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereTokenValidate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
