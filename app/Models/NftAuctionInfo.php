@@ -37,7 +37,8 @@ class NftAuctionInfo extends Model
      */
     protected $with = [
         'packages:id,auction_id,price,unit_price,destination_address',
-        'xenoClassSaleTime:id,auction_id,xeno_class_id,start_time,end_time'
+        'xenoClassSaleTime:id,auction_id,xeno_class_id,start_time,end_time',
+        'gaChaTicketExchangeTime:id,auction_id,start_time,end_time'
     ];
 
     /**
@@ -85,5 +86,15 @@ class NftAuctionInfo extends Model
     public function xenoClassSaleTime(): HasMany
     {
         return $this->hasMany(XenoClassSaleTime::class, 'auction_id', 'id');
+    }
+
+    /**
+     * Get the gacha ticket exchange time that owns the NftAuctionInfo
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function gaChaTicketExchangeTime(): BelongsTo
+    {
+        return $this->belongsTo(GachaTicketExchangeTime::class, 'id', 'auction_id');
     }
 }
