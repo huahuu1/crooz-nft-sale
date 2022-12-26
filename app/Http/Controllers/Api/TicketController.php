@@ -100,7 +100,7 @@ class TicketController extends Controller
                     $this->auctionNftService->createNftAuction(
                         $request->wallet_address,
                         $nftId,
-                        $request->ticket_type == 2 ? 20 : 7,
+                        $request->delivery_source ?? 7,
                         1
                     );
                 }
