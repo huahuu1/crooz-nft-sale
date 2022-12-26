@@ -238,7 +238,7 @@ trait ApiBscScanTransaction
         $destinationAddress = $this->auctionInfoService->infoNftAuctionById(3)->packages[0]->destination_address;
         $auctionNetworks = $this->auctionInfoService->infoNftAuctionById(3)->auctionNetwork;
         foreach ($auctionNetworks[0]->type as $auctionNetwork) {
-            if (strtolower($auctionNetwork->contract_wallet) == strtolower($contractAddress) && $auctionNetwork->code == 'BUSD') {
+            if (strtolower($auctionNetwork->contract_wallet ?? '') == strtolower($contractAddress ?? '') && $auctionNetwork->code == 'BUSD') {
                 return [
                     'chain' => 'bsc-BUSD',
                     'token' => 'BUSD',
@@ -246,7 +246,7 @@ trait ApiBscScanTransaction
                 ];
             }
 
-            if (strtolower($auctionNetwork->contract_wallet) == strtolower($contractAddress) && $auctionNetwork->code == 'USDT') {
+            if (strtolower($auctionNetwork->contract_wallet ?? '') == strtolower($contractAddress ?? '') && $auctionNetwork->code == 'USDT') {
                 return [
                     'chain' => 'bsc-BSC-USD',
                     'token' => 'USDT',
