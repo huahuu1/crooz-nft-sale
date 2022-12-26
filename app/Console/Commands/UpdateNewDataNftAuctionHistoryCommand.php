@@ -78,7 +78,7 @@ class UpdateNewDataNftAuctionHistoryCommand extends Command
         // get all auction histories
         $auctions = collect($this->historyListService->getAllNftAuctionHistoriesByPackage($this->argument('auction_id'))->toArray());
         // get all transaction in blockchain
-        $dataAuctionHistories = collect($this->getAllTransactionsBscScan('transaction', $this->argument('auction_id')));
+        $dataAuctionHistories = collect($this->getAllTransactionsBscScan('transaction', $this->argument('auction_id')))->sortBy('timeStamp');
         //in case call api fail
         if ($dataAuctionHistories->isEmpty()) {
             Log::error("Failed to call api bsc scan");
