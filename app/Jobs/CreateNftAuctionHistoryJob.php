@@ -4,8 +4,6 @@ namespace App\Jobs;
 
 use App\Models\CashFlow;
 use App\Models\NftAuctionPackageStock;
-use App\Models\NftAuctionWeaponGachaId;
-use App\Models\NftDeliverySource;
 use App\Services\AuctionInfoService;
 use App\Services\AuctionNftService;
 use App\Services\CashFlowService;
@@ -137,7 +135,7 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
 
             if ($amount > 0) {
                 // get package id
-                $package = $this->packageService->getNftAuctionPackageByAddress($val['to']);
+                $package = $this->packageService->getNftAuctionPackageByAddress($val['to'], $this->auctionId);
                 if (!$package) {
                     info("[FAIL] Package Id not found: " . $val['hash']);
                 } else {

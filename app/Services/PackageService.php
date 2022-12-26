@@ -9,13 +9,14 @@ class PackageService
     /**
      * get nft auction package by address
      *
-     * @param array $address
+     * @param array $address, $auctionId
      * @return NftAuctionPackage::class
      */
-    public function getNftAuctionPackageByAddress($address)
+    public function getNftAuctionPackageByAddress($address, $auctionId)
     {
         return NftAuctionPackage::select('id', 'auction_id', 'price', 'unit_price', 'destination_address')
             ->where('destination_address', $address)
+            ->where('auction_id', $auctionId)
             ->first();
     }
 }
