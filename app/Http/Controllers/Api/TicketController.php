@@ -127,10 +127,9 @@ class TicketController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getTicketsNumber($user)
+    public function getTicketsNumber($user, $auctionId)
     {
         $user = $this->userService->getUserByWalletAddressOrByUserId($user);
-
         if (!$user) {
             return response()->json([
                 'message' => __('user.getUser.not_found'),
@@ -138,7 +137,7 @@ class TicketController extends Controller
         }
 
         return response()->json([
-            'data' => $this->ticketService->getUserTicketsNumber($user->id)->all(),
+            'data' => $this->ticketService->getUserTicketsNumber($user->id, $auctionId)->all(),
         ]);
     }
 }
