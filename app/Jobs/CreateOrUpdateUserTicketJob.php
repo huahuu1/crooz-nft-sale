@@ -74,7 +74,7 @@ class CreateOrUpdateUserTicketJob implements ShouldQueue
             $totalTicket = (int) floor($this->convertAmount($val['token_decimal'], $val['value']));
 
             if ($totalTicket > 0) {
-                $userTicket = $this->ticketService->getUserFreeTicketsNumber($user->id);
+                $userTicket = $this->ticketService->getUserFreeTicketsNumber($user->id, $this->auctionId);
                 if (empty($userTicket)) {
                     // create or update user ticket
                     $ticket = $this->ticketService->createFreeGachaTicketData(

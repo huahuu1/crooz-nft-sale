@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\NftAuctionHistory;
-use App\Models\NftAuctionInfo;
+use Carbon\Carbon;
 use Exception;
 
 class HistoryListService
@@ -181,7 +181,7 @@ class HistoryListService
             'payment_method' => NftAuctionHistory::METHOD_CRYPTO,
             'package_id' => $packageId,
             'created_at' => $dateTime,
-            'updated_at' => $dateTime,
+            'updated_at' => Carbon::now(),
         ]);
     }
 }
