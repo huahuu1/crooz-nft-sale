@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\GachaTicket;
 use App\Models\GachaTicketExchangeTime;
 use App\Services\AuctionNftService;
 use App\Services\NftService;
@@ -80,8 +81,12 @@ class TicketController extends Controller
                     'message' => 'Out of tickets',
                 ], 400);
             }
-
-            $result = $this->gachaTicket($baseUri, $request->wallet_address, $request->ticket_type);
+            //case sale number 4 gacha id = 3
+            if ($request->auction_id == 4 && $request->ticket_type == GachaTicket::FREE_TICKET) {
+                $result = $this->gachaTicket($baseUri, $request->wallet_address, 3);
+            } else {
+                $result = $this->gachaTicket($baseUri, $request->wallet_address, $request->ticket_type);
+            }
             //case error with call api gaCha
             if (!empty($result['response']['status']) && $result['response']['status'] != 0) {
                 return response()->json([
