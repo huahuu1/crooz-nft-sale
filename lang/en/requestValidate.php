@@ -50,5 +50,8 @@ return [
         'required' => 'The auction id field is required',
         'numeric' => 'The auction id field must be number',
         'exists' => 'The selected auction id is invalid'
+    ],
+    'signature' => [
+        'required' => 'The required field is required'
     ]
 ];
