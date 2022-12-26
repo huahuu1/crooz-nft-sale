@@ -49,21 +49,25 @@ class GachaService
         } else {
             // call api to get gacha NFT
             $nftXenoId = $this->gachaTicket($baseUri, $walletAddress, $xenoGacha->xeno_gacha_id)['response']['result'][0];
+            info("XENO Gacha ID: " . $xenoGacha->xeno_gacha_id);
+            info("XENO NFT ID: " . $nftXenoId);
             // get weapon gacha id
-            $xenoWeaponId = NftAuctionWeaponGachaId::getNftAuctionWeaponGachaIdsByNftId($nftXenoId)->weapon_gacha_id;
+            $weaponGachaId = NftAuctionWeaponGachaId::getNftAuctionWeaponGachaIdsByNftId($nftXenoId)->weapon_gacha_id;
+            info("Weapon Gacha ID: " . $weaponGachaId);
             // call api to get gacha NFT
-            $nftWeaponId = $this->gachaTicket($baseUri, $walletAddress, $xenoWeaponId)['response']['result'][0];
+            $nftWeaponId = $this->gachaTicket($baseUri, $walletAddress, $weaponGachaId)['response']['result'][0];
+            info("Weapon NFT ID: " . $nftWeaponId);
             // get nft delivery id
             $deliveryId = NftDeliverySource::getDeliverySourceIdByPackageId($packageId)->nft_delivery_id;
             // save to auction nft
             $auctionNftService->createNftAuctions(
                 $walletAddress,
-                array($xenoWeaponId, $nftWeaponId),
+                array($nftXenoId, $nftWeaponId),
                 $deliveryId,
                 1
             );
             // get all nft of gaCha result
-            return $nftService->getNftByIds(array($xenoWeaponId, $nftWeaponId)) ?? [];
+            return $nftService->getNftByIds(array($nftXenoId, $nftWeaponId)) ?? [];
         }
     }
 }
