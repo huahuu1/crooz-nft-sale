@@ -57,5 +57,6 @@ return [
     'ticket' => [
         'contract_wallet' => env('TICKET_CONTRACT_WALLET', '0x922Eea7c52Bf3Be99a851227D73d8F63b82e9422'),
         'destination_address' => env('TICKET_DESTINATION_ADDRESS', '0x9106C3CF4B1619EdDeDFfD91556C88507e71DE81'),
-    ]
+        'update_ticket_cron_time' => env('UPDATE_TICKET_CRON_TIME', '0 * * * *'),
+    ],
 ];
