@@ -132,10 +132,10 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
             $tokens = $this->dataConfig($val['contractAddress']);
             $tokenId = $tokens['token'] === 'BUSD' ? 5 : 7;
             $amount = $this->convertAmount($val['tokenDecimal'], $val['value']);
-
-            if ($amount > 0) {
-                // get package id
-                $package = $this->packageService->getNftAuctionPackageByAddress($val['to'], $this->auctionId);
+            // get package id
+            $package = $this->packageService->getNftAuctionPackageByAddress($val['to'], $this->auctionId);
+            // in case amount > 0 and amount must equal package's price
+            if ($amount > 0 && $amount == $package->price) {
                 if (!$package) {
                     info("[FAIL] Package Id not found: " . $val['hash']);
                 } else {
@@ -175,6 +175,8 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
                         info("[SUCCESS] Create nft auction History: " . $val['hash']);
                     }
                 }
+            } else {
+                info("[FAIL] Invalid package's price: " . $val['hash']);
             }
         }
     }
