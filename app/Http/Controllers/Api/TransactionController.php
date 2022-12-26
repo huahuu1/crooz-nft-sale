@@ -22,6 +22,7 @@ use App\Traits\ApiBscScanTransaction;
 use App\Traits\ApiFincodePayment;
 use App\Traits\CheckTransactionWithApiScan;
 use App\Traits\DistributeTicket;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -482,6 +483,14 @@ class TransactionController extends Controller
     {
         try {
             info("paymentWithCoupon-PaymentRequest", [$request->all()]);
+            // get xeno gacha by auction id, package_id and time now
+            $auctionInfoXenoGaCha =  $this->gachaService->getXenoGachaId($request->package_id, Carbon::now(), $request->auction_id);
+
+            if (empty($auctionInfoXenoGaCha)) {
+                return response()->json([
+                    'message' => __('transaction.coupon.fail'),
+                ], 400);
+            }
 
             $user = $this->userService->getUserByWalletAddress($request->wallet_address);
             //case not found user
