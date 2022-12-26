@@ -306,10 +306,15 @@ class AuthController extends Controller
             Log::info('loginWeb3-request', [$request->all()]);
             // password decrypt
             $password = config('defines.password_decrypte');
-            // decode signature
-            $signature = json_decode($request->signature ?? '');
+            // json encode signature
+            $signatureData = json_encode([
+                'ct' => $request->signature['ct'] ?? '',
+                'iv'=> $request->signature['iv'] ?? '',
+                's'=> $request->signature['s'] ?? '',
+            ]);
+
             // decrypt signature
-            $signature = CryptoJsAes::decrypt($signature ?? '', $password);
+            $signature = CryptoJsAes::decrypt($signatureData ?? '', $password);
             // get user with wallet address and signature
             $user = $this->userService->getUserByWalletAddressAndSignature($request->wallet_address, $signature);
 
