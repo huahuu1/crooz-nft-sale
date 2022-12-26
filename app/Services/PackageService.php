@@ -7,7 +7,7 @@ use App\Models\NftAuctionPackage;
 class PackageService
 {
     /**
-     * get nft auction package by address
+     * get nft auction package by address and auction id
      *
      * @param array $address, $auctionId
      * @return NftAuctionPackage::class
