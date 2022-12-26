@@ -13,9 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('transaction_rankings', function (Blueprint $table) {
-            $table->dropUnique(['wallet_address']);
-            $table->char('tx_hash', 150)->unique()->change();
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('signature', 100)->nullable()->after('token_validate');
         });
     }
 
@@ -26,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('transaction_rankings', function (Blueprint $table) {
-            $table->dropUnique(['wallet_address', 'tx_hash']);
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('signature');
         });
     }
 };

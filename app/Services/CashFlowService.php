@@ -51,7 +51,7 @@ class CashFlowService
             'transaction_type' => $transactionType,
             'payment_method' => $paymentMethod,
             'created_at' => $dateTime,
-            'updated_at' => $dateTime,
+            'updated_at' => Carbon::now(),
         ]);
     }
 }

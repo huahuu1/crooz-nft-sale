@@ -3,11 +3,17 @@
 namespace App\Jobs;
 
 use App\Models\CashFlow;
+use App\Models\NftAuctionPackageStock;
 use App\Services\AuctionInfoService;
+use App\Services\AuctionNftService;
 use App\Services\CashFlowService;
+use App\Services\GachaService;
 use App\Services\HistoryListService;
+use App\Services\NftService;
+use App\Services\PackageService;
 use App\Services\UserService;
 use App\Traits\ApiBscScanTransaction;
+use App\Traits\ApiGachaTicket;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,7 +22,13 @@ use Illuminate\Queue\SerializesModels;
 
 class CreateNftAuctionHistoryJob implements ShouldQueue
 {
-    use ApiBscScanTransaction, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use ApiBscScanTransaction;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use ApiGachaTicket;
+
     /**
      * New Histories variable
      *
@@ -52,12 +64,40 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
      */
     protected $userService;
 
-     /**
+    /**
      * CashFlow Service variable
      *
      * @var App\Services\CashFlowService
      */
     protected $cashFlowService;
+
+    /**
+     * Package Service variable
+     *
+     * @var App\Services\PackageService
+     */
+    protected $packageService;
+
+    /**
+     * Auction NftService variable
+     *
+     * @var App\Services\AuctionNftService
+     */
+    protected $auctionNftService;
+
+    /**
+     * Gacha Service variable
+     *
+     * @var App\Services\GachaService
+     */
+    protected $gachaService;
+
+    /**
+     * Nft Service variable
+     *
+     * @var App\Services\NftService
+     */
+    protected $nftService;
 
     /**
      * Create a new job instance.
@@ -72,6 +112,10 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
         $this->historyListService = new HistoryListService();
         $this->auctionInfoService = new AuctionInfoService();
         $this->cashFlowService = new CashFlowService();
+        $this->packageService = new PackageService();
+        $this->auctionNftService = new AuctionNftService();
+        $this->gachaService = new GachaService();
+        $this->nftService = new NftService();
     }
 
     /**
@@ -90,28 +134,47 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
             $amount = $this->convertAmount($val['tokenDecimal'], $val['value']);
 
             if ($amount > 0) {
-                // create nft Auction History
-                $this->historyListService->createNftAuctionHistoryByData(
-                    $val['hash'],
-                    $user->id,
-                    $tokenId,
-                    $this->auctionId,
-                    $amount,
-                    date('Y-m-d H:i:s', $val['timeStamp'])
-                );
-                // create cashflow
-                $this->cashFlowService->createCashFlowWithDate(
-                    $user->id,
-                    $tokenId,
-                    $amount,
-                    CashFlow::TOKEN_DEPOSIT,
-                    $val['hash'],
-                    CashFlow::METHOD_CRYPTO,
-                    date('Y-m-d H:i:s', $val['timeStamp'])
-                );
-                // call api to get gacha NFT
+                // get package id
+                $package = $this->packageService->getNftAuctionPackageByAddress($val['to'], $this->auctionId);
+                if (!$package) {
+                    info("[FAIL] Package Id not found: " . $val['hash']);
+                } else {
+                    $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($package->id);
+                    //prevent out of stock package
+                    if (!empty($packageStock) && $packageStock->remain <= 0) {
+                        info("[FAIL] Package out of stock: " . $val['hash']);
+                    } else {
+                        // create nft Auction History
+                        $this->historyListService->createNftAuctionHistoryByData(
+                            $val['hash'],
+                            $user->id,
+                            $tokenId,
+                            $this->auctionId,
+                            $amount,
+                            $package->id,
+                            date('Y-m-d H:i:s', $val['timeStamp'])
+                        );
+                        // create cashflow
+                        $this->cashFlowService->createCashFlowWithDate(
+                            $user->id,
+                            $tokenId,
+                            $amount,
+                            CashFlow::TOKEN_DEPOSIT,
+                            $val['hash'],
+                            CashFlow::METHOD_CRYPTO,
+                            date('Y-m-d H:i:s', $val['timeStamp'])
+                        );
+                        //subtract ticket when transaction is success
+                        if (!empty($packageStock)) {
+                            $packageStock->remain -= 1;
+                            $packageStock->update();
+                        }
+                        // call api gacha NFT
+                        $this->gachaService->callApiGachaNft($package->id, $this->auctionId, date('Y-m-d H:i:s', $val['timeStamp']), $val['from'], $this->auctionNftService, $this->nftService);
 
-                info("[SUCCESS] Create nft auction History: " . $val['hash']);
+                        info("[SUCCESS] Create nft auction History: " . $val['hash']);
+                    }
+                }
             }
         }
     }

@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\GachaTicket;
+use App\Models\NftAuctionXenoGachaId;
+use App\Models\XenoClassSaleTime;
 use Carbon\Carbon;
 use DB;
 use Exception;
@@ -95,7 +97,7 @@ class TicketService
                 'remain_ticket' => $ticketNumber,
                 'ticket_type' => GachaTicket::FREE_TICKET,
                 'created_at' => $dateTime,
-                'updated_at' => $dateTime,
+                'updated_at' => Carbon::now(),
             ];
             return GachaTicket::create($gaChaTicket);
         } catch (Exception $e) {
@@ -171,15 +173,16 @@ class TicketService
     }
 
     /**
-     * Get user's free tickets number by user id.
+     * Get user's free tickets number by user id and auction id.
      *
-     * @param $userId
+     * @param $userId, $auctionId
      * @return array|object
      */
-    public function getUserFreeTicketsNumber($userId)
+    public function getUserFreeTicketsNumber($userId, $auctionId)
     {
         return GachaTicket::select('id', 'user_id', 'ticket_type', 'total_ticket', 'remain_ticket')
             ->where('user_id', $userId)
+            ->where('nft_auction_id', $auctionId)
             ->where('ticket_type', GachaTicket::FREE_TICKET)
             ->first();
     }

@@ -14,7 +14,6 @@ return new class extends Migration
     public function up()
     {
         Schema::rename('transaction_histories', 'transaction_raw_data_histories');
-
     }
 
     /**

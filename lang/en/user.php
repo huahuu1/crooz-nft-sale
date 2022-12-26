@@ -26,5 +26,11 @@ return [
     'changePassword' => [
         'success' => 'Change password successfully',
         'fail' => 'Change password failed',
+    ],
+    'loginWeb3' => [
+        'fail' => 'Login not successfully'
+    ],
+    'registerSignature' => [
+        'fail' => 'Register Signature Not Successfully'
     ]
 ];

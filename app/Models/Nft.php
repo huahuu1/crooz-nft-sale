@@ -57,10 +57,10 @@ class Nft extends Model
     /**
      * Get random nfts.
      *
-     * @return \App\Models\Nft
+     * @return \App\Models\NftAuctionWeaponGachaId
      */
     public static function getRandomNfts()
     {
-        return Nft::select('nft_id')->pluck('nft_id')->random(3)->toArray();
+        return NftAuctionWeaponGachaId::select('nft_id')->pluck('nft_id')->random(1)->toArray();
     }
 }

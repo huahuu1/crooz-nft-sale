@@ -13,16 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('transaction_raw_datas', function (Blueprint $table) {
+        Schema::create('gacha_ticket_exchange_times', function (Blueprint $table) {
             $table->id();
-            $table->string('chain', 50);
-            $table->char('tx_hash', 150);
-            $table->string('from', 150);
-            $table->string('to', 150);
-            $table->string('token', 100);
-            $table->decimal('value', 30, 10);
-            $table->timestamp('timestamp');
-
+            $table->foreignId('auction_id')->constrained('nft_auction_infos');
+            $table->dateTime('start_time');
+            $table->dateTime('end_time');
             $table->timestamps();
         });
     }
@@ -34,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('transaction_raws');
+        Schema::dropIfExists('gacha_ticket_exchange_times');
     }
 };

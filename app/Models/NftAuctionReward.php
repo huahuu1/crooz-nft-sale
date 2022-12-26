@@ -63,6 +63,6 @@ class NftAuctionReward extends Model
      */
     public function Delivery(): BelongsTo
     {
-        return $this->belongsTo(NftDeliverySource::class, 'nft_id', 'id');
+        return $this->belongsTo(NftDeliverySource::class, 'nft_delivery_id', 'id');
     }
 }

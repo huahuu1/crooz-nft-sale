@@ -25,6 +25,7 @@ class User extends Authenticatable
         'password',
         'token_validate',
         'status',
+        'signature'
     ];
 
     /**

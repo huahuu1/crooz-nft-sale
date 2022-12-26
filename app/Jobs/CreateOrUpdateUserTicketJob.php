@@ -13,7 +13,12 @@ use Illuminate\Queue\SerializesModels;
 
 class CreateOrUpdateUserTicketJob implements ShouldQueue
 {
-    use ApiBscScanTransaction, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use ApiBscScanTransaction;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
     /**
      * Data Ticket variable
      *
@@ -69,7 +74,7 @@ class CreateOrUpdateUserTicketJob implements ShouldQueue
             $totalTicket = (int) floor($this->convertAmount($val['token_decimal'], $val['value']));
 
             if ($totalTicket > 0) {
-                $userTicket = $this->ticketService->getUserFreeTicketsNumber($user->id);
+                $userTicket = $this->ticketService->getUserFreeTicketsNumber($user->id, $this->auctionId);
                 if (empty($userTicket)) {
                     // create or update user ticket
                     $ticket = $this->ticketService->createFreeGachaTicketData(

@@ -15,7 +15,6 @@ trait DistributeTicket
     public function distributeTicket($transaction, $ticketService, $auctionNftService)
     {
         try {
-
             $packageInfo = $transaction->package;
             $nftQuantity = $transaction->package->reward->nft_quantity;
             $ticketNumber = 0;

@@ -41,6 +41,28 @@ class UserService
     }
 
     /**
+     * Get user by wallet address and signature
+     *
+     * @param string $walletAddress
+     * @param string $signature
+     * @return User
+     */
+    public function getUserByWalletAddressAndSignature($walletAddress, $signature)
+    {
+        return User::select(
+            'id',
+            'email',
+            'wallet_address',
+            'token_validate',
+            'status'
+        )
+            ->with('gxePartnerUser:id,user_id')
+            ->where('wallet_address', $walletAddress)
+            ->where('signature', $signature)
+            ->first();
+    }
+
+    /**
      * Get user by email
      *
      * @param $walletAddress

@@ -137,7 +137,8 @@ class NewAuctionSaleSeeder extends Seeder
             XenoClassSaleTimeSeeder::class,
             NftAuctionXenoGachaIdSeeder::class,
             NftAuctionWeaponGachaIdSeeder::class,
-            UserCouponSeeder::class
+            UserCouponSeeder::class,
+            GachaTicketExchangeTimesSeeder::class
         ]);
     }
 }

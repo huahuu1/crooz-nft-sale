@@ -8,14 +8,15 @@ use Illuminate\Support\Facades\Log;
 
 trait ApiBscScanTransaction
 {
-    public function retry($times, $type, $auctionId, $key) {
+    public function retry($times, $type, $auctionId, $key, $retryTime)
+    {
         $retries = $times;
         $success = false;
         do {
             $result = $this->configCallApi($type, $auctionId);
             $success = $result[$key]['status'];
             $retries--;
-            sleep(60);
+            sleep($retryTime);
         } while ($retries > 0 && !$success);
         return $result;
     }
@@ -83,10 +84,11 @@ trait ApiBscScanTransaction
     {
         try {
             $results = $this->configCallApi($type, $auctionId);
+            $retryTime = $this->configRetryTime($type);
             $response = [];
             foreach ($results as $key => $result) {
                 if ($result['status'] == '0') {
-                    $results = $this->retry(3, $type, $auctionId, $key);
+                    $results = $this->retry(1, $type, $auctionId, $key, $retryTime);
                     if ($result['status'] == '1') {
                         $result = $this->configCallApi($type, $auctionId);
                         $response[] = $result['result'];
@@ -112,6 +114,23 @@ trait ApiBscScanTransaction
                 return $this->callApiBscScanTokenTicket();
             case 'transaction':
                 return $this->callApiBscScan($auctionId);
+            case 'ranking':
+                return $this->callApiBscScan($auctionId);
+        }
+    }
+
+    /**
+     * @return $response
+     */
+    public function configRetryTime($type)
+    {
+        switch ($type) {
+            case 'ticket':
+                return 60;
+            case 'transaction':
+                return 2;
+            case 'ranking':
+                return 60;
         }
     }
 
@@ -219,7 +238,7 @@ trait ApiBscScanTransaction
         $destinationAddress = $this->auctionInfoService->infoNftAuctionById(3)->packages[0]->destination_address;
         $auctionNetworks = $this->auctionInfoService->infoNftAuctionById(3)->auctionNetwork;
         foreach ($auctionNetworks[0]->type as $auctionNetwork) {
-            if (strtolower($auctionNetwork->contract_wallet) == strtolower($contractAddress) && $auctionNetwork->code == 'BUSD') {
+            if (strtolower($auctionNetwork->contract_wallet ?? '') == strtolower($contractAddress ?? '') && $auctionNetwork->code == 'BUSD') {
                 return [
                     'chain' => 'bsc-BUSD',
                     'token' => 'BUSD',
@@ -227,7 +246,7 @@ trait ApiBscScanTransaction
                 ];
             }
 
-            if (strtolower($auctionNetwork->contract_wallet) == strtolower($contractAddress) && $auctionNetwork->code == 'USDT') {
+            if (strtolower($auctionNetwork->contract_wallet ?? '') == strtolower($contractAddress ?? '') && $auctionNetwork->code == 'USDT') {
                 return [
                     'chain' => 'bsc-BSC-USD',
                     'token' => 'USDT',
