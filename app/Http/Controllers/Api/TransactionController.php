@@ -595,13 +595,12 @@ class TransactionController extends Controller
                     'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
                 ], 400);
             }
-
             // user has coupon
             $isCoupon = $this->userCouponService->getUserCoupon($user->id, $request->auction_id);
             if (empty($isCoupon)) {
                 return response()->json([
                     'message' => __('transaction.coupon.hasCoupon'),
-                ], 400);
+                ], 200);
             }
 
             return response()->json([
