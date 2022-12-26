@@ -22,7 +22,7 @@ return [
     ],
     'coupon' => [
         'fail' => 'unsuccessful use of discount code',
-        'hasCoupon' => 'discount code does not exist',
+        'hasCoupon' => 'The user\'s coupon does not exist',
         'success' => 'successfully used discount code'
     ]
 ];
