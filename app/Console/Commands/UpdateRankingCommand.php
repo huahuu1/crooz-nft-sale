@@ -65,7 +65,7 @@ class UpdateRankingCommand extends Command
     {
         $results = collect($this->getAllTransactionsBscScan('ranking', 3));
         if ($results->isEmpty()) {
-            Log::error("Failed to call api bsc scan");
+            info("[FAILED] Api BSC scan call failed");
             $email = config('defines.mail_receive_failed_job');
             Notification::route('mail', $email)->notify(new EmailFailedJobNotification($email, 'Ranking Job'));
             return;
