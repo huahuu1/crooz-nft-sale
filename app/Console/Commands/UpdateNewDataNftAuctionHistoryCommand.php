@@ -81,7 +81,7 @@ class UpdateNewDataNftAuctionHistoryCommand extends Command
         $dataAuctionHistories = collect($this->getAllTransactionsBscScan('transaction', $this->argument('auction_id')))->sortBy('timeStamp');
         //in case call api fail
         if ($dataAuctionHistories->isEmpty()) {
-            Log::error("Failed to call api bsc scan");
+            info("[FAILED] Api BSC scan call failed");
             $email = config('defines.mail_receive_failed_job');
             Notification::route('mail', $email)->notify(new EmailFailedJobNotification($email, 'Auction History Job'));
             return;

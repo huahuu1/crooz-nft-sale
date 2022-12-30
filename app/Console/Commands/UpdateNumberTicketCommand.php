@@ -70,7 +70,7 @@ class UpdateNumberTicketCommand extends Command
         $dataTickets = collect($this->getAllTransactionsBscScan('ticket', $this->argument('auction_id')));
         //in case call api fail
         if ($dataTickets->isEmpty()) {
-            Log::error("Failed to call api bsc scan");
+            info("[FAILED] Api BSC scan call failed");
             $email = config('defines.mail_receive_failed_job');
             Notification::route('mail', $email)->notify(new EmailFailedJobNotification($email, 'Update Number Ticket Job'));
             return;
