@@ -23,7 +23,7 @@ Route::middleware(['language'])->group(function () {
     //Router authorization
     Route::controller(AuthController::class)->group(function () {
         Route::post('register', 'register');
-        Route::post('register-wallet', 'registerByWalletAddress');
+        // Route::post('register-wallet', 'registerByWalletAddress');
         Route::post('login', 'login');
 
         // create signature
