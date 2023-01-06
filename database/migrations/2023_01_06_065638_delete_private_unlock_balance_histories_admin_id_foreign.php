@@ -15,10 +15,8 @@ return new class extends Migration
     {
         Schema::table('private_unlock_balance_histories', function (Blueprint $table) {
             $table->dropForeign(['admin_id']);
-            $table->dropColumn('admin_id');
-        });
-        Schema::table('private_unlock_balance_histories', function (Blueprint $table) {
-            $table->unsignedBigInteger('admin_id')->nullable()->after('unlock_token_date');
+            $table->dropIndex('private_unlock_balance_histories_admin_id_foreign');
+            $table->unsignedBigInteger('admin_id')->nullable()->change();
         });
     }
 
