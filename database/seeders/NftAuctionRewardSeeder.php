@@ -83,7 +83,7 @@ class NftAuctionRewardSeeder extends Seeder
             ],
             [
                 'package_id' => 9,
-                'nft_id' => null,
+                'nft_id' => 26,
                 'ticket_quantity' => null,
                 'nft_quantity' => null,
                 'nft_delivery_id' => 8,
@@ -92,7 +92,7 @@ class NftAuctionRewardSeeder extends Seeder
             ],
             [
                 'package_id' => 10,
-                'nft_id' => null,
+                'nft_id' => 27,
                 'ticket_quantity' => null,
                 'nft_quantity' => null,
                 'nft_delivery_id' => 8,
@@ -101,7 +101,7 @@ class NftAuctionRewardSeeder extends Seeder
             ],
             [
                 'package_id' => 11,
-                'nft_id' => null,
+                'nft_id' => 28,
                 'ticket_quantity' => null,
                 'nft_quantity' => null,
                 'nft_delivery_id' => 8,
@@ -110,7 +110,7 @@ class NftAuctionRewardSeeder extends Seeder
             ],
             [
                 'package_id' => 12,
-                'nft_id' => null,
+                'nft_id' => 29,
                 'ticket_quantity' => null,
                 'nft_quantity' => null,
                 'nft_delivery_id' => 8,
@@ -119,7 +119,7 @@ class NftAuctionRewardSeeder extends Seeder
             ],
             [
                 'package_id' => 13,
-                'nft_id' => null,
+                'nft_id' => 30,
                 'ticket_quantity' => null,
                 'nft_quantity' => null,
                 'nft_delivery_id' => 8,
