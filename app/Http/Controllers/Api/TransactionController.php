@@ -499,7 +499,7 @@ class TransactionController extends Controller
         try {
             info("paymentWithCoupon-PaymentRequest", [$request->all()]);
             // get xeno gacha by auction id, package_id and time now
-            $auctionInfoXenoGaCha =  $this->gachaService->getXenoGachaId($request->package_id, Carbon::now(), $request->auction_id);
+            $auctionInfoXenoGaCha = $this->gachaService->getXenoGachaId($request->package_id, Carbon::now(), $request->auction_id);
 
             if (empty($auctionInfoXenoGaCha)) {
                 return response()->json([

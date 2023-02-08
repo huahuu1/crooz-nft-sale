@@ -21,13 +21,23 @@ class AuctionNetworkSeeder extends Seeder
 
         DB::table('auction_networks')->insert([
             [
-                'id' => 1,
                 'auction_id' => 2,
                 'network_id' => 1,
             ],
             [
-                'id' => 2,
                 'auction_id' => 2,
+                'network_id' => 2,
+            ],
+            [
+                'auction_id' => 3,
+                'network_id' => 2,
+            ],
+            [
+                'auction_id' => 4,
+                'network_id' => 2,
+            ],
+            [
+                'auction_id' => 5,
                 'network_id' => 2,
             ]
         ]);

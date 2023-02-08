@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\NftAuctionReward;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Schema;
 
 class NftAuctionRewardSeeder extends Seeder
 {
@@ -15,6 +15,8 @@ class NftAuctionRewardSeeder extends Seeder
      */
     public function run()
     {
+        Schema::disableForeignKeyConstraints();
+        NftAuctionReward::truncate();
         $nftAuctionRewards = [
             [
                 'package_id' => 1,
@@ -42,9 +44,90 @@ class NftAuctionRewardSeeder extends Seeder
                 'nft_delivery_id' => 7,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'package_id' => 5,
+                'nft_id' => null,
+                'ticket_quantity' => null,
+                'nft_quantity' => null,
+                'nft_delivery_id' => 8,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'package_id' => 6,
+                'nft_id' => null,
+                'ticket_quantity' => null,
+                'nft_quantity' => null,
+                'nft_delivery_id' => 8,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'package_id' => 7,
+                'nft_id' => null,
+                'ticket_quantity' => null,
+                'nft_quantity' => null,
+                'nft_delivery_id' => 8,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'package_id' => 8,
+                'nft_id' => null,
+                'ticket_quantity' => null,
+                'nft_quantity' => null,
+                'nft_delivery_id' => 8,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'package_id' => 9,
+                'nft_id' => null,
+                'ticket_quantity' => null,
+                'nft_quantity' => null,
+                'nft_delivery_id' => 8,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'package_id' => 10,
+                'nft_id' => null,
+                'ticket_quantity' => null,
+                'nft_quantity' => null,
+                'nft_delivery_id' => 8,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'package_id' => 11,
+                'nft_id' => null,
+                'ticket_quantity' => null,
+                'nft_quantity' => null,
+                'nft_delivery_id' => 8,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'package_id' => 12,
+                'nft_id' => null,
+                'ticket_quantity' => null,
+                'nft_quantity' => null,
+                'nft_delivery_id' => 8,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'package_id' => 13,
+                'nft_id' => null,
+                'ticket_quantity' => null,
+                'nft_quantity' => null,
+                'nft_delivery_id' => 8,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ]
         ];
-
         NftAuctionReward::insert($nftAuctionRewards);
+        Schema::enableForeignKeyConstraints();
     }
 }
