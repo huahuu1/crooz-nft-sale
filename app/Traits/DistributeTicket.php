@@ -17,56 +17,59 @@ trait DistributeTicket
         try {
             $packageInfo = $transaction->package;
             $nftQuantity = $transaction->package->reward->nft_quantity;
-            $ticketNumber = 0;
-            //case user deposits amount not equal with package price
-            if ($transaction->amount != $packageInfo->price) {
-                // convert total ticket
-                $ticketNumber = floor($transaction->amount / $packageInfo->unit_price);
-                $nftQuantity = $ticketNumber;
-            }
-            //case user deposits amount equal with package price
-            if ($transaction->amount == $packageInfo->price) {
-                // convert total ticket
-                $ticketNumber = $transaction->package->reward->ticket_quantity;
-            }
+            $ticketQuantity = $transaction->package->reward->ticket_quantity;
+            if ($nftQuantity > 0 && $ticketQuantity > 0) {
+                $ticketNumber = 0;
+                //case user deposits amount not equal with package price
+                if ($transaction->amount != $packageInfo->price) {
+                    // convert total ticket
+                    $ticketNumber = floor($transaction->amount / $packageInfo->unit_price);
+                    $nftQuantity = $ticketNumber;
+                }
+                //case user deposits amount equal with package price
+                if ($transaction->amount == $packageInfo->price) {
+                    // convert total ticket
+                    $ticketNumber = $transaction->package->reward->ticket_quantity;
+                }
 
-            if ($ticketNumber > 0) {
-                // get gachaTicket our current user
-                $isGachaTicket = $ticketService->hasGachaInfoByUserId($transaction->user_id);
-                if (!$isGachaTicket) {
-                    // create gacha paid ticket
-                    $ticketService->createPaidGachaTicketData(
-                        $transaction->user_id,
-                        $ticketNumber,
-                        $packageInfo->auction_id
-                    );
-                } else {
-                    // update gacha ticket form user_id and paid ticket
-                    $userTicket = $ticketService->getGachaTicketByUserIdAndType(
-                        $transaction->user_id,
-                        GachaTicket::PAID_TICKET,
-                        $packageInfo->auction_id
-                    );
-                    $userTicket->total_ticket += $ticketNumber;
-                    $userTicket->remain_ticket += $ticketNumber;
-                    $userTicket->update();
+                if ($ticketNumber > 0) {
+                    // get gachaTicket our current user
+                    $isGachaTicket = $ticketService->hasGachaInfoByUserId($transaction->user_id);
+                    if (!$isGachaTicket) {
+                        // create gacha paid ticket
+                        $ticketService->createPaidGachaTicketData(
+                            $transaction->user_id,
+                            $ticketNumber,
+                            $packageInfo->auction_id
+                        );
+                    } else {
+                        // update gacha ticket form user_id and paid ticket
+                        $userTicket = $ticketService->getGachaTicketByUserIdAndType(
+                            $transaction->user_id,
+                            GachaTicket::PAID_TICKET,
+                            $packageInfo->auction_id
+                        );
+                        $userTicket->total_ticket += $ticketNumber;
+                        $userTicket->remain_ticket += $ticketNumber;
+                        $userTicket->update();
+                    }
+                    // create nft auction of user by ticket number
+                    for ($i = 0; $i < $nftQuantity; $i++) {
+                        $auctionNftService->createNftAuction(
+                            $transaction->user->wallet_address,
+                            $transaction->package->reward->nft_id,
+                            $transaction->package->reward->nft_delivery_id,
+                            1
+                        );
+                    }
                 }
-                // create nft auction of user by ticket number
-                for ($i = 0; $i < $nftQuantity; $i++) {
-                    $auctionNftService->createNftAuction(
-                        $transaction->user->wallet_address,
-                        $transaction->package->reward->nft_id,
-                        $transaction->package->reward->nft_delivery_id,
-                        1
-                    );
-                }
+                Log::info(
+                    '[SUCCESS] Check Status Nft Auction for: '
+                        . $transaction->id . ' ('
+                        . substr($transaction->tx_hash, 0, 10)
+                        . ')'
+                );
             }
-            Log::info(
-                '[SUCCESS] Check Status Nft Auction for: '
-                    . $transaction->id . ' ('
-                    . substr($transaction->tx_hash, 0, 10)
-                    . ')'
-            );
         } catch (Exception $e) {
             Log::error($e);
         }

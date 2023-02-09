@@ -64,6 +64,8 @@ class TransactionController extends Controller
 
     protected $nftService;
 
+    protected $rankingService;
+
     /**
      * TransactionController constructor.
      *
@@ -462,8 +464,19 @@ class TransactionController extends Controller
                     $auctionFiat->update();
                     // Call Job Distribute Ticket
                     $this->distributeTicket($auctionFiat, $this->ticketService, $this->auctionNftService);
-                    // call api gacha NFT
-                    $nfts = $this->gachaService->callApiGachaNft($request->package_id, $request->nft_auction_id, Carbon::now(), $request->wallet_address, $this->auctionNftService, $this->nftService);
+                    if ($request->nft_auction_id == 5) {
+                        // get NFT id by nft_auction_rewards
+                        $nfts = $this->gachaService->getNftByPackageId($request->package_id);
+                        $this->auctionNftService->createNftAuction(
+                            $request->wallet_address,
+                            $nfts->nft->nft_id,
+                            $nfts->delivery->id,
+                            1
+                        );
+                    } else {
+                        // call api gacha NFT
+                        $nfts = $this->gachaService->callApiGachaNfts($request->package_id, $request->nft_auction_id, Carbon::now(), $request->wallet_address, $this->auctionNftService, $this->nftService);
+                    }
                     // Insert record in cash flow
                     $this->cashFlowService->createCashFlow(
                         $user->id,
@@ -477,7 +490,7 @@ class TransactionController extends Controller
             }
             return response()->json([
                 'message' => __('transaction.createDepositNftTransaction.success'),
-                'data' => $nfts
+                'data' => $nfts->nft ?? $nfts
             ], $result['statusCode']);
         } catch (Exception $e) {
             Log::error($e);
@@ -488,6 +501,7 @@ class TransactionController extends Controller
             ], 400);
         }
     }
+
     /**
      * Create transaction with coupon.
      *
@@ -528,7 +542,7 @@ class TransactionController extends Controller
                     'message' => __('transaction.createDepositNftTransaction.out_of_stock'),
                 ], 400);
             }
-            //create data in nft auction history with status pending
+            //create data in nft auction history
             $auctionFiat = $this->historyListService->createNftAuctionHistory(
                 $user->id,
                 $request->token_id,
@@ -561,7 +575,7 @@ class TransactionController extends Controller
             // update remain Ticket
             $this->distributeTicket($auctionFiat, $this->ticketService, $this->auctionNftService);
             // call api gacha NFT
-            $nfts = $this->gachaService->callApiGachaNft($request->package_id, $request->auction_id, Carbon::now(), $request->wallet_address, $this->auctionNftService, $this->nftService);
+            $nfts = $this->gachaService->callApiGachaNfts($request->package_id, $request->auction_id, Carbon::now(), $request->wallet_address, $this->auctionNftService, $this->nftService);
 
             return response()->json([
                 'message' => __('transaction.coupon.success'),
@@ -577,6 +591,119 @@ class TransactionController extends Controller
             ], 400);
         }
     }
+
+    /**
+     * Create transaction with coupon 5th sale by credit.
+     *
+     * @param  \App\Http\Requests\PaymentCouponRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function paymentWithCoupon5thSaleByCredit(PaymentCouponRequest $request)
+    {
+        try {
+            info("paymentWithCoupon-PaymentRequest", [$request->all()]);
+
+            $user = $this->userService->getUserByWalletAddress($request->wallet_address);
+            //case not found user
+            if (!$user) {
+                return response()->json([
+                    'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
+                ], 400);
+            }
+            // user has coupon
+            $isCoupon = $this->userCouponService->hasUserCoupon($user->id, $request->auction_id);
+            if (empty($isCoupon)) {
+                return response()->json([
+                    'message' => __('transaction.coupon.hasCoupon'),
+                ], 400);
+            }
+            //calculate amount after discount
+            $amount = $request->amount * $isCoupon->discount_percentage / 100;
+            //create data in nft auction history
+            $this->historyListService->createNftAuctionHistory(
+                $user->id,
+                $request->token_id,
+                $request->auction_id,
+                $amount,
+                NftAuctionHistory::SUCCESS_STATUS,
+                null,
+                NftAuctionHistory::METHOD_COUPON,
+                $request->package_id
+            );
+            // Insert record in cash flow
+            $this->cashFlowService->createCashFlow(
+                $user->id,
+                $request->token_id,
+                $amount,
+                CashFlow::NFT_DEPOSIT,
+                null,
+                CashFlow::METHOD_COUPON
+            );
+            // update coupon
+            $isCoupon->remain_coupon -= 1;
+            $isCoupon->update();
+            // add user coupon history
+            $this->userCouponService->createUserCouponHistory($isCoupon->id);
+
+            return response()->json([
+                'message' => __('transaction.coupon.success'),
+                'remain_coupon' => $isCoupon->remain_coupon,
+            ], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'message' => __('transaction.coupon.fail'),
+                'error' => $e,
+            ], 400);
+        }
+    }
+
+    /**
+     * Create transaction with coupon 5th sale by crypto.
+     *
+     * @param  \App\Http\Requests\PaymentCouponRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function paymentWithCoupon5thSaleByCrypto(Request $request)
+    {
+        try {
+            info("paymentWithCoupon-PaymentRequest", [$request->all()]);
+
+            $user = $this->userService->getUserByWalletAddress($request->wallet_address);
+            //case not found user
+            if (!$user) {
+                return response()->json([
+                    'message' => __('transaction.createDepositNftTransaction.connect_metamask'),
+                ], 400);
+            }
+            // user has coupon
+            $isCoupon = $this->userCouponService->hasUserCoupon($user->id, $request->auction_id);
+            if (empty($isCoupon)) {
+                return response()->json([
+                    'message' => __('transaction.coupon.hasCoupon'),
+                ], 400);
+            }
+            //create user coupon hold
+            $this->userCouponService->createUserCouponHold($isCoupon->id, $request->package_id);
+            // update coupon
+            $isCoupon->remain_coupon -= 1;
+            $isCoupon->update();
+
+            return response()->json([
+                'message' => __('transaction.coupon.success'),
+                'remain_coupon' => $isCoupon->remain_coupon,
+            ], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return response()->json([
+                'message' => __('transaction.coupon.fail'),
+                'error' => $e,
+            ], 400);
+        }
+    }
+
     /**
      * Get user has coupon.
      *

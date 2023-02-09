@@ -69,6 +69,8 @@ Route::middleware(['language'])->group(function () {
             Route::get('package-history-nft-auction', 'historyNftAuctionByPackage');
             // complete payment with coupon
             Route::post('payment/coupon', 'paymentWithCoupon');
+            Route::post('payment/coupon-5th-sale/credit', 'paymentWithCoupon5thSaleByCredit');
+            Route::post('payment/coupon-5th-sale/crypto', 'paymentWithCoupon5thSaleByCrypto');
             Route::get('check-user-with-discount-coupon', [TransactionController::class, 'checkUserWithDiscountCoupon']);
         });
 

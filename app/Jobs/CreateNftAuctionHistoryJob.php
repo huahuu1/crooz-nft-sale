@@ -3,7 +3,9 @@
 namespace App\Jobs;
 
 use App\Models\CashFlow;
+use App\Models\NftAuctionHistory;
 use App\Models\NftAuctionPackageStock;
+use App\Models\UserCouponHold;
 use App\Services\AuctionInfoService;
 use App\Services\AuctionNftService;
 use App\Services\CashFlowService;
@@ -11,6 +13,7 @@ use App\Services\GachaService;
 use App\Services\HistoryListService;
 use App\Services\NftService;
 use App\Services\PackageService;
+use App\Services\UserCouponService;
 use App\Services\UserService;
 use App\Traits\ApiBscScanTransaction;
 use App\Traits\ApiGachaTicket;
@@ -100,6 +103,13 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
     protected $nftService;
 
     /**
+     * User Coupon Service variable
+     *
+     * @var App\Services\UserCouponService
+     */
+    protected $userCouponService;
+
+    /**
      * Create a new job instance.
      *
      * @return void
@@ -116,6 +126,7 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
         $this->auctionNftService = new AuctionNftService();
         $this->gachaService = new GachaService();
         $this->nftService = new NftService();
+        $this->userCouponService = new UserCouponService();
     }
 
     /**
@@ -169,8 +180,49 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
                             $packageStock->remain -= 1;
                             $packageStock->update();
                         }
-                        // call api gacha NFT
-                        $this->gachaService->callApiGachaNft($package->id, $this->auctionId, date('Y-m-d H:i:s', $val['timeStamp']), $val['from'], $this->auctionNftService, $this->nftService);
+                        if ($this->auctionId == 5) {
+                            if ($package->id == 12) {
+                                // get user coupon
+                                $userCoupon = $this->userCouponService->hasUserCoupon($user->id, $this->auctionId);
+                                // get user coupon hold
+                                $couponHold = $this->userCouponService->getUserCouponHold($userCoupon->id, $package->id);
+                                // delete user coupon hold
+                                UserCouponHold::where('id', $couponHold->id)->delete();
+                                // create user coupon history
+                                $this->userCouponService->createUserCouponHistoryByDate($userCoupon->id, $couponHold->purchased_time);
+                                // create data in nft auction history
+                                $this->historyListService->createNftAuctionHistory(
+                                    $user->id,
+                                    $tokenId,
+                                    $this->auctionId,
+                                    $amount,
+                                    NftAuctionHistory::SUCCESS_STATUS,
+                                    null,
+                                    NftAuctionHistory::METHOD_COUPON,
+                                    $package->id
+                                );
+                                // insert record in cash flow
+                                $this->cashFlowService->createCashFlow(
+                                    $user->id,
+                                    $tokenId,
+                                    $amount,
+                                    CashFlow::NFT_DEPOSIT,
+                                    null,
+                                    CashFlow::METHOD_COUPON
+                                );
+                            }
+                            // get NFT id by nft_auction_rewards
+                            $nfts = $this->gachaService->getNftByPackageId($package->id);
+                            $this->auctionNftService->createNftAuction(
+                                $val['from'],
+                                $nfts->nft->nft_id,
+                                $nfts->delivery->id,
+                                1
+                            );
+                        } else {
+                            // call api gacha NFT
+                            $this->gachaService->callApiGachaNfts($package->id, $this->auctionId, date('Y-m-d H:i:s', $val['timeStamp']), $val['from'], $this->auctionNftService, $this->nftService);
+                        }
 
                         info("[SUCCESS] Create nft auction History: " . $val['hash']);
                     }

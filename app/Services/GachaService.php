@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\NftAuctionReward;
 use App\Models\NftAuctionWeaponGachaId;
 use App\Models\NftDeliverySource;
 use App\Models\XenoClassSaleTime;
@@ -29,12 +30,25 @@ class GachaService
     }
 
     /**
-     * Call api gacha NFT
+     * Get nft id by package id.
+     *
+     * @param $packageId
+     * @return array|object
+     */
+    public function getNftByPackageId($packageId)
+    {
+        return NftAuctionReward::select('package_id', 'nft_id', 'nft_delivery_id')
+            ->where('package_id', $packageId)
+            ->first();
+    }
+
+    /**
+     * Call api gacha NFT to get Xeno NFT and Weapon NFT
      *
      * @param $packageId, $auctionId, $purchaseTime, $walletAddress
      * @return array|object
      */
-    public function callApiGachaNft($packageId, $auctionId, $purchaseTime, $walletAddress, $auctionNftService, $nftService)
+    public function callApiGachaNfts($packageId, $auctionId, $purchaseTime, $walletAddress, $auctionNftService, $nftService)
     {
         $baseUri = config('defines.gacha_api_url');
         $xenoGacha = $this->getXenoGachaId($packageId, $purchaseTime, $auctionId);
@@ -66,7 +80,7 @@ class GachaService
                 $deliveryId,
                 1
             );
-            // get all nft of gaCha result
+            // get all nft of gacha result
             return $nftService->getNftByIds(array($nftXenoId, $nftWeaponId)) ?? [];
         }
     }
