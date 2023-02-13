@@ -617,14 +617,12 @@ class TransactionController extends Controller
                     'message' => __('transaction.coupon.hasCoupon'),
                 ], 400);
             }
-            //calculate amount after discount
-            $amount = $request->amount * $isCoupon->discount_percentage / 100;
             //create data in nft auction history
             $this->historyListService->createNftAuctionHistory(
                 $user->id,
                 $request->token_id,
                 $request->auction_id,
-                $amount,
+                $request->amount,
                 NftAuctionHistory::SUCCESS_STATUS,
                 null,
                 NftAuctionHistory::METHOD_COUPON,
@@ -634,7 +632,7 @@ class TransactionController extends Controller
             $this->cashFlowService->createCashFlow(
                 $user->id,
                 $request->token_id,
-                $amount,
+                $request->amount,
                 CashFlow::NFT_DEPOSIT,
                 null,
                 CashFlow::METHOD_COUPON

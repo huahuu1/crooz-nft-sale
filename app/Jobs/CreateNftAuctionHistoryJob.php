@@ -155,6 +155,12 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
                     if (!empty($packageStock) && $packageStock->remain <= 0) {
                         info("[FAIL] Package out of stock: " . $val['hash']);
                     } else {
+                        if ($package->id == 12) {
+                            // get user coupon
+                            $userCoupon = $this->userCouponService->hasUserCoupon($user->id, $this->auctionId);
+                            //calculate amount after discount
+                            $amount = $amount * $userCoupon->discount_percentage / 100;
+                        }
                         // create nft Auction History
                         $this->historyListService->createNftAuctionHistoryByData(
                             $val['hash'],
@@ -182,8 +188,6 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
                         }
                         if ($this->auctionId == 5) {
                             if ($package->id == 12) {
-                                // get user coupon
-                                $userCoupon = $this->userCouponService->hasUserCoupon($user->id, $this->auctionId);
                                 // get user coupon hold
                                 $couponHold = $this->userCouponService->getUserCouponHold($userCoupon->id, $package->id);
                                 // delete user coupon hold
