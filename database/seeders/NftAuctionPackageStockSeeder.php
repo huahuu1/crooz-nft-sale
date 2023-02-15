@@ -31,13 +31,6 @@ class NftAuctionPackageStockSeeder extends Seeder
                 'remain' => 100,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'package_id' => 9,
-                'total' => 100,
-                'remain' => 100,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
             ]
         ];
         NftAuctionPackageStock::insert($NftAuctionPackageStocks);

@@ -34,6 +34,6 @@ class GachaTicketExchangeTime extends Model
      */
     public static function getTicketExchangeTimeByAuctionId($auctionId)
     {
-        return GachaTicketExchangeTime::select('id', 'auction_id', 'start_time', 'end_time')->where('auction_id', 4)->first();
+        return GachaTicketExchangeTime::select('id', 'auction_id', 'start_time', 'end_time')->where('auction_id', $auctionId)->first();
     }
 }

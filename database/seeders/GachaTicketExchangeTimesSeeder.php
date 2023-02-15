@@ -21,10 +21,16 @@ class GachaTicketExchangeTimesSeeder extends Seeder
 
         $nftAuctionWeaponGachaIds = [
             [
-                'id' => 1,
                 'auction_id' => 4,
                 'start_time' => Carbon::create('2022', '12', '27', '20'),
                 'end_time'  => Carbon::create('2023', '01', '10', '19', '59', '59'),
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'auction_id' => 5,
+                'start_time' => Carbon::create('2023-02-15'),
+                'end_time'  => Carbon::create('2023-02-22'),
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ]
