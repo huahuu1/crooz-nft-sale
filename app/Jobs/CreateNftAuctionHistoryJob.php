@@ -155,6 +155,7 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
                     if (!empty($packageStock) && $packageStock->remain <= 0) {
                         info("[FAIL] Package out of stock: " . $val['hash']);
                     } else {
+                        $isSuccess = false;
                         if ($package->id == 12) {
                             // get user coupon
                             $userCoupon = $this->userCouponService->hasUserCoupon($user->id, $this->auctionId);
@@ -181,6 +182,7 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
                             CashFlow::METHOD_CRYPTO,
                             date('Y-m-d H:i:s', $val['timeStamp'])
                         );
+                        $isSuccess = true;
                         //subtract ticket when transaction is success
                         if (!empty($packageStock)) {
                             $packageStock->remain -= 1;
@@ -190,45 +192,54 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
                             if ($package->id == 12) {
                                 // get user coupon hold
                                 $couponHold = $this->userCouponService->getUserCouponHold($userCoupon->id, $package->id);
-                                // delete user coupon hold
-                                UserCouponHold::where('id', $couponHold->id)->delete();
-                                // create user coupon history
-                                $this->userCouponService->createUserCouponHistoryByDate($userCoupon->id, $couponHold->purchased_time);
-                                // create data in nft auction history
-                                $this->historyListService->createNftAuctionHistory(
-                                    $user->id,
-                                    $tokenId,
-                                    $this->auctionId,
-                                    $amount,
-                                    NftAuctionHistory::SUCCESS_STATUS,
-                                    null,
-                                    NftAuctionHistory::METHOD_COUPON,
-                                    $package->id
-                                );
-                                // insert record in cash flow
-                                $this->cashFlowService->createCashFlow(
-                                    $user->id,
-                                    $tokenId,
-                                    $amount,
-                                    CashFlow::NFT_DEPOSIT,
-                                    null,
-                                    CashFlow::METHOD_COUPON
+                                if (!$couponHold) {
+                                    info("[FAIL] Coupon Id not found: " . $val['hash']);NftAuctionHistory::where('tx_hash', $val['hash'])->delete();
+                                    CashFlow::where('tx_hash', $val['hash'])->delete();
+                                    $isSuccess = false;
+                                } else {
+                                    // delete user coupon hold
+                                    UserCouponHold::where('id', $couponHold->id)->delete();
+                                    // create user coupon history
+                                    $this->userCouponService->createUserCouponHistoryByDate($userCoupon->id, $couponHold->purchased_time);
+                                    // create data in nft auction history
+                                    $this->historyListService->createNftAuctionHistory(
+                                        $user->id,
+                                        $tokenId,
+                                        $this->auctionId,
+                                        $amount,
+                                        NftAuctionHistory::SUCCESS_STATUS,
+                                        null,
+                                        NftAuctionHistory::METHOD_COUPON,
+                                        $package->id
+                                    );
+                                    // insert record in cash flow
+                                    $this->cashFlowService->createCashFlow(
+                                        $user->id,
+                                        $tokenId,
+                                        $amount,
+                                        CashFlow::NFT_DEPOSIT,
+                                        null,
+                                        CashFlow::METHOD_COUPON
+                                    );
+                                    $isSuccess = true;
+                                }
+                            }
+                            if ($isSuccess) {
+                                // get NFT id by nft_auction_rewards
+                                $nfts = $this->gachaService->getNftByPackageId($package->id);
+                                $this->auctionNftService->createNftAuction(
+                                    $val['from'],
+                                    $nfts->nft->nft_id,
+                                    $nfts->delivery->id,
+                                    1
                                 );
                             }
-                            // get NFT id by nft_auction_rewards
-                            $nfts = $this->gachaService->getNftByPackageId($package->id);
-                            $this->auctionNftService->createNftAuction(
-                                $val['from'],
-                                $nfts->nft->nft_id,
-                                $nfts->delivery->id,
-                                1
-                            );
                         } else {
                             // call api gacha NFT
                             $this->gachaService->callApiGachaNfts($package->id, $this->auctionId, date('Y-m-d H:i:s', $val['timeStamp']), $val['from'], $this->auctionNftService, $this->nftService);
                         }
-
-                        info("[SUCCESS] Create nft auction History: " . $val['hash']);
+                        $isSuccess = $isSuccess ? "[SUCCESS]" : "[FAIL]";
+                        info($isSuccess . " Create nft auction History: " . $val['hash']);
                     }
                 }
             } else {
