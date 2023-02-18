@@ -158,11 +158,11 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
                     info("[FAIL] Package Id not found: " . $val['hash']);
                 } else {
                     $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($package->id);
+                    $isSuccess = false;
                     //prevent out of stock package
                     if (!empty($packageStock) && $packageStock->remain <= 0) {
                         info("[FAIL] Package out of stock: " . $val['hash']);
                     } else {
-                        $isSuccess = false;
                         // create nft Auction History
                         $this->historyListService->createNftAuctionHistoryByData(
                             $val['hash'],
@@ -190,18 +190,18 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
                             $packageStock->update();
                         }
                         if ($this->auctionId == 5) {
-                            if ($package->id == 9) {
+                            if ($package->id == 9 && $amount == $packageCouponPrice) {
                                 // get user coupon hold
                                 $couponHold = $this->userCouponService->getUserCouponHold($userCoupon->id, $package->id);
                                 if (!$couponHold) {
                                     info("[FAIL] Coupon Id not found: " . $val['hash']);NftAuctionHistory::where('tx_hash', $val['hash'])->delete();
                                     CashFlow::where('tx_hash', $val['hash'])->delete();
                                     $isSuccess = false;
-                                } else {
-                                    // delete user coupon hold
-                                    UserCouponHold::where('id', $couponHold->id)->delete();
+                                } else if($couponHold && $isSuccess) {
                                     // create user coupon history
                                     $this->userCouponService->createUserCouponHistoryByDate($userCoupon->id, $couponHold->purchased_time);
+                                    // delete user coupon hold
+                                    UserCouponHold::where('id', $couponHold->id)->delete();
                                     // create data in nft auction history
                                     $this->historyListService->createNftAuctionHistory(
                                         $user->id,
@@ -222,7 +222,6 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
                                         null,
                                         CashFlow::METHOD_COUPON
                                     );
-                                    $isSuccess = true;
                                 }
                             }
                             if ($isSuccess) {

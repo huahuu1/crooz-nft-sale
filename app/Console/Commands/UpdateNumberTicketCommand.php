@@ -20,7 +20,7 @@ class UpdateNumberTicketCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'update:ticket {auction_id=4}';
+    protected $signature = 'update:ticket {auction_id=5}';
 
     /**
      * The console command description.
