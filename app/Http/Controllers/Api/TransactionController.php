@@ -533,7 +533,7 @@ class TransactionController extends Controller
             if (empty($isCoupon)) {
                 return response()->json([
                     'message' => __('transaction.coupon.hasCoupon'),
-                ], 400);
+                ], 422);
             }
             //prevent out of stock package
             $packageStock = NftAuctionPackageStock::getPackageStockByPackageId($request->package_id);
@@ -615,7 +615,7 @@ class TransactionController extends Controller
             if (empty($isCoupon)) {
                 return response()->json([
                     'message' => __('transaction.coupon.hasCoupon'),
-                ], 400);
+                ], 422);
             }
             //create data in nft auction history
             $this->historyListService->createNftAuctionHistory(
@@ -725,7 +725,7 @@ class TransactionController extends Controller
             if (empty($isCoupon)) {
                 return response()->json([
                     'message' => __('transaction.coupon.hasCoupon'),
-                ], 200);
+                ], 422);
             }
 
             return response()->json([
