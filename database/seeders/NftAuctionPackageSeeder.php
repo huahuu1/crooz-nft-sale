@@ -84,16 +84,16 @@ class NftAuctionPackageSeeder extends Seeder
             ],
             [
                 'auction_id' => 5,
-                'price' => 2500,
-                'unit_price' => 2500,
-                'destination_address' => '0x0E44F6Ce4db17C204fcaA7C35E1119Aa8212Cb431',
+                'price' => 200,
+                'unit_price' => 200,
+                'destination_address' => '0xde2fceF50CC71C18bA41c8091CF811BC7d688319',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ],
             [
                 'auction_id' => 5,
-                'price' => 1000,
-                'unit_price' => 1000,
+                'price' => 300,
+                'unit_price' => 300,
                 'destination_address' => '0x0E44F6Ce4db17C204fcaA7C35E1119Aa8212Cb431',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
@@ -108,16 +108,16 @@ class NftAuctionPackageSeeder extends Seeder
             ],
             [
                 'auction_id' => 5,
-                'price' => 200,
-                'unit_price' => 200,
+                'price' => 1000,
+                'unit_price' => 1000,
                 'destination_address' => '0x0E44F6Ce4db17C204fcaA7C35E1119Aa8212Cb431',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ],
             [
                 'auction_id' => 5,
-                'price' => 300,
-                'unit_price' => 300,
+                'price' => 2500,
+                'unit_price' => 2500,
                 'destination_address' => '0x0E44F6Ce4db17C204fcaA7C35E1119Aa8212Cb431',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')

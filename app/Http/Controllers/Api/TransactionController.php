@@ -680,7 +680,7 @@ class TransactionController extends Controller
             if (empty($isCoupon)) {
                 return response()->json([
                     'message' => __('transaction.coupon.hasCoupon'),
-                ], 400);
+                ], 422);
             }
             //create user coupon hold
             $this->userCouponService->createUserCouponHold($isCoupon->id, $request->package_id);

@@ -21,7 +21,7 @@ class UpdateNewDataNftAuctionHistoryCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'update:nft-auction-history {auction_id=4}';
+    protected $signature = 'update:nft-auction-history {auction_id=5}';
 
     /**
      * The console command description.
