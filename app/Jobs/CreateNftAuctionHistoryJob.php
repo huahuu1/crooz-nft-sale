@@ -145,8 +145,15 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
             $amount = $this->convertAmount($val['tokenDecimal'], $val['value']);
             // get package id
             $package = $this->packageService->getNftAuctionPackageByAddress($val['to'], $this->auctionId);
+            // in case the package has coupon
+            $packageCouponPrice = null;
+            if ($package->id == 9) {
+                // get user coupon
+                $userCoupon = $this->userCouponService->getUserCoupon($user->id, $this->auctionId);
+                $packageCouponPrice = $package->price * $userCoupon->discount_percentage / 100;
+            }
             // in case amount > 0 and amount must equal package's price
-            if ($amount > 0 && $amount == $package->price) {
+            if ($amount > 0 && ($amount == $package->price || $amount == $packageCouponPrice)) {
                 if (!$package) {
                     info("[FAIL] Package Id not found: " . $val['hash']);
                 } else {
@@ -156,12 +163,6 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
                         info("[FAIL] Package out of stock: " . $val['hash']);
                     } else {
                         $isSuccess = false;
-                        if ($package->id == 9) {
-                            // get user coupon
-                            $userCoupon = $this->userCouponService->hasUserCoupon($user->id, $this->auctionId);
-                            //calculate amount after discount
-                            $amount = $amount * $userCoupon->discount_percentage / 100;
-                        }
                         // create nft Auction History
                         $this->historyListService->createNftAuctionHistoryByData(
                             $val['hash'],
