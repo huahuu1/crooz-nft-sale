@@ -84,6 +84,8 @@ class TicketController extends Controller
             //case sale number 4 gacha id = 3
             if ($request->auction_id == 4 && $request->ticket_type == GachaTicket::FREE_TICKET) {
                 $result = $this->gachaTicket($baseUri, $request->wallet_address, 3);
+            } else if ($request->auction_id == 5 && $request->ticket_type == GachaTicket::FREE_TICKET) {
+                $result = $this->gachaTicket($baseUri, $request->wallet_address, 59);
             } else {
                 $result = $this->gachaTicket($baseUri, $request->wallet_address, $request->ticket_type);
             }
