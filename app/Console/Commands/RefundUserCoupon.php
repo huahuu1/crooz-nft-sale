@@ -65,8 +65,10 @@ class RefundUserCoupon extends Command
      */
     public function refundUserCoupon()
     {
+        // timeout of holding coupon
+        $time = env('TIMEOUT_HOLDING_COUPON', 3);
         // get all coupon hold that greater than 3 hours
-        $couponHolds = $this->userCouponService->getUserCouponHolds();
+        $couponHolds = $this->userCouponService->getUserCouponHolds($time);
         // refund coupon to user and delete coupon hold
         if (!empty($couponHolds)) {
             foreach ($couponHolds as $couponHold) {
