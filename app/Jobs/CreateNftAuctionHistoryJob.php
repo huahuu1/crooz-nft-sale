@@ -147,13 +147,13 @@ class CreateNftAuctionHistoryJob implements ShouldQueue
             $package = $this->packageService->getNftAuctionPackageByAddress($val['to'], $this->auctionId);
             // in case the package has coupon
             $packageCouponPrice = null;
-            if ($package->id == 9) {
+            if ($package && $package->id == 9) {
                 // get user coupon
                 $userCoupon = $this->userCouponService->getUserCoupon($user->id, $this->auctionId);
                 $packageCouponPrice = $package->price * $userCoupon->discount_percentage / 100;
             }
             // in case amount > 0 and amount must equal package's price
-            if ($amount > 0 && ($amount == $package->price || $amount == $packageCouponPrice)) {
+            if ($package && $amount > 0 && ($amount == $package->price || $amount == $packageCouponPrice)) {
                 if (!$package) {
                     info("[FAIL] Package Id not found: " . $val['hash']);
                 } else {

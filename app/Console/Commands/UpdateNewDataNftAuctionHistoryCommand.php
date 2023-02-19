@@ -63,9 +63,9 @@ class UpdateNewDataNftAuctionHistoryCommand extends Command
      */
     public function handle()
     {
-        info("Start UpdateNftAuctionHistory");
+        Log::info("Start UpdateNftAuctionHistory");
         $this->updateNftAuctionHistory();
-        info("End UpdateNftAuctionHistory");
+        Log::info("End UpdateNftAuctionHistory");
     }
 
     /**
