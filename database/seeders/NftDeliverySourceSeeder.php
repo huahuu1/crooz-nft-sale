@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\NftDeliverySource;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Schema;
 
 class NftDeliverySourceSeeder extends Seeder
 {
@@ -14,6 +16,8 @@ class NftDeliverySourceSeeder extends Seeder
      */
     public function run()
     {
+        Schema::disableForeignKeyConstraints();
+        NftDeliverySource::truncate();
         DB::table('nft_delivery_sources')->insert([
             [
                 'id' => 1,
@@ -56,7 +60,26 @@ class NftDeliverySourceSeeder extends Seeder
                 'name' => '202211 NFT Auction',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'id' => 8,
+                'name' => '202212 NFT Auction',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'id' => 20,
+                'name' => '202212 NFT Auction',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'id' => 27,
+                'name' => '202302 NFT Auction',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
             ]
         ]);
+        Schema::enableForeignKeyConstraints();
     }
 }
