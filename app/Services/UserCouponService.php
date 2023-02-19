@@ -68,7 +68,7 @@ class UserCouponService
      */
     public function getUserCouponHolds($time)
     {
-        return UserCouponHold::where('purchased_time', '<=', Carbon::now()->subHours($time)->toDateTimeString())
+        return UserCouponHold::where('purchased_time', '<=', Carbon::now()->subMinutes($time)->toDateTimeString())
             ->get();
     }
 

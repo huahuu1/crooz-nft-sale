@@ -2,15 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\CreateNftAuctionHistoryJob;
-use App\Notifications\EmailFailedJobNotification;
-use App\Services\AuctionInfoService;
-use App\Services\HistoryListService;
 use App\Services\UserCouponService;
-use App\Traits\ApiBscScanTransaction;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Notification;
 
 class RefundUserCoupon extends Command
 {
