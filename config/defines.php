@@ -59,4 +59,7 @@ return [
         'destination_address' => env('TICKET_DESTINATION_ADDRESS', '0x9106C3CF4B1619EdDeDFfD91556C88507e71DE81'),
         'update_ticket_cron_time' => env('UPDATE_TICKET_CRON_TIME', '0 * * * *'),
     ],
+    'coupon' => [
+        'timeout' => env('TIMEOUT_HOLDING_COUPON', 3),
+    ],
 ];
