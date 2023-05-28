@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\UpdateUnlockBalanceJob;
+use App\Models\TokenSaleInfo;
 use App\Models\UnlockUserBalance;
 use App\Services\UserBalanceService;
 use Carbon\Carbon;
@@ -59,7 +60,6 @@ class UnlockUserTokenCommand extends Command
     public function tokenUnlockExecution()
     {
         $unlockUserBalanceList = $this->unlockUserBalance->getUnlockUserBalances();
-
         $unlockUserBalanceList->chunkById(100, function ($unlockUserBalances) {
             foreach ($unlockUserBalances as $key => $unlockUserBalance) {
                 $userBalance = $this->userBalanceService->getUserBalanceByTokenId($unlockUserBalance->user_id, $unlockUserBalance->token_id);
@@ -75,11 +75,17 @@ class UnlockUserTokenCommand extends Command
                 }
 
                 if ($checkDate) {
-                    //calculate the amount to unlock
-                    $unlockAmount = $unlockUserBalance->amount_lock * $unlockUserBalance->token_sale->lock_info->unlock_percentages / 100;
+                    $tokenSaleInfo = TokenSaleInfo::select('rule_id', 'price', 'end_date')->where('id', $unlockUserBalance->token_sale_id)->withExists('token_unlock_rule:id,rule_code')->first();
 
+                    $tokenUnlockRule = collect($tokenSaleInfo->token_unlock_rule->all()[0]);
+
+                    $orderRun = $unlockUserBalance->current_order_unlock;
+                    //calculate the amount to unlock
+                    if ($orderRun < count($tokenUnlockRule['rule_code'])) {
+                        $unlockAmount = $unlockUserBalance->amount_lock * $tokenUnlockRule['rule_code'][$orderRun]['unlock_percentages'] / 100;
+                    }
                     if ($unlockUserBalance->status != 0) {
-                        UpdateUnlockBalanceJob::dispatch($unlockUserBalance, $userBalance, $unlockAmount)->delay(now()->addSeconds(($key + 1) * 3));
+                        UpdateUnlockBalanceJob::dispatch($unlockUserBalance, $userBalance, $unlockAmount ? $unlockAmoun : 0)->delay(now()->addSeconds(($key + 1) * 3));
 
                         Log::info('[SUCCESS] Unlock token for user ID: '.$unlockUserBalance->user_id.' - sale token ID: '.$unlockUserBalance->token_sale_id);
                         $this->info('[SUCCESS] Unlock token for user ID: '.$unlockUserBalance->user_id.' - sale token ID: '.$unlockUserBalance->token_sale_id);

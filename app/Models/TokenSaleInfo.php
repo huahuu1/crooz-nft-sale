@@ -19,7 +19,7 @@ class TokenSaleInfo extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'lock_id',
+        'rule_id',
         'start_date',
         'end_date',
         'total',
@@ -28,10 +28,10 @@ class TokenSaleInfo extends Model
     ];
 
     /**
-     * Get the lock info that owns the token sale.
+     * Get the rule info that owns the token sale.
      */
-    public function lock_info()
+    public function token_unlock_rule()
     {
-        return $this->belongsTo(LockInfo::class, 'lock_id');
+        return $this->hasMany(TokenUnlockRule::class, 'id', 'rule_id')->with('rule_code:id,rule_code,period,unit,unlock_percentages');
     }
 }

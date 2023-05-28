@@ -16,4 +16,28 @@ class UserService
     {
         return User::where('wallet_address', $walletAddress)->first();
     }
+
+    /**
+     * Checking user has email or not by wallet address.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function hasVerifiedEmailByWalletAddress($walletAddress)
+    {
+        return User::select('email')->where('wallet_address', $walletAddress)
+                                    ->whereNotNull('email')
+                                    ->count();
+    }
+
+    /**
+     * Checking user has email or not by user id.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function hasVerifiedEmailByUserId($userId)
+    {
+        return User::select('email')->where('id', $userId)
+                                    ->whereNotNull('email')
+                                    ->count();
+    }
 }
