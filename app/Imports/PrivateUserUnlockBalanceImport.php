@@ -12,6 +12,7 @@ use App\Services\UserBalanceService;
 use App\Services\UserWithdrawalService;
 use App\Traits\CalculateNextRunDate;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\RemembersRowNumber;
@@ -55,7 +56,7 @@ class PrivateUserUnlockBalanceImport implements ToModel, WithHeadingRow, SkipsEm
 
     /**
      * @param  array  $row
-     * @return \Illuminate\Database\Eloquent\Model|null
+     * @return Model|null
      */
     public function model(array $row)
     {
